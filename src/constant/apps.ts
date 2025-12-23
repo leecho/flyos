@@ -66,7 +66,8 @@ export const apps: AppItem[] = [
         window: {
             height: 600,
             width: 900,
-            maximizable: 1
+            maximizable: 1,
+            component: 'AppStore'
         }
     },
     {
@@ -95,12 +96,14 @@ export const apps: AppItem[] = [
         tile: {
             bgColor: "bg-indigo-600",
             style: "rounded-lg text-white",
-            size: "medium"
+            size: "medium",
+            component: 'Photo'
         },
         window: {
             height: 650,
             width: 950,
-            maximizable: 1
+            maximizable: 1,
+            component: 'Photo'
         }
     },
     {
@@ -112,15 +115,35 @@ export const apps: AppItem[] = [
         tile: {
             bgColor: "bg-red-600",
             style: "rounded-lg text-white",
-            size: "small"
+            size: "small",
+            component: "Calendar"
         },
         window: {
             height: 420,
             width: 600,
-            maximizable: 0
+            maximizable: 0,
+            component: "Calendar"
         }
     },
     {
+        id: "weather",
+        name: "天气",
+        icon: "/icons/weather.png",
+        style: "shadow-md rounded-lg",
+        bgColor: "bg-sky-500",
+        tile: {
+            bgColor: "bg-sky-600",
+            style: "rounded-lg text-white",
+            size: "large",
+            component: 'Weather'
+        },
+        window: {
+            height: 540,
+            width: 850,
+            maximizable: 1,
+            component: 'Weather'
+        }
+    },{
         id: "mail",
         name: "邮箱",
         icon: "/icons/mail.png",
@@ -129,12 +152,32 @@ export const apps: AppItem[] = [
         tile: {
             bgColor: "bg-sky-600",
             style: "rounded-lg text-white",
-            size: "small"
+            size: "medium",
+            component: 'Mail'
         },
         window: {
             height: 540,
             width: 850,
-            maximizable: 1
+            maximizable: 1,
+            component: 'Mail'
+        }
+    },{
+        id: "news",
+        name: "新闻",
+        icon: "/icons/mail.png",
+        style: "shadow-md rounded-lg",
+        bgColor: "bg-sky-500",
+        tile: {
+            bgColor: "bg-sky-600",
+            style: "rounded-lg text-white",
+            size: "small",
+            component: 'News'
+        },
+        window: {
+            height: 540,
+            width: 850,
+            maximizable: 1,
+            component: 'News'
         }
     },
     {
@@ -152,7 +195,8 @@ export const apps: AppItem[] = [
         window: {
             height: 560,
             width: 900,
-            maximizable: 1
+            maximizable: 1,
+            component: 'Music'
         }
     },
     {
@@ -183,9 +227,9 @@ export const groups = [{
 },{
     id: "2",
     name: "Group2",
-    apps: ["photos","calendar","mail"]
+    apps: ["photos","calendar","mail","news"]
 },{
     id: "3",
     name: "Group3",
-    apps: ["music","notepad"]
+    apps: ["music","notepad","weather"]
 }] as AppGroup[]

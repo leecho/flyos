@@ -64,7 +64,7 @@
       </div>
 
       <!-- Content -->
-      <div class="flex-1 overflow-auto bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+      <div class="flex-1 overflow-auto ">
         <component v-if="component" :is="subComponent" />
       </div>
 
