@@ -18,13 +18,13 @@
           @click.stop
         >
           <!-- 顶部常用工具栏 -->
-          <div class="flex items-center justify-between px-2 py-1 mb-1 border-b border-black/5 dark:border-white/5">
-            <div v-for="icon in quickIcons" :key="icon.id"
-                 class="p-2 rounded-md hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer transition-colors"
-                 :title="icon.label">
-              <component :is="icon.svg" class="w-4 h-4" />
-            </div>
-          </div>
+<!--          <div class="flex items-center justify-between px-2 py-1 mb-1 border-b border-black/5 dark:border-white/5">-->
+<!--            <div v-for="icon in quickIcons" :key="icon.id"-->
+<!--                 class="p-2 rounded-md hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer transition-colors"-->
+<!--                 :title="icon.label">-->
+<!--              <component :is="icon.svg" class="w-4 h-4" />-->
+<!--            </div>-->
+<!--          </div>-->
 
           <template v-for="(item, index) in items" :key="index">
             <!-- 分隔线 -->

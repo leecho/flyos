@@ -30,7 +30,9 @@
       >
         <div class="flex items-center gap-2">
           <slot name="icon">
-            <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
+            <div >
+                <AppIcon :id="appId" size='sm' rounded='sm'/>
+            </div>
           </slot>
           <span class="font-medium text-gray-800 dark:text-gray-100">
             {{ title }}
@@ -86,7 +88,8 @@ import {
   watch,
   nextTick
 } from 'vue'
-import { useWindowAnimator} from "@/comosables/useWindowAnimator.ts";
+import { useWindowAnimator} from "@/composables/useWindowAnimator.ts";
+import AppIcon from './AppIcon.vue'
 /* ------------------ Props ------------------ */
 const props = defineProps<{
   id: string
@@ -97,6 +100,7 @@ const props = defineProps<{
   maximized?: boolean
   width?: number
   height?: number
+  appId: string
 }>()
 
 const emit = defineEmits(['close', 'minimize', 'active', 'contextmenu'])

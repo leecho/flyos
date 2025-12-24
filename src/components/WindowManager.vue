@@ -13,6 +13,7 @@
     :height='win.height'
     :width='win.width'
     :id=win.id
+    :appId=win.appId
     :minimized='win.minimized'
     :component='win.component'></Window>
   <ContextMenu ref='menuRef' />

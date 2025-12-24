@@ -1,7 +1,7 @@
 <template>
   <div class="flex-1 flex m-[60px] gap-3 flex-col overflow-y-auto items-center md:items-start content-stretch text-white"
   >
-    <div class="h-[40px] flex">
+    <div class="h-[40px] w-[40px] flex">
       <img :src="logo"/>
       <div class="text-3xl ml-[10px] leading-[40px]">FlyOS</div>
     </div>
@@ -12,7 +12,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import logo from '../assets/vue.svg'
+import logo from '../assets/logo.svg'
 import TileGroup from "./TileGroup.vue";
 import {appStore} from "../stores/appStore";
 import ContextMenu from "./ContextMenu.vue";

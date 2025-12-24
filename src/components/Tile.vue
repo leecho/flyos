@@ -8,7 +8,7 @@
       v-if="!subComponent"
       class="w-full h-full flex flex-col items-center justify-center p-2"
     >
-      <img :src="defaultLogo" class="w-8 h-8 mb-1 drop-shadow-md object-contain" />
+      <AppIcon :id='app.id' />
       <!-- 小磁贴通常不显示名称 -->
       <div v-if="app.tile.size !== 'small'" class="text-[11px] font-medium truncate w-full px-2 text-center opacity-90">
         {{ app.name }}
@@ -43,6 +43,7 @@
 import defaultLogo from '@/assets/vue.svg'
 import type { AppItem } from "@/stores/appStore.ts";
 import { computed, defineAsyncComponent } from "vue";
+import AppIcon from './AppIcon.vue'
 
 const props = defineProps<{
   app: AppItem

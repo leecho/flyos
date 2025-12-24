@@ -219,7 +219,26 @@ export const apps: AppItem[] = [
             maximizable: 0,
             component: 'Notepad'
         }
+    },{
+        id: "notifier",
+        name: "通知中心",
+        icon: "/icons/bell.png", // 请确保图标路径正确
+        style: "shadow-md rounded-lg",
+        bgColor: "bg-indigo-600",
+        tile: {
+            bgColor: "bg-indigo-700",
+            style: "rounded-lg text-white font-semibold",
+            size: "medium",
+            component: 'Notifier' // 这里的名字应与你注册的 Vue 组件一致
+        },
+        window: {
+            height: 500,
+            width: 700,
+            maximizable: 1,
+            component: 'Notifier'
+        }
     }
+
 ] as AppItem[]
 
 
@@ -234,5 +253,5 @@ export const groups = [{
 },{
     id: "3",
     name: "Group3",
-    apps: ["music","notepad","weather"]
+    apps: ["music","notepad","weather","notifier"]
 }] as AppGroup[]

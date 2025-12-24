@@ -99,6 +99,7 @@ useDraggable(groupRef, props.group.apps, {
 <style scoped>
 .tile-group {
   /* 限制单组宽度，确保磁贴折行整齐 */
-  width: 330px;
+  min-width: 330px;
+  max-width: 330px;
 }
 </style>
