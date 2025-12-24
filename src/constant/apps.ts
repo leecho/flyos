@@ -15,7 +15,8 @@ export const apps: AppItem[] = [
         window: {
             height: 600,
             width: 900,
-            maximizable: 1
+            maximizable: 1,
+            component: 'Explorer'
         }
     },
     {
@@ -32,7 +33,8 @@ export const apps: AppItem[] = [
         window: {
             height: 700,
             width: 1100,
-            maximizable: 1
+            maximizable: 1,
+            component: 'Browser'
         }
     },
     {
@@ -49,7 +51,8 @@ export const apps: AppItem[] = [
         window: {
             height: 500,
             width: 800,
-            maximizable: 1
+            maximizable: 1,
+            component: 'Terminal'
         }
     },
     {
