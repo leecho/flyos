@@ -10,7 +10,13 @@
     >
       <AppIcon :id='app.id' />
       <!-- 小磁贴通常不显示名称 -->
-      <div v-if="app.tile.size !== 'small'" class="text-[11px] font-medium truncate w-full px-2 text-center opacity-90">
+<!--      <div v-if="app.tile.size !== 'small'" class="text-[11px] font-medium truncate w-full px-2 text-center opacity-90">-->
+<!--        {{ app.name }}-->
+<!--      </div>-->
+      <!-- 3. 左下角文本标签 (符合 Windows 规范：仅在中/宽/大尺寸显示) -->
+      <div
+           class="absolute bottom-1.5 left-2 z-20 pointer-events-none text-[10px] font-medium opacity-90 truncate max-w-[85%] drop-shadow-sm"
+      >
         {{ app.name }}
       </div>
     </div>
@@ -27,12 +33,7 @@
       </Suspense>
     </div>
 
-    <!-- 3. 左下角文本标签 (符合 Windows 规范：仅在中/宽/大尺寸显示) -->
-    <div
-      class="absolute bottom-1.5 left-2 z-20 pointer-events-none text-[10px] font-medium opacity-90 truncate max-w-[85%] drop-shadow-sm"
-    >
-      {{ app.name }}
-    </div>
+
 
     <!-- 悬停提亮遮罩 -->
     <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
@@ -59,9 +60,9 @@ const props = defineProps<{
  */
 const sizeClasses = computed(() => {
   const map: Record<string, string> = {
-    'small': 'col-span-2 row-span-2',
-    'medium': 'col-span-4 row-span-2',
-    'large': 'col-span-4 row-span-4',
+    'small': 'col-span-1 row-span-1',
+    'medium': 'col-span-2 row-span-1',
+    'large': 'col-span-2 row-span-2',
   }
   return map[props.app.tile.size] || 'col-span-2 row-span-2'
 })

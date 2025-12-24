@@ -228,8 +228,7 @@ export const apps: AppItem[] = [
         tile: {
             bgColor: "bg-indigo-700",
             style: "rounded-lg text-white font-semibold",
-            size: "medium",
-            component: 'Notifier' // 这里的名字应与你注册的 Vue 组件一致
+            size: "small"
         },
         window: {
             height: 500,

@@ -23,7 +23,7 @@
     <!-- 我们设定 6 列，这样可以灵活分配 1x1, 2x2, 4x2 的比例 -->
     <div
       ref="groupRef"
-      class="grid grid-cols-6 auto-rows-[50px] gap-2 p-1 w-full"
+      class="grid grid-cols-3 auto-rows-[100px] gap-2 p-1 w-full"
       style="grid-auto-flow: dense;"
     >
       <Tile
