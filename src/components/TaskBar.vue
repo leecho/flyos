@@ -25,7 +25,7 @@
     </div>
 
     <!-- 右侧：系统托盘 (时间、通知等) -->
-    <div class="flex items-center gap-2 px-2 h-10 rounded-lg hover:bg-white/10 transition-colors cursor-default text-xs font-medium">
+    <div @click='notificationCenterRef.toggleOpen()' class="flex items-center gap-2 px-2 h-10 rounded-lg hover:bg-white/10 transition-colors cursor-default text-xs font-medium">
       <div class="flex flex-col items-end leading-tight text-gray-700 dark:text-gray-300">
         <span>{{ currentTime }}</span>
         <span>{{ currentDate }}</span>
@@ -38,6 +38,7 @@
     <!-- 弹窗组件 -->
     <ContextMenu ref="menuRef" />
     <StartMenu ref="startMenuRef" />
+    <NotificationCenter ref="notificationCenterRef" />
   </div>
 </template>
 
@@ -48,11 +49,13 @@ import TaskBarItem from "./TaskBarItem.vue"
 import ContextMenu from './ContextMenu.vue'
 import StartMenu from './StartMenu.vue'
 import { stopTask } from '../stores/taskStore.ts'
+import NotificationCenter from './NotificationCenter.vue'
 
 const menuRef = ref()
 const startMenuRef = ref()
 const currentTime = ref('')
 const currentDate = ref('')
+const notificationCenterRef = ref()
 
 // 更新时间逻辑
 const updateTime = () => {

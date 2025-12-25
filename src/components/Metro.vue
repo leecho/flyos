@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 flex m-[60px] gap-3 flex-col overflow-y-auto items-center md:items-start content-stretch text-white"
+  <div class="flex-1 flex m-[20px] lg:m-[60px] gap-3 flex-col overflow-y-auto items-center md:items-start content-stretch text-white"
   >
     <div class="h-[40px] w-[40px] flex">
       <img :src="logo"/>
