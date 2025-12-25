@@ -57,7 +57,7 @@ defineExpose({ toggleOpen, isOpen });
         <button
           v-if="notifications.length > 0"
           @click="clearAll"
-          class="px-4 py-2 bg-slate-100 dark:bg-white/5 hover:bg-rose-500 hover:text-white rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300"
+          class="px-4 py-2 bg-slate-100 dark:bg-white/5 hover:bg-rose-500 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300"
         >
           全部清除
         </button>
@@ -68,7 +68,7 @@ defineExpose({ toggleOpen, isOpen });
         <!-- 勿扰模式 -->
         <button
           @click="dndMode = !dndMode"
-          class="flex items-center gap-3 p-4 rounded-3xl transition-all duration-300 group"
+          class="flex items-center gap-3 p-4 rounded-xl transition-all duration-300 group"
           :class="dndMode ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400'"
         >
           <div class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/20">
@@ -83,7 +83,7 @@ defineExpose({ toggleOpen, isOpen });
         </button>
 
         <!-- Wi-Fi 状态模拟 -->
-        <button class="flex items-center gap-3 p-4 rounded-3xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 group">
+        <button class="flex items-center gap-3 p-4 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 group">
           <div class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.111 16.404a5.5 5.5 0 117.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
@@ -96,7 +96,7 @@ defineExpose({ toggleOpen, isOpen });
         </button>
 
         <!-- 亮度与音量调节 -->
-        <div class="col-span-2 bg-slate-100 dark:bg-white/5 p-5 rounded-[2rem] space-y-5">
+        <div class="col-span-2 bg-slate-100 dark:bg-white/5 p-5 rounded-xl space-y-5">
           <div class="flex items-center gap-4">
             <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
             <input type="range" v-model="brightness" class="system-slider" />
@@ -110,16 +110,16 @@ defineExpose({ toggleOpen, isOpen });
 
       <!-- 动态通知列表 (来自 useNotification) -->
       <div class="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
-        <div class="space-y-4">
+        <div class="space-y-3">
           <TransitionGroup name="list">
             <div
               v-for="notif in notifications"
               :key="notif.id"
-              class="group relative bg-white/40 dark:bg-white/5 p-5 rounded-3xl border border-white dark:border-white/5 hover:border-indigo-500/50 transition-all duration-300"
+              class="group relative bg-white/40 dark:bg-white/5 p-5 select-none rounded-xl border border-white dark:border-white/5 hover:border-indigo-500/50 transition-all duration-300"
             >
-              <div class="flex justify-between items-start mb-2">
-                <div class="flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full ring-4 ring-opacity-20 shadow-[0_0_10px_rgba(0,0,0,0.1)]" :class="{
+              <div class="flex justify-between items-start mb-2 ">
+                <div class="flex items-center gap-2 ">
+                  <span class="w-2 h-2 rounded-full ring-4  ring-opacity-20 shadow-[0_0_10px_rgba(0,0,0,0.1)]" :class="{
                     'bg-blue-500 ring-blue-500': notif.type === 'info',
                     'bg-emerald-500 ring-emerald-500': notif.type === 'success',
                     'bg-amber-500 ring-amber-500': notif.type === 'warning',

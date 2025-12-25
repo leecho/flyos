@@ -31,7 +31,7 @@
         <div class="flex items-center gap-2">
           <slot name="icon">
             <div >
-                <AppIcon :id="appId" size='sm' rounded='sm'/>
+                <AppIcon :id="appId" size='mini' rounded='sm'/>
             </div>
           </slot>
           <span class="font-medium text-gray-800 dark:text-gray-100">
