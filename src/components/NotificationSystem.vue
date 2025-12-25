@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useNotification } from '@/composables/useNotification';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue'
 
-const { notifications, hideToast } = useNotification();
+const { notifications, hideToast, push } = useNotification();
 
 /**
  * 过滤出当前需要在桌面上弹出的通知

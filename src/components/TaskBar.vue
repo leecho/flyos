@@ -72,7 +72,7 @@ onMounted(() => {
 onUnmounted(() => clearInterval(timer))
 
 const openWindowContextMenu = ($event: MouseEvent, win: WindowItem) => {
-  $event.preventDefault()
+  $event.stopPropagation()
   const options = [
     { label: '最大化', action: () => toggleMaximize(win.id) },
     { label: '最小化', action: () => toggleMinimize(win.id) },

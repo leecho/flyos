@@ -1,13 +1,13 @@
 <template>
-  <div ref='desktopRef' class='flex flex-col gap-3 m-[20px] pb-[20px] w-full h-full flex-wrap content-start'
+  <div ref='desktopRef' class='flex flex-col gap-4 m-[20px] pb-[50px] w-full h-full flex-wrap content-start'
        @contextmenu.prevent='menuRef.open($event, desktopMenu)'>
     <div v-for='app in apps'
          :title='app.name'
          :key='app.id'
          @click='startTask(app)'
-         class='desktop-icon  flex flex-col p-[5px] w-[75px] h-[75px] justify-center cursor-pointer rounded hover:backdrop-blur-sm hover:bg-white/55 dark:hover:bg-black/55'>
+         class='desktop-icon  flex flex-col p-[5px] w-[80px] h-[80px] justify-center cursor-pointer rounded hover:backdrop-blur-sm hover:bg-white/55 dark:hover:bg-black/55'>
       <div class='text-center justify-center flex'>
-        <img :src='logo' class='w-[32px] h-[32px]'>
+        <AppIcon :id='app.id' size='md'/>
       </div>
       <span class='text-center truncate w-full mt-1 text-shadow-sm h-[18px] text-white'>{{ app.name }}</span>
     </div>
@@ -21,6 +21,7 @@ import { startTask } from '../stores/taskStore.ts'
 import { ref } from 'vue'
 import { themeStore } from '../stores/themeStore.ts'
 import { useDraggable } from 'vue-draggable-plus'
+import AppIcon from './AppIcon.vue'
 
 const apps = appStore.apps
 const desktopRef = ref()

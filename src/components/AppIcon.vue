@@ -58,7 +58,7 @@ import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
   id: string
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'mini' | 'sm' | 'md' | 'lg' | 'xl'
   rounded?: 'sm' | 'md' | 'lg' | 'full'
 }>(), {
   size: 'md',
@@ -74,7 +74,7 @@ const sizeClasses = {
 }
 
 const iconSize = computed(() => {
-  const map = { sm: 16, md: 24, lg: 34, xl: 48 }
+  const map = { mini:12,  sm: 16, md: 24, lg: 34, xl: 48 }
   return map[props.size]
 })
 

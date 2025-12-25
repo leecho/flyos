@@ -1,251 +1,199 @@
-<script setup>
-import { onMounted, computed } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import { messageBox } from '@/composables/useMessage';
 import { useNotification } from '@/composables/useNotification';
 
-// 初始化通知中心逻辑
+/**
+ * 核心逻辑初始化
+ */
 const { notifications, push, remove, clearAll } = useNotification();
 
-// --- 实用工具与状态 ---
-const notificationCount = computed(() => notifications.value.length);
-
-// --- 业务操作 ---
-const triggerAlert = () => {
-  messageBox.alert('欢迎使用 FlyOS 系统，这是一个全局的消息警报示例。', '系统安全提示');
+// 操作函数
+const handleAlert = () => {
+  messageBox.alert('当前系统环境运行良好，未检测到异常。', '状态自检');
 };
 
-const triggerConfirm = async () => {
-  const confirmed = await messageBox.confirm('您确定要执行深度清理吗？此操作不可逆。', '危险操作确认');
-  if (confirmed) {
-    clearAll();
+const handleConfirm = async () => {
+  const ok = await messageBox.confirm('是否初始化系统配置？此操作将重置所有个性化设置。', '初始化确认');
+  if (ok) {
     push({
-      title: '清理成功',
-      content: '所有通知历史记录已被物理清除。',
+      title: '系统重置',
+      content: '个性化设置已恢复至出厂默认值。',
+      type: 'warning',
+      appName: '系统设置'
+    });
+  }
+};
+
+const handlePrompt = async () => {
+  const result = await messageBox.prompt('请输入新的网络 SSID：', 'FlyOS-Router', '网络管理');
+  if (result) {
+    push({
+      title: 'SSID 已变更',
+      content: `无线网络名称已更新为 "${result}"。`,
       type: 'success',
-      appName: '磁盘管理'
+      appName: '网络中心'
     });
   }
 };
 
-const triggerPrompt = async () => {
-  const name = await messageBox.prompt('请输入您在 FlyOS 中的新代号：', 'Administrator', '身份识别');
-  if (name) {
-    push({
-      title: '身份已更新',
-      content: `很高兴见到你，${name}。系统已为您分配了新的访问权限。`,
-      type: 'info',
-      appName: '身份中心'
-    });
-  }
+const quickNotify = (type: 'info' | 'success' | 'warning' | 'error') => {
+  const types = {
+    info: { title: '系统更新', content: '发现新版本 v2.4.0，包含多项性能优化。' },
+    success: { title: '同步成功', content: '云端数据已同步至本地存储。' },
+    warning: { title: '存储不足', content: '系统盘空间剩余不足 10%，请清理。' },
+    error: { title: '连接失败', content: '远程服务器响应超时，请检查网络。' }
+  };
+  push({ ...types[type], type, appName: '核心系统' });
 };
 
-const sendRandomNotification = () => {
-  const configs = [
-    { title: '安全威胁已解除', content: '防火墙已成功拦截来自 192.168.1.1 的异常请求。', type: 'success', appName: '安全中心' },
-    { title: '云端同步异常', content: '由于网络连接波动，您的文档尚未同步到云端。', type: 'warning', appName: '云空间' },
-    { title: '核心更新可用', content: 'FlyOS v2.4.0 版本已准备就绪，请选择合适时间安装。', type: 'info', appName: '系统更新' },
-    { title: '存储空间不足', content: '系统分区可用容量不足 500MB，请立即清理。', type: 'error', appName: '内核' }
-  ];
-  const item = configs[Math.floor(Math.random() * configs.length)];
-  push(item);
-};
-
-onMounted(() => {
-  setTimeout(() => {
-    push({ title: '系统就绪', content: '已成功集成外部 Message 与 Notification 组件。', type: 'success', appName: '系统总线' });
-  }, 500);
-});
-
-// --- 图标定义 ---
+// 图标资源
 const icons = {
-  bell: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
-  trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>`,
-  plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
-  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
-  alert: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`
+  shield: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  bell: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9m4.35 13.5a2.4 2.4 0 0 0 4.3 0"/></svg>`,
+  settings: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z\"/></svg>`,
+  trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+  info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`
 };
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans p-4 sm:p-8 md:p-12">
-    <!-- 背景修饰 -->
-    <div class="fixed top-0 left-1/4 w-96 h-96 bg-indigo-200/40 blur-[120px] rounded-full -z-10"></div>
-    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-blue-200/30 blur-[120px] rounded-full -z-10"></div>
+  <div class="flex h-screen w-full bg-[#f1f3f9] dark:bg-[#0a0a0a] text-slate-800 dark:text-slate-200 transition-colors duration-500 overflow-hidden font-sans">
 
-    <div class="max-w-6xl mx-auto">
-      <!-- 头部设计 -->
-      <header class="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
-        <div class="space-y-2">
-          <div class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm mb-2">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Global Composables Active</span>
-          </div>
-          <h1 class="text-4xl font-black text-slate-900 tracking-tight">控制台中心</h1>
-          <p class="text-slate-500 font-medium">集成自 <code class="text-indigo-600 bg-indigo-50 px-1 rounded">@/composables</code> 的统一通知架构</p>
+    <!-- 左侧导航控制台 (Sidebar) -->
+    <aside class="w-80 h-full p-6 flex flex-col gap-6 bg-white/50 dark:bg-white/5 backdrop-blur-2xl border-r border-slate-200 dark:border-white/10 shrink-0">
+      <div class="flex items-center gap-3 px-2">
+        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+          <div class="w-6 h-6" v-html="icons.shield"></div>
         </div>
-
-        <div class="flex items-center gap-3 w-full md:w-auto">
-          <button @click="sendRandomNotification" class="flex-1 md:flex-none h-12 px-6 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-xl shadow-slate-200 hover:bg-indigo-600 hover:shadow-indigo-200 transition-all active:scale-95 group">
-            <div class="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" v-html="icons.plus"></div>
-            推送通知
-          </button>
-          <button @click="triggerConfirm" class="h-12 w-12 flex items-center justify-center rounded-2xl border-2 border-slate-200 text-slate-400 hover:text-rose-500 hover:border-rose-100 hover:bg-rose-50 transition-all active:scale-95" title="清空所有通知">
-            <div class="w-5 h-5" v-html="icons.trash"></div>
-          </button>
-        </div>
-      </header>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <!-- 侧边交互区 -->
-        <div class="lg:col-span-4 space-y-6">
-          <div class="bg-white/80 backdrop-blur-md border border-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/40">
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">MessageBox API 演示</h3>
-            <div class="space-y-3">
-              <button @click="triggerAlert" class="action-card group">
-                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
-                  <div class="w-5 h-5" v-html="icons.alert"></div>
-                </div>
-                <div class="flex-1 text-left">
-                  <p class="font-bold text-slate-700">警告对话框</p>
-                  <p class="text-[10px] text-slate-400 font-mono">.alert()</p>
-                </div>
-              </button>
-              <button @click="triggerConfirm" class="action-card group">
-                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all">
-                  <div class="w-5 h-5" v-html="icons.check"></div>
-                </div>
-                <div class="flex-1 text-left">
-                  <p class="font-bold text-slate-700">二次确认</p>
-                  <p class="text-[10px] text-slate-400 font-mono">.confirm()</p>
-                </div>
-              </button>
-              <button @click="triggerPrompt" class="action-card group">
-                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                  <div class="w-5 h-5" v-html="icons.plus"></div>
-                </div>
-                <div class="flex-1 text-left">
-                  <p class="font-bold text-slate-700">数据录入</p>
-                  <p class="text-[10px] text-slate-400 font-mono">.prompt()</p>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          <div class="bg-indigo-600 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-indigo-200 overflow-hidden relative group">
-            <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-            <div class="relative z-10">
-              <h4 class="text-lg font-bold mb-2 tracking-tight">实时数据通道</h4>
-              <p class="text-indigo-100/70 text-sm leading-relaxed mb-6 font-medium">
-                所有通知项均通过 <code class="bg-indigo-500/50 px-1 rounded">onSnapshot</code> 或内部 Reactive 状态同步，保证多端 UI 响应。
-              </p>
-              <div class="flex items-center gap-4">
-                <div class="px-4 py-2 bg-white/20 backdrop-blur-md rounded-xl text-xs font-bold uppercase tracking-wider">
-                  {{ notificationCount }} 条未读消息
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 通知展示主区 -->
-        <div class="lg:col-span-8">
-          <div class="bg-white rounded-[2.5rem] border border-slate-200/60 shadow-xl shadow-slate-200/20 flex flex-col min-h-[600px] overflow-hidden">
-            <div class="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
-              <h2 class="text-xl font-black text-slate-800 tracking-tight">消息流</h2>
-              <div v-html="icons.bell" class="w-5 h-5 text-slate-300"></div>
-            </div>
-
-            <div class="flex-1 p-6 relative">
-              <TransitionGroup name="list" tag="div" class="space-y-4">
-                <div
-                  v-for="notif in notifications"
-                  :key="notif.id"
-                  class="notif-item group"
-                  :class="[
-                    notif.type === 'success' ? 'border-emerald-100 bg-emerald-50/20' :
-                    notif.type === 'error' ? 'border-rose-100 bg-rose-50/20' :
-                    notif.type === 'warning' ? 'border-amber-100 bg-amber-50/20' : 'border-slate-100 bg-white'
-                  ]"
-                >
-                  <div class="shrink-0 w-1.5 self-stretch rounded-full"
-                       :class="[
-                      notif.type === 'success' ? 'bg-emerald-400' :
-                      notif.type === 'error' ? 'bg-rose-400' :
-                      notif.type === 'warning' ? 'bg-amber-400' : 'bg-indigo-400'
-                    ]"
-                  ></div>
-
-                  <div class="flex-1 py-1">
-                    <div class="flex items-center justify-between mb-1.5">
-                      <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ notif.appName || '系统' }}</span>
-                        <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
-                        <span class="text-[10px] font-medium text-slate-400">{{ notif.time }}</span>
-                      </div>
-                      <button @click="remove(notif.id)" class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-rose-500 p-1">
-                        <div class="w-4 h-4" v-html="icons.trash"></div>
-                      </button>
-                    </div>
-                    <h5 class="text-sm font-bold text-slate-800 mb-1">{{ notif.title }}</h5>
-                    <p class="text-sm text-slate-500 leading-relaxed font-medium">{{ notif.content }}</p>
-                  </div>
-                </div>
-              </TransitionGroup>
-
-              <div v-if="notifications.length === 0" class="absolute inset-0 flex flex-col items-center justify-center">
-                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-200">
-                  <div class="w-10 h-10" v-html="icons.bell"></div>
-                </div>
-                <p class="text-slate-400 font-bold tracking-tight">暂无任何系统通知</p>
-              </div>
-            </div>
-          </div>
+        <div>
+          <h2 class="font-black text-lg leading-none tracking-tight">控制中心</h2>
+          <span class="text-[10px] uppercase tracking-widest opacity-40 font-bold">FlyOS Management</span>
         </div>
       </div>
-    </div>
 
+      <!-- 快捷操作区 -->
+      <nav class="flex-1 space-y-2 py-4">
+        <p class="text-[10px] font-bold uppercase text-slate-400 px-2 mb-4 tracking-widest">交互调试</p>
+        <button @click="handleAlert" class="nav-item">
+          <div class="icon-box bg-blue-500/10 text-blue-600"><div class="w-4 h-4" v-html="icons.info"></div></div>
+          <span>普通弹窗</span>
+        </button>
+        <button @click="handleConfirm" class="nav-item">
+          <div class="icon-box bg-rose-500/10 text-rose-600"><div class="w-4 h-4" v-html="icons.shield"></div></div>
+          <span>确认操作</span>
+        </button>
+        <button @click="handlePrompt" class="nav-item">
+          <div class="icon-box bg-amber-500/10 text-amber-600"><div class="w-4 h-4" v-html="icons.settings"></div></div>
+          <span>数据录入</span>
+        </button>
+
+        <p class="text-[10px] font-bold uppercase text-slate-400 px-2 mt-8 mb-4 tracking-widest">快速推送</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button @click="quickNotify('success')" class="quick-notif-btn hover:bg-emerald-500 hover:text-white">成功</button>
+          <button @click="quickNotify('error')" class="quick-notif-btn hover:bg-rose-500 hover:text-white">错误</button>
+          <button @click="quickNotify('warning')" class="quick-notif-btn hover:bg-amber-500 hover:text-white">警报</button>
+          <button @click="quickNotify('info')" class="quick-notif-btn hover:bg-blue-500 hover:text-white">信息</button>
+        </div>
+      </nav>
+
+      <!-- 底部统计 -->
+<!--      <div class="p-5 bg-indigo-600 rounded-3xl text-white shadow-xl shadow-indigo-500/20">-->
+<!--        <div class="flex items-center justify-between mb-2">-->
+<!--          <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center" v-html="icons.bell"></div>-->
+<!--          <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">ACTIVE</span>-->
+<!--        </div>-->
+<!--        <p class="text-xs opacity-70">积压通知</p>-->
+<!--        <p class="text-3xl font-black tabular-nums">{{ notifications.length }}</p>-->
+<!--      </div>-->
+    </aside>
+
+    <!-- 右侧内容区 (Content Stream) -->
+    <main class="flex-1 flex flex-col min-w-0 bg-[#f8fafc] dark:bg-black/20">
+      <!-- 顶部条 -->
+      <header class="h-20 flex items-center justify-between px-10 shrink-0">
+        <h3 class="font-bold text-xl">实时通知流水<span class="bg-indigo-600 font-bold tabular-nums ml-1  shadow-xl shadow-indigo-500/20 text-white px-2 py-0.5 rounded-full">{{notifications.length}}</span></h3>
+        <button @click="clearAll" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-200 dark:bg-white/10 hover:bg-rose-500 hover:text-white transition-all text-xs font-bold">
+          <div class="w-4 h-4" v-html="icons.trash"></div>
+          清空队列
+        </button>
+      </header>
+
+      <!-- 滚动区域 -->
+      <div class="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+        <div v-if="notifications.length === 0" class="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
+          <div class="w-16 h-16 opacity-10" v-html="icons.bell"></div>
+          <p class="text-sm font-medium">暂无系统消息，一切运行正常</p>
+        </div>
+
+        <TransitionGroup name="list" tag="div" class="space-y-4 max-w-4xl mx-auto">
+          <div v-for="item in notifications" :key="item.id" class="notif-card group">
+            <!-- 类型指示器线 -->
+            <div :class="[
+              'w-1.5 h-12 rounded-full mr-1',
+              item.type === 'success' ? 'bg-emerald-500' :
+              item.type === 'error' ? 'bg-rose-500' :
+              item.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
+            ]"></div>
+
+            <div class="flex-1 px-4 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-[10px] font-black uppercase tracking-tighter text-indigo-600 dark:text-indigo-400">{{ item.appName }}</span>
+                <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                <span class="text-[10px] font-medium opacity-40">{{ item.time }}</span>
+              </div>
+              <h4 class="font-bold text-base truncate">{{ item.title }}</h4>
+              <p class="text-sm opacity-60 line-clamp-2 mt-0.5 leading-relaxed">{{ item.content }}</p>
+            </div>
+
+            <button @click="remove(item.id)" class="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-slate-400 hover:text-rose-500">
+              <div class="w-5 h-5" v-html="icons.trash"></div>
+            </button>
+          </div>
+        </TransitionGroup>
+      </div>
+    </main>
   </div>
 </template>
 
 <style scoped>
 @reference "@/styles/tailwind.css";
-.action-card {
-  @apply w-full p-4 bg-white border border-slate-100 rounded-[1.5rem] flex items-center gap-4 transition-all hover:shadow-lg hover:shadow-slate-100 hover:border-transparent active:scale-[0.98];
+.nav-item {
+  @apply w-full flex items-center gap-4 px-3 py-3 rounded-2xl transition-all text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-white/10 hover:text-indigo-600 dark:hover:text-white hover:shadow-sm;
 }
 
-.notif-item {
-  @apply flex items-center gap-4 p-5 border rounded-[1.75rem] transition-all hover:shadow-md hover:shadow-slate-100;
+.icon-box {
+  @apply w-9 h-9 rounded-xl flex items-center justify-center shrink-0;
 }
 
-/* 列表动画 */
+.quick-notif-btn {
+  @apply py-3 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[11px] font-black transition-all active:scale-95;
+}
+
+.notif-card {
+  @apply flex items-center p-6 bg-white dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-300;
+}
+
+/* 列表动画：更优雅的滑入 */
 .list-enter-active, .list-leave-active {
-  transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .list-enter-from {
   opacity: 0;
-  transform: translateY(30px) scale(0.9);
+  transform: translateX(-20px) scale(0.95);
 }
 .list-leave-to {
   opacity: 0;
-  transform: translateX(60px) scale(0.95);
+  transform: scale(0.9) translateY(10px);
 }
 .list-move {
-  transition: transform 0.4s ease;
+  transition: transform 0.5s ease;
 }
 
-/* 对话框动画 */
-.dialog-enter-active, .dialog-leave-active {
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
 }
-.dialog-enter-from {
-  opacity: 0;
-  transform: scale(0.8) translateY(20px);
-}
-.dialog-leave-to {
-  opacity: 0;
-  transform: scale(0.9) translateY(10px);
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-white/10 rounded-full;
 }
 </style>

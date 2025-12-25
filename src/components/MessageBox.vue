@@ -25,7 +25,7 @@
         <!-- 内容区域 -->
         <div class="px-6 py-4 flex-1">
           <p class="text-[14px] text-gray-800 dark:text-gray-200 leading-normal whitespace-pre-wrap">
-            {{ state.messageText }}
+            {{ state.message }}
           </p>
 
           <div v-if="state.type === 'prompt'" class="mt-4">

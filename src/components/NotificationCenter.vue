@@ -40,14 +40,14 @@ defineExpose({ toggleOpen, isOpen });
   <!-- 容器：动态平移进入 -->
   <aside
     ref="centerRef"
-    class="fixed top-1 right-1 bottom-[50px] w-[380px] z-[100] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform pointer-events-none"
+    class="fixed top-1 right-1 bottom-[45px] w-[380px] z-[100] transition-all duration-500 ease-[cubic-bezier(0.2,1,0.5,1)] transform pointer-events-none"
     :class="isOpen ? 'translate-x-0 opacity-100' : 'translate-x-[110%] opacity-0'"
   >
     <!-- 毛玻璃本体 -->
     <div class="h-full w-full bg-white/70 dark:bg-slate-900/80 backdrop-blur-3xl shadow-2xl border border-white/40 dark:border-white/10 rounded-xl overflow-hidden flex flex-col pointer-events-auto">
 
       <!-- 头部：标题与清空 -->
-      <header class="pt-8 px-8 pb-4 flex items-center justify-between">
+      <header class="pt-8 px-8 pb-2 flex items-center justify-between">
         <div>
           <h2 class="text-2xl font-black tracking-tighter text-slate-800 dark:text-white">通知中心</h2>
           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
@@ -115,7 +115,7 @@ defineExpose({ toggleOpen, isOpen });
             <div
               v-for="notif in notifications"
               :key="notif.id"
-              class="group relative bg-white/40 dark:bg-white/5 p-5 select-none rounded-xl border border-white dark:border-white/5 hover:border-indigo-500/50 transition-all duration-300"
+              class="group relative bg-white/40 dark:bg-white/5 p-5 select-none rounded-xl border border-white/5 dark:border-white/5 hover:border-indigo-500/50 transition-all duration-300"
             >
               <div class="flex justify-between items-start mb-2 ">
                 <div class="flex items-center gap-2 ">

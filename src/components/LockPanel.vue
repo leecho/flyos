@@ -32,7 +32,7 @@
         <Transition name="zoom">
           <div
             v-if="showInput"
-            class="flex flex-col items-center gap-6 p-10 rounded-3xl bg-white/30 dark:bg-black/20 border border-white/20 shadow-2xl backdrop-blur-xl max-w-sm w-full mx-4"
+            class="flex flex-col items-center gap-6 p-10 max-w-sm w-full mx-4"
             @click.stop
           >
             <!-- 用户头像：保持 userStore 绑定 -->
