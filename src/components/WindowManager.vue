@@ -14,6 +14,7 @@
     :width='win.width'
     :id=win.id
     :appId=win.appId
+    visible='true'
     :minimized='win.minimized'
     :component='win.component'></Window>
   <ContextMenu ref='menuRef' />

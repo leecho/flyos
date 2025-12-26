@@ -39,29 +39,37 @@
           </span>
         </div>
 
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1" @mousedown.stop>
+          <!-- 最小化 -->
           <button
-              @click="emit('minimize')"
-              class="w-6 h-6 rounded flex items-center justify-center
-                   hover:bg-gray-300 dark:hover:bg-gray-700
-                   text-gray-700 dark:text-gray-200"
-          >─</button>
-
-          <button
-              @click="toggleMaximize"
-              class="w-6 h-6 rounded flex items-center justify-center
-                   hover:bg-gray-300 dark:hover:bg-gray-700
-                   text-gray-700 dark:text-gray-200"
+            @click="$emit('minimize')"
+            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-white"
           >
-            {{ isMaximized ? '🗗' : '□' }}
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+            </svg>
           </button>
-
+          <!-- 最大化/还原 -->
           <button
-              @click="emit('close')"
-              class="w-6 h-6 rounded flex items-center justify-center
-                   hover:bg-red-500 dark:hover:bg-red-600
-                   text-gray-700 dark:text-gray-200"
-          >✕</button>
+            @click="toggleMaximize"
+            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-white"
+          >
+            <svg v-if="!isMaximized" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
+            </svg>
+            <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 8H4v4m12 4h4v-4m0-8h-4v4M4 16h4v4" />
+            </svg>
+          </button>
+          <!-- 关闭 -->
+          <button
+            @click="$emit('close')"
+            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-500 hover:text-white transition-all text-gray-500"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       </div>
 

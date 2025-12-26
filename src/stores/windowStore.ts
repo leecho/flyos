@@ -98,7 +98,7 @@ function activateTop() {
 
 /* ---------------- TaskBar / 点击切换 ---------------- */
 
-export function toggleActive(id: string) {
+export function toggleActive(id: string, params: Object | null) {
     const win = getWindow(id)
     if (!win) return
 
