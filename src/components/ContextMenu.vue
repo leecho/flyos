@@ -62,7 +62,7 @@
               <Transition name="win11-menu">
                 <div
                   v-if="item.children && activeSubMenuIndex === index"
-                  class="absolute left-[calc(100%-4px)] top-[-6px] min-w-[180px] p-1.5 rounded-xl border shadow-2xl backdrop-blur-3xl
+                  class="absolute left-[calc(100%+4px)] top-[-6px] min-w-[180px] p-1.5 rounded-xl border shadow-2xl backdrop-blur-3xl
                          bg-[#f3f3f3]/95 text-slate-900 border-black/5
                          dark:bg-[#202020]/95 dark:text-white dark:border-white/10"
                 >

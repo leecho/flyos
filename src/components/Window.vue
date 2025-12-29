@@ -202,7 +202,6 @@ const snapPreviewStyle = computed(() => {
 
 watch(() => props.maximized, (val) => {
   const target = val
-  console.log(val)
   if (target !== isMaximized.value) {
     target ? applyMaximize() : applyRestore()
   }

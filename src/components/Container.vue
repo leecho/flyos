@@ -1,25 +1,25 @@
 <template>
-  <div class="h-full w-full flex flex-col bg-transparent relative overflow-hidden"
-       v-show="!userStore.user.locked"
-       @contextmenu.prevent="menuRef.open($event, desktopMenu)">
+  <div class='h-full w-full flex flex-col bg-transparent relative overflow-hidden'
+       v-show='!userStore.user.locked'
+       @contextmenu.prevent='menuRef.open($event, desktopMenu)'>
 
     <!-- 桌面层级切换动画 -->
-    <div class="flex-1 relative">
-      <Transition name="desktop-fade">
-        <Desktop v-if="desktopStore.mode == 'desktop'" class="absolute inset-0" />
+    <div class='flex-1 relative'>
+      <Transition name='desktop-fade'>
+        <Desktop v-if="desktopStore.mode == 'desktop'" class='absolute inset-0' />
       </Transition>
 
-      <Transition name="metro-fade">
-        <Metro v-if="desktopStore.mode == 'metro'" class="absolute inset-0" />
+      <Transition name='metro-fade'>
+        <Metro v-if="desktopStore.mode == 'metro'" class='absolute inset-0' />
       </Transition>
     </div>
 
     <TaskBar />
-    <ContextMenu ref="menuRef"/>
+    <ContextMenu ref='menuRef' />
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { userStore } from '../stores/userStore.ts'
 import { desktopStore, setMode } from '../stores/desktopStore.ts'
 import Metro from './Metro.vue'
@@ -28,27 +28,28 @@ import Desktop from './Desktop.vue'
 import ContextMenu from './ContextMenu.vue'
 import { themeStore } from '../stores/themeStore.ts'
 import { ref } from 'vue'
+import { CheckIcon } from 'lucide-vue-next'
 
 const menuRef = ref()
 
 const desktopMenu = [
-  { label: "刷新", action: () => console.log("刷新") },
-  { label: "显示设置", action: () => console.log("显示设置") },
-  { type: "divider" },
+  { label: '刷新', action: () => console.log('刷新') },
+  { label: '显示设置', action: () => console.log('显示设置') },
+  { type: 'divider' },
   {
-    label: "风格",
+    label: '风格',
     children: [
-      { label: "浅色", action: () => themeStore.setTheme('light') },
-      { label: "深色", action: () => themeStore.setTheme('dark') },
-      { label: "系统", action: () => themeStore.setTheme('system') },
-    ],
+      { label: '浅色', action: () => themeStore.setTheme('light') },
+      { label: '深色', action: () => themeStore.setTheme('dark') },
+      { label: '系统', action: () => themeStore.setTheme('system') }
+    ]
   },
   {
-    label: "布局",
+    label: '布局',
     children: [
-      { label: "图标", action: () => setMode('desktop') },
-      { label: "磁贴", action: () => setMode('metro') },
-    ],
+      { label: '图标', icon: themeStore.mode.value == 'desktop' ? CheckIcon : null, action: () => setMode('desktop') },
+      { label: '磁贴', icon: themeStore.mode.value == 'metro' ? CheckIcon : null, action: () => setMode('metro') }
+    ]
   }
 ]
 </script>

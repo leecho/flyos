@@ -28,7 +28,6 @@ export function startTask(app: AppItem){
 
 export function stopTask(appId: string){
     const winId = taskStore.tasks.get(appId)
-    console.log(taskStore.tasks)
     closeWindow(winId)
     taskStore.tasks.delete(appId)
 }

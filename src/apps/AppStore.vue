@@ -124,7 +124,6 @@ const installState = reactive<Record<string, { status: string, progress: number 
 
 const installApp = (id: string) => {
   if (installState[id]?.status === 'installed') {
-    console.log('Opening app...', id)
     return
   }
 

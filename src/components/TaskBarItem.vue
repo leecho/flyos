@@ -22,7 +22,7 @@ const onContextmenu = (e) => {
 <template>
   <div
     :id="'taskbar-item-' + (window?.id || '')"
-    class="relative group flex flex-col items-center justify-center w-10 h-10 transition-all duration-300 cursor-pointer"
+    class="relative group flex flex-col items-center justify-center w-10 h-10 transition-all duration-300 cursor-pointer overflow-visible"
     @click="emits('click')"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"

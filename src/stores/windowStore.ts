@@ -57,8 +57,6 @@ export function openWindow(
         active: false
     }
 
-    console.log(windowItem)
-
     windowStore.windows.push(windowItem)
     activeWindow(id)
 
