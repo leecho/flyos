@@ -21,7 +21,7 @@ import { ref } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import ContextMenu from './ContextMenu.vue'
 import { startTask } from '../stores/taskStore.ts'
-
+import { CheckIcon } from 'lucide-vue-next'
 const menuRef = ref()
 
 function openContextMenu(e: MouseEvent, app: any) {
@@ -31,15 +31,20 @@ function openContextMenu(e: MouseEvent, app: any) {
     {
       label: '尺寸',
       children: [
-        { label: '小', action: () => (app.tile.size = 'small') },
-        { label: '中', action: () => (app.tile.size = 'medium') },
-        { label: '大', action: () => (app.tile.size = 'large') }
+        { label: '小', icon: getSizeMenuIcon(app,'small') , action: () => (app.tile.size = 'small') },
+        { label: '中', icon: getSizeMenuIcon(app,'medium') ,action: () => (app.tile.size = 'medium') },
+        { label: '大', icon: getSizeMenuIcon(app,'large') ,action: () => (app.tile.size = 'large') }
       ]
     },
     { label: '从开始屏幕' + (app.fixed ? '取消' : '') + '固定', action: () => app.fixed = !app.fixed }
   ]
   e.stopPropagation()
   menuRef.value.open(e, options)
+}
+
+const getSizeMenuIcon = (app, size) => {
+  if(app.tile.size == size) return CheckIcon
+  return null
 }
 
 

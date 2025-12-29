@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import AppIcon from "./AppIcon.vue" // 假设之前的图标组件已引入
 
 const props = defineProps({
