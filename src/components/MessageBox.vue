@@ -44,7 +44,7 @@
         <div class="px-6 py-4  flex flex-row-reverse gap-3">
           <button
             v-on:click="messageBox.handleConfirm"
-            class="min-w-[80px] px-4 py-1.5 bg-[#0067c0] hover:bg-[#005da1] text-white text-[13px] rounded-md transition-all active:scale-95 shadow-sm"
+            class="min-w-[80px] px-4 py-1.5 bg-blue-700 hover:bg-blue-900 text-white text-[13px] rounded-md transition-all active:scale-95 shadow-sm"
           >
             {{ state.type === 'confirm' ? '确认' : '好' }}
           </button>

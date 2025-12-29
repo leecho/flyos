@@ -92,7 +92,7 @@
             </div>
           </div>
         </div>
-        <button class="w-full mt-6 py-2 text-[11px] font-medium border border-gray-300 dark:border-white/10 rounded-md hover:bg-white dark:hover:bg-white/5">
+        <button @click='openTaskManager' class="w-full mt-6 py-2 text-[11px] font-medium border border-gray-300 dark:border-white/10 rounded-md hover:bg-white dark:hover:bg-white/5">
           打开任务管理器
         </button>
       </aside>
@@ -114,11 +114,19 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { ActivityIcon, ListIcon } from 'lucide-vue-next';
+import { getAppById } from '@/stores/appStore'
+import { startTask } from '@/stores/taskStore'
 
 // 核心数据状态
 const cpuHistory = ref(Array(20).fill(20));
 const ramHistory = ref(Array(20).fill(45));
 const lastUpdate = ref(new Date().toLocaleTimeString());
+
+const openTaskManager = () => {
+  const app = getAppById('taskmgr')
+  startTask(app)
+
+}
 
 // 顶部指标
 const mainStats = ref([

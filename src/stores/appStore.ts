@@ -9,6 +9,7 @@ export interface AppItem {
     style: string
     tile: TileConfig
     window: WindowConfig
+    fixed: boolean
 }
 
 export interface AppIcon {

@@ -24,7 +24,8 @@ export const apps: AppItem[] = [
             width: 900,
             maximizable: true,
             component: 'Explorer'
-        }
+        },
+        fixed: true
     },
     {
         id: "edge",
@@ -46,7 +47,8 @@ export const apps: AppItem[] = [
             width: 1100,
             maximizable: true,
             component: 'Browser'
-        }
+        },
+        fixed: true
     },
     {
         id: "terminal",
@@ -68,7 +70,8 @@ export const apps: AppItem[] = [
             width: 800,
             maximizable: true,
             component: 'Terminal'
-        }
+        },
+        fixed: true
     },
     {
         id: "store",
@@ -90,7 +93,8 @@ export const apps: AppItem[] = [
             width: 900,
             maximizable: true,
             component: 'AppStore'
-        }
+        },
+        fixed: true
     },
     {
         id: "settings",
@@ -112,7 +116,8 @@ export const apps: AppItem[] = [
             width: 800,
             maximizable: true,
             component: 'Setting'
-        }
+        },
+        fixed: true
     },
     {
         id: "photos",
@@ -134,7 +139,8 @@ export const apps: AppItem[] = [
             width: 950,
             maximizable: true,
             component: 'Photo'
-        }
+        },
+        fixed: true
     },
     {
         id: "calendar",
@@ -156,7 +162,8 @@ export const apps: AppItem[] = [
             width: 600,
             maximizable: false,
             component: "Calendar"
-        }
+        },
+        fixed: true
     },
     {
         id: "weather",
@@ -178,7 +185,8 @@ export const apps: AppItem[] = [
             width: 850,
             maximizable: true,
             component: 'Weather'
-        }
+        },
+        fixed: true
     },
     {
         id: "mail",

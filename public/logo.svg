@@ -1,0 +1,48 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 底层阴影与背景渐变 -->
+    <defs>
+        <linearGradient id="flyos_bg_grad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#6366F1"/> <!-- Indigo 500 -->
+            <stop offset="0.5" stop-color="#A855F7"/> <!-- Purple 500 -->
+            <stop offset="1" stop-color="#EC4899"/> <!-- Pink 500 -->
+        </linearGradient>
+
+        <linearGradient id="wing_grad" x1="150" y1="120" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+            <stop stop-color="white" stop-opacity="0.9"/>
+            <stop offset="1" stop-color="white" stop-opacity="0.3"/>
+        </linearGradient>
+
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
+            <feGaussianBlur stdDeviation="15" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+
+
+    </defs>
+
+    <!-- 图标背景圆角矩形 -->
+
+    <rect width="512" height="512" rx="110" fill="url(#flyos_bg_grad)"/>
+
+    <!-- 装饰性光晕效果 -->
+
+    <circle cx="400" cy="112" r="150" fill="white" fill-opacity="0.1" filter="url(#glow)"/>
+
+    <!-- 抽象 "F" 字母与飞翼造型 -->
+
+    <!-- 背景支撑线条 (F的横杠变形) -->
+
+    <path d="M128 128C128 114.745 138.745 104 152 104H400C413.255 104 424 114.745 424 128V152C424 165.255 413.255 176 400 176H232V232H350C363.255 232 374 242.745 374 256V280C374 293.255 363.255 304 350 304H232V408H180V128C180 114.745 169.255 104 156 104C142.745 104 132 114.745 132 128V432H128V128Z" fill="white" fill-opacity="0.15"/>
+
+    <!-- 核心飞翼部分 (折纸风格) -->
+
+    <path d="M200 120L450 120L300 270L450 420L200 420V120Z" fill="url(#wing_grad)" />
+
+    <!-- 前景轮廓线 -->
+
+    <path d="M200 120L350 270L200 420" stroke="white" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- 底部微光 -->
+
+    <rect x="120" y="460" width="272" height="4" rx="2" fill="white" fill-opacity="0.3" />
+</svg>

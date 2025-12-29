@@ -9,7 +9,11 @@
                text-blue-400 text-xl transition-all duration-300 cursor-pointer group"
         @click="startMenuRef.toggleOpen()"
       >
-        <span class="group-hover:scale-110 group-active:scale-90 transition-transform">⊞</span>
+        <svg class="group-hover:scale-110 group-active:scale-90 transition-transform" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 25C65 25 80 35 80 50C80 65 65 75 50 75L35 60L50 45V25Z" fill="currentColor" />
+          <path d="M42 35L20 50L42 65V55H30L42 45V35Z" fill="currentColor" fill-opacity="0.6" />
+          <rect x="46" y="25" width="8" height="50" rx="4" fill="currentColor" />
+        </svg>
       </div>
     </div>
 

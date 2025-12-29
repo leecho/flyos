@@ -1,6 +1,5 @@
 <template>
-  <div ref='desktopRef' class='flex flex-col gap-4 m-[20px] pb-[50px] w-full h-full flex-wrap content-start'
-       @contextmenu.prevent='menuRef.open($event, desktopMenu)'>
+  <div ref='desktopRef' class='flex flex-col gap-4 m-[20px] pb-[50px] w-full h-full flex-wrap content-start'>
     <div v-for='app in apps'
          :title='app.name'
          :key='app.id'
@@ -16,30 +15,13 @@
 </template>
 <script setup lang='ts'>
 import { appStore } from '../stores/appStore.ts'
-import logo from '../assets/vue.svg'
 import { startTask } from '../stores/taskStore.ts'
 import { ref } from 'vue'
-import { themeStore } from '../stores/themeStore.ts'
 import { useDraggable } from 'vue-draggable-plus'
 import AppIcon from './AppIcon.vue'
 
 const apps = appStore.apps
 const desktopRef = ref()
-const desktopMenu = [
-  { label: '刷新', action: () => console.log('刷新') },
-  { label: '显示设置', action: () => console.log('显示设置') },
-  { type: 'divider' },
-  {
-    label: '风格',
-    children: [
-      { label: '浅色', action: () => themeStore.setTheme('light') },
-      { label: '深色', action: () => themeStore.setTheme('dark') },
-      { label: '跟随系统', action: () => themeStore.setTheme('system') }
-    ]
-  },
-  { label: '个性化', action: () => console.log('个性化') }
-]
-
 
 useDraggable(desktopRef, appStore.apps, {
   animation: 150,

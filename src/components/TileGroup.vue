@@ -36,11 +36,10 @@
         :key='appId'
         :app='getAppById(appId)'
         @click='startTask(getAppById(appId))'
-        @contextmenu.prevent='openContextMenu($event, getAppById(appId))'
+        @contextmenu.prevent='onContextMenu($event, getAppById(appId))'
       />
     </div>
 
-    <ContextMenu ref='menuRef' />
   </div>
 </template>
 
@@ -48,10 +47,15 @@
 import { ref, nextTick } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import Tile from './Tile.vue'
-import ContextMenu from './ContextMenu.vue'
 import { startTask } from '../stores/taskStore'
 import { getAppById } from '../stores/appStore'
 import { SquareMenuIcon } from 'lucide-vue-next'
+
+const emits = defineEmits(['selectTile'])
+
+const onContextMenu = ($event, app) => {
+  emits('selectTile',$event, app)
+}
 
 const props = defineProps<{
   group: {
@@ -75,24 +79,6 @@ function startEdit() {
 function saveName() {
   props.group.name = name.value
   editing.value = false
-}
-
-function openContextMenu(e: MouseEvent, app: any) {
-  const options = [
-    { label: '打开应用', action: () => startTask(app) },
-    { type: 'divider' },
-    {
-      label: '尺寸',
-      children: [
-        { label: '小 (2x2)', action: () => (app.tile.size = 'small') },
-        { label: '中 (4x2)', action: () => (app.tile.size = 'medium') },
-        { label: '大 (4x4)', action: () => (app.tile.size = 'large') }
-      ]
-    },
-    { label: '从开始屏幕取消固定', action: () => console.log('Remove', app.id) }
-  ]
-  e.stopPropagation()
-  menuRef.value.open(e, options)
 }
 
 useDraggable(groupRef, props.group.apps, {

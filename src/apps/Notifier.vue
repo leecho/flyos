@@ -58,7 +58,7 @@ const icons = {
 </script>
 
 <template>
-  <div class="flex h-screen w-full bg-[#f1f3f9] dark:bg-[#0a0a0a] text-slate-800 dark:text-slate-200 transition-colors duration-500 overflow-hidden font-sans">
+  <div class="flex h-full w-full bg-[#f1f3f9] dark:bg-[#0a0a0a] text-slate-800 dark:text-slate-200 transition-colors duration-500 overflow-hidden font-sans">
 
     <!-- 左侧导航控制台 (Sidebar) -->
     <aside class="w-80 h-full p-6 flex flex-col gap-6 bg-white/50 dark:bg-white/5 backdrop-blur-2xl border-r border-slate-200 dark:border-white/10 shrink-0">
@@ -100,7 +100,7 @@ const icons = {
     </aside>
 
     <!-- 右侧内容区 (Content Stream) -->
-    <main class="flex-1 flex flex-col min-w-0 bg-[#f8fafc] dark:bg-black/20">
+    <main class="flex-1 h-full flex flex-col min-w-0 bg-[#f8fafc] dark:bg-black/20">
       <!-- 顶部条 -->
       <header class="h-20 flex items-center justify-between px-10 shrink-0">
         <h3 class="font-bold text-xl">实时通知流水<span class="bg-indigo-600 font-bold tabular-nums ml-1  shadow-xl shadow-indigo-500/20 text-white px-2 py-0.5 rounded-full">{{notifications.length}}</span></h3>
@@ -162,7 +162,7 @@ const icons = {
 }
 
 .notif-card {
-  @apply flex items-center p-6 bg-white dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-300;
+  @apply flex items-center p-6 bg-white dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-300;
 }
 
 /* 列表动画：更优雅的滑入 */

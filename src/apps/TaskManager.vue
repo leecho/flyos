@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { taskStore, stopTask } from '../stores/taskStore.ts';
 import { getAppById } from '@/stores/appStore';
 import AppIcon from '../components/AppIcon.vue'
+import { messageBox } from '../composables/useMessage.ts'
 
 // 模拟历史数据用于绘图
 const cpuHistory = ref(Array(20).fill(10));
@@ -59,9 +60,13 @@ const refresh = () => {
 onMounted(() => { timer = setInterval(refresh, 1500); });
 onUnmounted(() => { if (timer) clearInterval(timer); });
 
-const terminateTask = (e: Event, id: string) => {
+
+const terminateTask = async (e: Event, id: string) => {
   e.stopPropagation();
-  stopTask(id);
+  const ok = await messageBox.confirm('确定要关闭应用？', '提示');
+    if (ok) {
+      stopTask(id);
+    }
 };
 
 // SVG 曲线路径生成
@@ -162,7 +167,7 @@ const getPath = (data: number[]) => {
                 <AppIcon :id='task.id' size='sm' />
                 <div class="flex flex-col">
                   <span class="text-xs font-bold">{{ task.name }}</span>
-                  <span class="text-[10px] opacity-40 font-mono tracking-tighter">PID: {{ Math.floor(Math.random() * 9000) + 1000 }}</span>
+                  <span class="text-[10px] opacity-40 font-mono tracking-tighter">PID: {{ task.id }}</span>
                 </div>
               </div>
             </td>

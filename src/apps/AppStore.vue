@@ -79,7 +79,7 @@
               <div
                 v-if="installState[app.id]?.status === 'installing'"
                 class="absolute left-0 top-0 h-full bg-blue-500/20 transition-all duration-300"
-                :style="{ width: installState[app.id].progress + '%' }"
+                :style="{ width: installState[app.id]?.progress + '%' }"
               ></div>
 
               <span class="relative z-10">
@@ -131,6 +131,7 @@ const installApp = (id: string) => {
   installState[id] = { status: 'installing', progress: 0 }
 
   const timer = setInterval(() => {
+    if(!installState[id]) return
     if (installState[id].progress < 100) {
       installState[id].progress += Math.floor(Math.random() * 20) + 5
       if (installState[id].progress > 100) installState[id].progress = 100
