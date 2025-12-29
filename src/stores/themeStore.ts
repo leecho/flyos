@@ -32,8 +32,6 @@ function initTheme() {
     if (saved) mode.value = saved
 
     applyTheme()
-
-
 }
 
 export const themeStore = {

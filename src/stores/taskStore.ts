@@ -16,7 +16,10 @@ export function startTask(app: AppItem){
     const windowItem = {
         title: app.name,
         appId: app.id,
-        component: app.window.component
+        component: app.window.component,
+        maximizable: app.window.maximizable,
+        height: app.window.height,
+        width: app.window.width
     }
     // 创建新窗口
     const winId = openWindow(windowItem);

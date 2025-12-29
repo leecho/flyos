@@ -1,13 +1,20 @@
 import {reactive} from "vue";
 
+export type IconType = 'svg' | 'image'
+
 export interface AppItem {
     id: string           // 唯一 id
     name: string
-    icon: string
+    icon: AppIcon
     style: string
-    bgColor: string
     tile: TileConfig
     window: WindowConfig
+}
+
+export interface AppIcon {
+    type: IconType
+    content: string
+    bgColor: string
 }
 
 export interface TileConfig{

@@ -10,12 +10,14 @@
     @minimize='toggleMinimize(win.id)'
     @maximize='toggleMaximize(win.id)'
     @contextmenu='openWindowContextMenu($event, win)'
+    :maximizable='win.maximizable'
     :height='win.height'
     :width='win.width'
     :id=win.id
     :appId=win.appId
     visible='true'
     :minimized='win.minimized'
+    :maximized='win.maximized'
     :component='win.component'></Window>
   <ContextMenu ref='menuRef' />
 </template>
@@ -33,9 +35,9 @@ const menuRef = ref()
 const openWindowContextMenu = ($event, win: WindowItem) => {
   $event.stopPropagation()
   const options = [
-    { label: '最大化', action: () => toggleMaximize(win.id) },
+    { label: '最大化', disabled: win.maximized , action: () => toggleMaximize(win.id) },
     { label: '最小化', action: () => toggleMinimize(win.id) },
-    { label: '恢复', action: () => toggleMaximize(win.id) },
+    { label: '恢复', disabled: !win.maximized ,action: () => toggleMaximize(win.id) },
     { label: '关闭', action: () => stopTask(win.appId) }
   ]
   menuRef.value.open($event, options)

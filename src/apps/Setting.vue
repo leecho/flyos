@@ -53,7 +53,7 @@ const brightness = ref(80);
   <div class="settings-app flex h-full bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-xl text-gray-900 dark:text-gray-100 font-sans overflow-hidden">
 
     <!-- 侧边导航栏 -->
-    <div class="w-64 border-r border-gray-200/50 bg-gray-100/80 dark:bg-gray-800/80 dark:border-gray-800/50 flex flex-col p-4 space-y-2 overflow-y-auto">
+    <div class="w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex flex-col p-4 space-y-2 overflow-y-auto">
       <!-- 用户简略信息 -->
       <div class="flex items-center gap-3 px-3 py-4 mb-4 ">
         <img :src="userStore.user.avatar" class="w-10 h-10 rounded-full border-2 border-blue-500/50 object-cover shadow-sm" />
@@ -79,7 +79,7 @@ const brightness = ref(80);
     </div>
 
     <!-- 主内容区 -->
-    <div class="flex-1 flex flex-col min-w-0 pt-5">
+    <div class="flex-1 flex flex-col min-w-0 pt-5 border-gray-100 dark:border-gray-800 ">
       <header class="h-16 flex items-center px-8 border-b border-gray-200/30 dark:border-gray-800/30">
         <h2 class="text-[20px] font-black uppercase tracking-widest opacity-80">{{ activeCategoryLabel }}</h2>
       </header>

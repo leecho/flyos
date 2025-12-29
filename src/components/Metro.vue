@@ -24,7 +24,7 @@ const groupRef = ref()
 
 useDraggable(groupRef, appStore.groups, {
   animation: 150,
-  handle: '.group-header',
+  handle: '.group-handler',
   chosenClass: 'opacity-40'
 })
 </script>

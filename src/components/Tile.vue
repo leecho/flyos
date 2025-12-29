@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative overflow-hidden transition-all duration-200 active:scale-95 shadow-lg shadow-black/30 group rounded-sm"
-    :class="[app.bgColor, sizeClasses]"
+    :class="[app.tile.bgColor, sizeClasses]"
   >
     <!-- 1. 默认图标展示 (当没有动态磁贴时) -->
     <div
@@ -64,7 +64,7 @@ const sizeClasses = computed(() => {
     'medium': 'col-span-2 row-span-1',
     'large': 'col-span-2 row-span-2',
   }
-  return map[props.app.tile.size] || 'col-span-2 row-span-2'
+  return (map[props.app.tile.size] || 'col-span-2 row-span-2') + ' tile-' + props.app.tile.size
 })
 
 const subComponent = computed(() => {

@@ -62,15 +62,6 @@ const icons = {
 
     <!-- 左侧导航控制台 (Sidebar) -->
     <aside class="w-80 h-full p-6 flex flex-col gap-6 bg-white/50 dark:bg-white/5 backdrop-blur-2xl border-r border-slate-200 dark:border-white/10 shrink-0">
-      <div class="flex items-center gap-3 px-2">
-        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-          <div class="w-6 h-6" v-html="icons.shield"></div>
-        </div>
-        <div>
-          <h2 class="font-black text-lg leading-none tracking-tight">控制中心</h2>
-          <span class="text-[10px] uppercase tracking-widest opacity-40 font-bold">FlyOS Management</span>
-        </div>
-      </div>
 
       <!-- 快捷操作区 -->
       <nav class="flex-1 space-y-2 py-4">

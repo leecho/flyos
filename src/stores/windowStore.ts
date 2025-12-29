@@ -13,6 +13,7 @@ export interface WindowItem {
     isOpen: boolean
     minimized: boolean
     maximized: boolean
+    maximizable: boolean
     active?: boolean
 }
 
@@ -55,6 +56,8 @@ export function openWindow(
         maximized: false,
         active: false
     }
+
+    console.log(windowItem)
 
     windowStore.windows.push(windowItem)
     activeWindow(id)

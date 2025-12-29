@@ -5,7 +5,6 @@ import MessageBox from './components/MessageBox.vue'
 import LockPanel from './components/LockPanel.vue'
 import Container from './components/Container.vue'
 import NotificationSystem from './components/NotificationSystem.vue'
-
 </script>
 
 <template>
