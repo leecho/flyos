@@ -31,13 +31,11 @@
 </template>
 
 <script setup lang="ts">
-import AppIcon from "./AppIcon.vue" // 假设之前的图标组件已引入
+import AppIcon from "./AppIcon.vue"
+import type { WindowItem } from '../stores/windowStore' // 假设之前的图标组件已引入
 
 const props = defineProps({
-  window: {
-    type: Object,
-    required: true
-  }
+  window: Object as WindowItem
 })
 
 const emits = defineEmits(['click', 'contextmenu'])
