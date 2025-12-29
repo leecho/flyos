@@ -468,6 +468,94 @@ export const apps: AppItem[] = [
         window: {
             component: 'Clock'
         }
+    },
+    {
+        id: "camera",
+        name: "相机",
+        icon: {
+            type: 'svg',
+            content: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle>',
+            bgColor: "bg-gradient-to-br from-gray-700 to-gray-900"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-gray-800",
+            style: "rounded-lg text-white",
+            size: "small",
+            component: ""
+        },
+        window: {
+            height: 480,
+            width: 640,
+            maximizable: true,
+            component: 'Camera'
+        }
+    },
+    {
+        id: "maps",
+        name: "地图",
+        icon: {
+            type: 'svg',
+            content: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>',
+            bgColor: "bg-gradient-to-br from-green-400 to-blue-500"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-green-500",
+            style: "rounded-lg text-white",
+            size: "large",
+            component: ""
+        },
+        window: {
+            height: 600,
+            width: 800,
+            maximizable: true,
+            component: 'Maps'
+        }
+    },
+    {
+        id: "games",
+        name: "游戏",
+        icon: {
+            type: 'svg',
+            content: '<path d="m21 16-4-4-4 4-4-4-4 4-5-5 5-5 4 4 4-4 4 4 4-4 5 5z"></path>',
+            bgColor: "bg-gradient-to-br from-purple-600 to-indigo-800"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-indigo-700",
+            style: "rounded-lg text-white",
+            size: "medium",
+            component: ""
+        },
+        window: {
+            height: 600,
+            width: 800,
+            maximizable: true,
+            component: 'Games'
+        }
+    },
+    {
+        id: "video",
+        name: "视频",
+        icon: {
+            type: 'svg',
+            content: '<path d="m23 7-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>',
+            bgColor: "bg-gradient-to-br from-red-500 to-pink-500"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-red-600",
+            style: "rounded-lg text-white",
+            size: "medium",
+            component: ""
+        },
+        window: {
+            height: 600,
+            width: 900,
+            maximizable: true,
+            component: 'Video'
+        }
     }
 ] as AppItem[];
 
@@ -488,11 +576,11 @@ export const groups: AppGroup[] = [
     {
         id: "multimedia",
         name: "多媒体生活",
-        apps: ["photos", "music", "recorder", "news", "weather"]
+        apps: ["photos", "music", "recorder", "news", "weather", "camera", "games", "video"]
     },
     {
         id: "utility",
         name: "实用工具",
-        apps: ["calculator", "calendar", "clock"]
+        apps: ["calculator", "calendar", "clock", "maps"]
     }
 ];
