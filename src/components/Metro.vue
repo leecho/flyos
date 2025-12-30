@@ -1,13 +1,13 @@
 <template>
   <div
-    class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col overflow-y-auto items-center md:items-start content-stretch text-white transition-all duration-500 ease-[cubic-bezier(0.2,1,0.5,1)] '
+    class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col items-center md:items-start content-stretch text-white transition-all duration-500 ease-[cubic-bezier(0.2,1,0.5,1)] '
   >
-    <div class='h-[40px] w-[40px] flex'>
-      <img :src='logo' />
+    <div class='w-full flex flex-shrink-0'>
+      <img :src='logo' class="w-[40px] h-[40px]" />
       <div class='text-3xl ml-[10px] leading-[40px]'>FlyOS</div>
     </div>
     <div ref='groupRef'
-         class='flex md:flex-row flex-col flex-1 gap-15 mt-[20px] mb-[20px] w-full overflow-y-auto lg:overflow-x-auto items-center md:items-start'>
+         class='flex-1 flex md:flex-row flex-col gap-12 mt-[20px] mb-[20px] w-full overflow-y-auto md:overflow-x-auto md:pb-4 items-center md:items-start min-h-0'>
       <TileGroup v-for='group in appStore.groups' :group='group' @select-tile='openContextMenu' />
     </div>
   </div>

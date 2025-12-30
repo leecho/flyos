@@ -510,7 +510,7 @@ export const apps: AppItem[] = [
             height: 600,
             width: 800,
             maximizable: true,
-            component: 'Maps'
+            component: 'Map'
         }
     },
     {
