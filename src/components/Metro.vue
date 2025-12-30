@@ -1,6 +1,6 @@
 <template>
   <div
-    class='flex-1 flex m-[20px] lg:m-[60px] gap-3 flex-col overflow-y-auto items-center md:items-start content-stretch text-white transition-all duration-500 ease-[cubic-bezier(0.2,1,0.5,1)] '
+    class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col overflow-y-auto items-center md:items-start content-stretch text-white transition-all duration-500 ease-[cubic-bezier(0.2,1,0.5,1)] '
   >
     <div class='h-[40px] w-[40px] flex'>
       <img :src='logo' />
@@ -16,7 +16,7 @@
 <script setup lang='ts'>
 import logo from '../assets/logo.svg'
 import TileGroup from './TileGroup.vue'
-import { appStore } from '../stores/appStore'
+import { appStore, type AppItem } from '../stores/appStore'
 import { ref } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import ContextMenu from './ContextMenu.vue'
@@ -42,7 +42,7 @@ function openContextMenu(e: MouseEvent, app: any) {
   menuRef.value.open(e, options)
 }
 
-const getSizeMenuIcon = (app, size) => {
+const getSizeMenuIcon = (app: AppItem, size: string) => {
   if(app.tile.size == size) return CheckIcon
   return null
 }

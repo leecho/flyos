@@ -525,7 +525,7 @@ export const apps: AppItem[] = [
         tile: {
             bgColor: "bg-indigo-700",
             style: "rounded-lg text-white",
-            size: "medium",
+            size: "small",
             component: ""
         },
         window: {
@@ -547,7 +547,7 @@ export const apps: AppItem[] = [
         tile: {
             bgColor: "bg-red-600",
             style: "rounded-lg text-white",
-            size: "medium",
+            size: "small",
             component: ""
         },
         window: {
