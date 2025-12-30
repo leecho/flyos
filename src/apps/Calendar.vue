@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { messageBox } from '../composables/useMessage';
 
 interface Event {
   id: string;
@@ -145,8 +146,8 @@ function goToToday() {
   viewDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
 }
 
-function addEvent() {
-  const title = prompt('输入日程内容:');
+async function addEvent() {
+  const title = await messageBox.prompt('输入日程内容')
   if (title) {
     events.value.push({
       id: Date.now().toString(),

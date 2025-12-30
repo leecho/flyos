@@ -1,6 +1,6 @@
 <template>
   <div
-    class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col items-center md:items-start content-stretch text-white transition-all duration-500 ease-[cubic-bezier(0.2,1,0.5,1)] '
+    class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col items-center md:items-start content-stretch text-white transition-all duration-200 ease-[cubic-bezier(0.2,1,0.5,1)] '
   >
     <div class='w-full flex flex-shrink-0'>
       <img :src='logo' class="w-[40px] h-[40px]" />

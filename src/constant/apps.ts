@@ -158,9 +158,6 @@ export const apps: AppItem[] = [
             component: "Calendar"
         },
         window: {
-            height: 420,
-            width: 600,
-            maximizable: false,
             component: "Calendar"
         },
         fixed: true
@@ -503,7 +500,7 @@ export const apps: AppItem[] = [
         tile: {
             bgColor: "bg-green-500",
             style: "rounded-lg text-white",
-            size: "large",
+            size: "small",
             component: ""
         },
         window: {
@@ -576,11 +573,11 @@ export const groups: AppGroup[] = [
     {
         id: "multimedia",
         name: "多媒体生活",
-        apps: ["photos", "music", "recorder", "news", "weather", "camera", "games", "video"]
+        apps: ["photos", "music", "news", "weather", "camera", "games", "video"]
     },
     {
         id: "utility",
         name: "实用工具",
-        apps: ["calculator", "calendar", "clock", "maps"]
+        apps: ["calculator", "calendar", "clock", "maps", "recorder"]
     }
 ];

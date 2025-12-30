@@ -40,8 +40,8 @@ defineExpose({ toggleOpen, isOpen });
   <!-- 容器：动态平移进入 -->
   <aside
     ref="centerRef"
-    class="fixed top-1 right-1 bottom-[45px] w-[380px] z-[100] transition-all duration-500 ease-[cubic-bezier(0.2,1,0.5,1)] transform pointer-events-none"
-    :class="isOpen ? 'translate-x-0 opacity-100' : 'translate-x-[110%] opacity-0'"
+    class="fixed top-1 right-1 bottom-[45px] w-[380px] z-[100] transition-all duration-300 ease-[cubic-bezier(0.2,0.5,1)] transform pointer-events-none"
+    :class="isOpen ? 'translate-x-0 opacity-100' : 'translate-x-[110%] opacity-50'"
   >
     <!-- 毛玻璃本体 -->
     <div class="h-full w-full bg-white/70 dark:bg-slate-900/80 backdrop-blur-3xl shadow-2xl border border-white/40 dark:border-white/10 rounded-xl overflow-hidden flex flex-col pointer-events-auto">

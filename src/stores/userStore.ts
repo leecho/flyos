@@ -7,11 +7,11 @@ export interface User {
   locked: boolean
 }
 
-export const userStore = reactive<User>({
+export const userStore = reactive({
   user: {
     id: '1',
     name: 'FlyOS User',
     avatar: 'https://avatars.githubusercontent.com/u/1?v=4',
     locked: false
-  }
+  } as User
 })

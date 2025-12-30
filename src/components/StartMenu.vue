@@ -14,7 +14,7 @@
         v-if='visible'
         ref='menuRef'
         class='start-menu-panel fixed bottom-14 left-2 w-[600px] h-[720px] max-h-[85vh]
-               rounded-xl border border-black/10 dark:border-white/10 shadow-2xl overflow-hidden
+               rounded-xl shadow-2xl overflow-hidden
                flex flex-col text-slate-900 dark:text-white z-[100000]
                bg-white/70 dark:bg-[#191919]/75 backdrop-blur-[40px] saturate-[150%]'
         @click.stop
