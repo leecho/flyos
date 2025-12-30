@@ -45,5 +45,5 @@ export const  appStore = reactive({
 })
 
 export function getAppById(id: string) {
-    return appStore.apps.find(w => w.id === id)
+    return appStore.apps.find(w => w.id === id) as AppItem
 }

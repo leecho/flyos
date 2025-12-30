@@ -213,7 +213,7 @@ defineExpose({
 <style scoped>
 /* 这里仅保留阴影和动画相关的样式，基础颜色和背景已迁移至 Tailwind Class */
 .start-menu-panel {
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 :global(.dark) .start-menu-panel {
