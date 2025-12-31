@@ -124,10 +124,10 @@
       <div class="absolute inset-0 bg-gray-200 dark:bg-gray-800">
         <Transition name="slide-fade" mode="out-in">
           <div :key="currentTilePhotoIndex" class="absolute inset-0">
-            <img :src="photos[currentTilePhotoIndex].url" class="w-full h-full object-cover" />
+            <img :src="photos[currentTilePhotoIndex]?.url" class="w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent p-4 flex flex-col justify-end">
               <p class="text-white text-xs font-bold">回忆</p>
-              <p class="text-white/70 text-[10px]">{{ photos[currentTilePhotoIndex].location }}</p>
+              <p class="text-white/70 text-[10px]">{{ photos[currentTilePhotoIndex]?.location }}</p>
             </div>
           </div>
         </Transition>
