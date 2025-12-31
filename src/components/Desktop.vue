@@ -5,7 +5,7 @@
          :key='app.id'
          @click='startTask(app)'
          @contextmenu.prevent='openContextMenu($event, app)'
-         class='desktop-icon  flex flex-col p-[5px] w-[80px] h-[80px] justify-center cursor-pointer rounded-xl hover:backdrop-blur-sm hover:bg-white/55 dark:hover:bg-black/55'>
+         class='desktop-icon  flex flex-col p-[5px] w-[80px] h-[80px] justify-center cursor-pointer items-center rounded-md hover:backdrop-blur-sm hover:bg-accent/55 '>
       <div class='text-center justify-center flex'>
         <AppIcon :id='app.id' size='md'/>
       </div>

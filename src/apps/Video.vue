@@ -39,7 +39,7 @@
           :key="video.id"
           @click="playVideo(video)"
           class="flex p-3 cursor-pointer transition-all duration-300 ease-in-out"
-          :class="currentVideo?.id === video.id ? 'bg-blue-500/20 border-l-4 border-blue-500' : 'hover:bg-gray-800/60'"
+          :class="currentVideo?.id === video.id ? 'bg-accent/20 border-l-4 border-accent' : 'hover:bg-gray-800/60'"
         >
           <div class="relative flex-shrink-0 mr-4">
             <img :src="video.thumbnail" alt="thumbnail" class="w-32 h-20 object-cover rounded-lg bg-gray-700 shadow-lg">

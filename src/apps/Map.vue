@@ -9,7 +9,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="搜索位置..."
-            class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-transparent focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-transparent focus:ring-2 focus:ring-accent focus:border-accent transition"
           >
           <i class="icofont-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         </div>
@@ -20,7 +20,7 @@
           :key="location.id"
           @click="selectLocation(location)"
           class="p-4 cursor-pointer transition-colors duration-200"
-          :class="selectedLocation?.id === location.id ? 'bg-blue-500 bg-opacity-10' : 'hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:bg-opacity-50'"
+          :class="selectedLocation?.id === location.id ? 'bg-accent/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:bg-opacity-50'"
         >
           <h4 class="font-semibold text-gray-800 dark:text-white">{{ location.name }}</h4>
           <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ location.address }}</p>
@@ -71,7 +71,7 @@
           </div>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ selectedLocation.description }}</p>
           <div class="mt-4 flex gap-4">
-              <button class="px-5 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors">导航</button>
+              <button class="px-5 py-2 bg-accent text-white rounded-lg font-semibold hover:bg-accent/90 transition-colors">导航</button>
               <button class="px-5 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">保存</button>
           </div>
         </div>

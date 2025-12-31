@@ -6,7 +6,7 @@ const canvasRef = ref(null);
 const containerRef = ref(null);
 const ctx = ref(null);
 const isDrawing = ref(false);
-const color = ref('#6366f1');
+const color = ref(''); // Default color will be set dynamically from theme
 const lineWidth = ref(6);
 const tool = ref('pencil');
 const isSidebarOpen = ref(true);
@@ -16,7 +16,8 @@ const boards = ref([]);
 const activeBoardId = ref(null);
 
 const STORAGE_KEY = 'zen_whiteboard_v2_data';
-const presetColors = ['#0f172a', '#6366f1', '#10b981', '#f59e0b', '#ef4444', '#a855f7'];
+// Preset colors, with a placeholder for the theme's accent color
+const presetColors = ref(['#0f172a', '#10b981', '#f59e0b', '#ef4444', '#a855f7']);
 let lastPos = { x: 0, y: 0 };
 let resizeObserver = null;
 
@@ -181,10 +182,14 @@ const clearCurrent = () => {
 
 const switchBoard = (id) => {
   activeBoardId.value = id;
-  // 切换画布后重绘在 watch 中处理
 };
 
 onMounted(() => {
+  // Dynamically set accent color from CSS variables
+  const accentColorValue = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#6366f1';
+  color.value = accentColorValue;
+  presetColors.value.splice(1, 0, accentColorValue); // Insert theme color as a preset
+
   loadData();
   resizeObserver = new ResizeObserver(() => setupCanvas());
   if (containerRef.value) {
@@ -196,7 +201,6 @@ onUnmounted(() => {
   if (resizeObserver) resizeObserver.disconnect();
 });
 
-// 监听活动画布 ID 变化
 watch(activeBoardId, () => {
   nextTick(setupCanvas);
 });
@@ -211,8 +215,8 @@ watch(activeBoardId, () => {
       :class="[isSidebarOpen ? 'w-64' : 'w-0']"
     >
       <div class="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0">
-        <h2 class="font-bold text-xs uppercase tracking-widest text-indigo-500 truncate">我的画布</h2>
-        <button @click="createNewBoard" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-indigo-500">
+        <h2 class="font-bold text-xs uppercase tracking-widest text-accent truncate">我的画布</h2>
+        <button @click="createNewBoard" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-accent">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
       </div>
@@ -224,7 +228,7 @@ watch(activeBoardId, () => {
           @click="switchBoard(board.id)"
           class="group flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border"
           :class="[activeBoardId === board.id
-            ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-500/10 dark:border-indigo-500/30'
+            ? 'bg-accent/10 border-accent/20 dark:bg-accent/10 dark:border-accent/30'
             : 'border-transparent hover:bg-slate-100 dark:hover:bg-slate-800']"
         >
           <div class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
@@ -290,7 +294,7 @@ watch(activeBoardId, () => {
         <button
           @click="tool = 'pencil'"
           class="p-3 rounded-xl transition-all"
-          :class="[tool === 'pencil' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800']"
+          :class="[tool === 'pencil' ? 'bg-accent text-white shadow-lg' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800']"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
         </button>
@@ -298,7 +302,7 @@ watch(activeBoardId, () => {
         <button
           @click="tool = 'eraser'"
           class="p-3 rounded-xl transition-all"
-          :class="[tool === 'eraser' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800']"
+          :class="[tool === 'eraser' ? 'bg-accent text-white shadow-lg' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800']"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 20Z"/></svg>
         </button>
@@ -313,7 +317,7 @@ watch(activeBoardId, () => {
             class="slider-v"
           />
           <div class="w-4 h-4 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center">
-            <div class="bg-indigo-500 rounded-full" :style="{ width: Math.max(2, lineWidth/4) + 'px', height: Math.max(2, lineWidth/4) + 'px' }"></div>
+            <div class="bg-accent rounded-full" :style="{ width: Math.max(2, lineWidth/4) + 'px', height: Math.max(2, lineWidth/4) + 'px' }"></div>
           </div>
         </div>
       </div>
@@ -372,7 +376,7 @@ watch(activeBoardId, () => {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #6366f1;
+  background: var(--accent-color);
   border: 2px solid white;
   box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }

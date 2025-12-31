@@ -97,12 +97,12 @@ const getPath = (data: number[]) => {
                 <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">中央处理器</p>
                 <p class="text-2xl font-mono font-medium">{{ systemStats.cpu }}%</p>
               </div>
-              <svg class="w-16 h-8 text-blue-500" viewBox="0 0 100 30">
+              <svg class="w-16 h-8 text-accent" viewBox="0 0 100 30">
                 <path :d="getPath(cpuHistory)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div class="h-1 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-              <div class="h-full bg-blue-500 transition-all duration-700" :style="{ width: systemStats.cpu + '%' }"></div>
+              <div class="h-full bg-accent transition-all duration-700" :style="{ width: systemStats.cpu + '%' }"></div>
             </div>
           </div>
 
@@ -172,7 +172,7 @@ const getPath = (data: number[]) => {
               </div>
             </td>
             <td class="px-4 py-3 text-right border-y border-transparent group-hover:border-zinc-200 dark:group-hover:border-zinc-800">
-              <span class="text-xs font-mono font-bold text-blue-500">{{ task.window.component }}.vue</span>
+              <span class="text-xs font-mono font-bold text-accent">{{ task.window.component }}.vue</span>
             </td>
             <td class="px-4 py-3 text-right border-y border-transparent group-hover:border-zinc-200 dark:group-hover:border-zinc-800">
               <span class="text-xs font-mono opacity-60">{{ Math.round(task.metrics.mem) }} MB</span>
