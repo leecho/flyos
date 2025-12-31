@@ -4,15 +4,13 @@
        @contextmenu.prevent='menuRef.open($event, desktopMenu)'>
 
     <!-- 桌面层级切换动画 -->
-    <div class='flex-1 relative'>
       <Transition name='desktop-fade'>
-        <Desktop v-if="desktopStore.mode == 'desktop'" class='absolute inset-0' />
+        <Desktop v-if="desktopStore.mode == 'desktop'"  />
       </Transition>
 
       <Transition name='metro-fade'>
-        <Metro v-if="desktopStore.mode == 'metro'" class='absolute inset-0' />
+        <Metro v-if="desktopStore.mode == 'metro'"  />
       </Transition>
-    </div>
 
     <TaskBar />
     <ContextMenu ref='menuRef' />

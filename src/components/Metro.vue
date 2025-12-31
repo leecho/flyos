@@ -7,7 +7,7 @@
       <div class='text-3xl ml-[10px] leading-[40px]'>FlyOS</div>
     </div>
     <div ref='groupRef'
-         class='flex-1 flex md:flex-row flex-col gap-12 mt-[20px] mb-[20px] w-full overflow-y-auto md:overflow-x-auto md:pb-4 items-center md:items-start min-h-0'>
+         class='flex-1 flex md:flex-row flex-col gap-12 mt-[20px] mb-[40px] w-full overflow-y-auto md:overflow-x-auto md:pb-4 items-center md:items-start min-h-0'>
       <TileGroup v-for='group in appStore.groups' :group='group' @select-tile='openContextMenu' />
     </div>
   </div>
