@@ -9,7 +9,7 @@
         <h1 class="text-lg font-bold tracking-tight">FlyOS 新闻</h1>
       </div>
 
-      <nav class="flex gap-4 overflow-x-auto no-scrollbar max-w-md">
+      <nav class="flex gap-4 overflow-x-auto no-scrollbar max-w-md hidden">
         <button
           v-for="cat in categories"
           :key="cat"

@@ -53,7 +53,7 @@ const brightness = ref(80);
   <div class="settings-app flex h-full bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-xl text-gray-900 dark:text-gray-100 font-sans overflow-hidden">
 
     <!-- 侧边导航栏 -->
-    <div class="w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex flex-col p-4 space-y-2 overflow-y-auto">
+    <div class="hidden w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 @md:flex flex-col p-4 space-y-2 overflow-y-auto">
       <!-- 用户简略信息 -->
       <div class="flex items-center gap-3 px-3 py-4 mb-4 ">
         <img :src="userStore.user.avatar" class="w-10 h-10 rounded-full border-2 border-accent/50 object-cover shadow-sm" />
@@ -89,6 +89,50 @@ const brightness = ref(80);
 
           <!-- 系统设置 -->
           <section v-if="currentCategory === 'system'" class="space-y-6">
+            
+          </section>
+
+          <!-- 账户信息 -->
+          <section v-if="currentCategory === 'user'" class="space-y-6">
+            <div class="flex items-center gap-8 p-2">
+              <div class="relative group">
+                <img :src="userStore.user.avatar" class="w-24 h-24 rounded-[2rem] shadow-2xl border-4 border-white dark:border-gray-800 object-cover" />
+                <div class="absolute inset-0 bg-black/40 rounded-[2rem] opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                  <div class="text-white scale-125" v-html="icons.user"></div>
+                </div>
+              </div>
+              <div>
+                <h2 class="text-2xl font-black tracking-tight">{{ userStore.user.name }}</h2>
+                <p class="text-[11px] font-bold text-accent uppercase tracking-widest mt-1">FlyOS Administrator</p>
+                <div class="mt-4 flex gap-2">
+                  <button class="px-5 py-2 bg-accent hover:bg-accent/90 text-white text-[11px] font-black rounded-xl shadow-lg shadow-accent/30 transition-all active:scale-95">编辑资料</button>
+                  <button class="px-5 py-2 bg-gray-200 dark:bg-white/10 text-[11px] font-black rounded-xl transition-all">安全设置</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500" v-html="icons.lock"></div>
+                  <div>
+                    <div class="text-sm font-bold">系统锁定状态</div>
+                    <div class="text-[11px] opacity-50">锁定后需要密码或生物识别才能进入</div>
+                  </div>
+                </div>
+                <button
+                  @click="userStore.user.locked = !userStore.user.locked"
+                  class="px-5 py-2 rounded-xl text-[11px] font-black uppercase transition-all"
+                  :class="userStore.user.locked ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30' : 'bg-emerald-500/10 text-emerald-500'"
+                >
+                  {{ userStore.user.locked ? '已锁定' : '立即锁定' }}
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 显示与桌面 -->
+          <section v-if="currentCategory === 'display'" class="space-y-6">
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">个性化体验</h3>
               <div class="space-y-6">
@@ -138,49 +182,6 @@ const brightness = ref(80);
                 </button>
               </div>
             </div>
-          </section>
-
-          <!-- 账户信息 -->
-          <section v-if="currentCategory === 'user'" class="space-y-6">
-            <div class="flex items-center gap-8 p-2">
-              <div class="relative group">
-                <img :src="userStore.user.avatar" class="w-24 h-24 rounded-[2rem] shadow-2xl border-4 border-white dark:border-gray-800 object-cover" />
-                <div class="absolute inset-0 bg-black/40 rounded-[2rem] opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                  <div class="text-white scale-125" v-html="icons.user"></div>
-                </div>
-              </div>
-              <div>
-                <h2 class="text-2xl font-black tracking-tight">{{ userStore.user.name }}</h2>
-                <p class="text-[11px] font-bold text-accent uppercase tracking-widest mt-1">FlyOS Administrator</p>
-                <div class="mt-4 flex gap-2">
-                  <button class="px-5 py-2 bg-accent hover:bg-accent/90 text-white text-[11px] font-black rounded-xl shadow-lg shadow-accent/30 transition-all active:scale-95">编辑资料</button>
-                  <button class="px-5 py-2 bg-gray-200 dark:bg-white/10 text-[11px] font-black rounded-xl transition-all">安全设置</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500" v-html="icons.lock"></div>
-                  <div>
-                    <div class="text-sm font-bold">系统锁定状态</div>
-                    <div class="text-[11px] opacity-50">锁定后需要密码或生物识别才能进入</div>
-                  </div>
-                </div>
-                <button
-                  @click="userStore.user.locked = !userStore.user.locked"
-                  class="px-5 py-2 rounded-xl text-[11px] font-black uppercase transition-all"
-                  :class="userStore.user.locked ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30' : 'bg-emerald-500/10 text-emerald-500'"
-                >
-                  {{ userStore.user.locked ? '已锁定' : '立即锁定' }}
-                </button>
-              </div>
-            </div>
-          </section>
-
-          <!-- 显示与桌面 -->
-          <section v-if="currentCategory === 'display'" class="space-y-6">
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">UI 布局模式</h3>
               <div class="grid grid-cols-2 gap-4">
