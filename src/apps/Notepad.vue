@@ -5,7 +5,7 @@
         <h2 class="font-bold text-xs uppercase tracking-wider opacity-60">我的笔记</h2>
         <button
           v-on:click="createNewNote"
-          class="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors text-blue-500"
+          class="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors text-accent"
           title="新建笔记"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -26,7 +26,7 @@
           </div>
           <button
             v-on:click.stop="deleteNote(note.id)"
-            class="opacity-0 group-hover:opacity-100 p-1 hover:text-red-500 transition-opacity"
+            class="opacity-0 group-hover:opacity-100 p-1 hover:text-accent transition-opacity"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
@@ -63,7 +63,7 @@
       <p class="text-sm">点击左侧笔记开始编辑</p>
       <button
         v-on:click="createNewNote"
-        class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-medium transition-all shadow-md active:scale-95"
+        class="px-5 py-2 bg-accent hover:bg-accent/90 text-white rounded-full text-xs font-medium transition-all shadow-md active:scale-95"
       >
         新建第一条笔记
       </button>

@@ -46,7 +46,7 @@ const onContextmenu = (e) => {
     <!-- 底部状态指示灯 (Dot) -->
     <div
       v-if="window"
-      class="absolute bottom-1 h-1 rounded-full transition-all duration-300 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+      class="absolute bottom-1 h-1 rounded-full transition-all duration-300 bg-accent shadow-[0_0_8px_rgba(59,130,246,0.6)]"
       :class="[window.active ? 'w-4' : 'w-1 opacity-60 group-hover:w-2']"
     ></div>
 

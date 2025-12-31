@@ -1,105 +1,10 @@
-<template>
-  <div class="app-store flex h-full text-black dark:text-white overflow-hidden bg-white/50 dark:bg-black/20">
-    <!-- 侧边导航栏 -->
-    <div class="w-48 border-r border-gray-400/20 flex flex-col p-4 gap-2 backdrop-blur-md bg-white/30 dark:bg-black/40">
-      <div class="px-2 mb-4 text-xs font-bold opacity-50 uppercase tracking-wider">分类</div>
-      <button
-        v-for="cat in categories"
-        :key="cat.id"
-        @click="activeCategory = cat.id"
-        :class="[
-          'flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-sm',
-          activeCategory === cat.id ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : 'hover:bg-white/20'
-        ]"
-      >
-        <span class="text-lg">{{ cat.icon }}</span>
-        {{ cat.name }}
-      </button>
-    </div>
-
-    <!-- 主内容区 -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- 搜索与标题 -->
-      <div class="p-6 flex items-center justify-between">
-        <h2 class="text-2xl font-bold tracking-tight">应用商店</h2>
-        <div class="relative w-64">
-          <input
-            type="text"
-            placeholder="搜索应用..."
-            class="w-full bg-white/40 dark:bg-black/40 border border-gray-400/20 rounded-full py-1.5 px-4 pl-10 text-sm outline-none focus:border-blue-500/50 transition-all"
-          >
-          <span class="absolute left-3 top-1.5 opacity-40">🔍</span>
-        </div>
-      </div>
-
-      <!-- 滚动区域 -->
-      <div class="flex-1 overflow-y-auto p-6 pt-0 custom-scrollbar">
-        <!-- 重点推荐 Banner -->
-        <div v-if="activeCategory === 'all'" class="mb-8 relative rounded-2xl overflow-hidden h-48 group cursor-pointer shadow-xl">
-          <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-blue-400"></div>
-          <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-          <div class="relative h-full flex flex-col justify-center px-8 text-white">
-            <div class="text-xs font-bold bg-white/20 w-fit px-2 py-0.5 rounded mb-2">热门推荐</div>
-            <div class="text-3xl font-black mb-1">Pixel Studio 2024</div>
-            <div class="text-sm opacity-80 max-w-sm">专业的像素绘图工具，现已完美适配 FlyOS 触控手势。</div>
-          </div>
-        </div>
-
-        <!-- 应用网格 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <div
-            v-for="app in filteredApps"
-            :key="app.id"
-            class="app-card group p-4 rounded-2xl border border-gray-400/10 bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 transition-all duration-300 flex flex-col"
-          >
-            <div class="flex gap-4 mb-4">
-              <div :class="['w-14 h-14 rounded-xl shadow-lg flex items-center justify-center text-2xl', app.color]">
-                {{ app.icon }}
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="font-bold truncate">{{ app.name }}</div>
-                <div class="text-[11px] opacity-50 truncate">{{ app.dev }}</div>
-                <div class="flex items-center gap-1 mt-1 text-orange-400 text-[10px]">
-                  <span>★</span>
-                  <span>{{ app.rating }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 安装按钮 -->
-            <button
-              @click="installApp(app.id)"
-              :disabled="installState[app.id]?.status === 'installing'"
-              :class="[
-                'mt-auto w-full py-1.5 rounded-lg text-xs font-bold transition-all relative overflow-hidden',
-                getButtonStyle(app.id)
-              ]"
-            >
-              <!-- 进度条背景 -->
-              <div
-                v-if="installState[app.id]?.status === 'installing'"
-                class="absolute left-0 top-0 h-full bg-blue-500/20 transition-all duration-300"
-                :style="{ width: installState[app.id]?.progress + '%' }"
-              ></div>
-
-              <span class="relative z-10">
-                {{ getButtonText(app.id) }}
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 
 const activeCategory = ref('all')
 
 const categories = [
-  { id: 'all', name: '全部', icon: '✨' },
+  { id: 'all', name: '探索', icon: '✨' },
   { id: 'app', name: '应用', icon: '📱' },
   { id: 'game', name: '游戏', icon: '🎮' },
   { id: 'tool', name: '工具', icon: '🛠️' },
@@ -124,6 +29,7 @@ const installState = reactive<Record<string, { status: string, progress: number 
 
 const installApp = (id: string) => {
   if (installState[id]?.status === 'installed') {
+    // Logic to open app can be added here
     return
   }
 
@@ -151,26 +57,119 @@ const getButtonText = (id: string) => {
 
 const getButtonStyle = (id: string) => {
   const state = installState[id]
-  if (!state) return 'bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500 hover:text-white'
-  if (state.status === 'installing') return 'bg-gray-400/10 text-gray-500 cursor-not-allowed'
-  if (state.status === 'installed') return 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
+  if (!state) return 'bg-accent/10 text-accent hover:bg-accent hover:text-white dark:text-accent'
+  if (state.status === 'installing') return 'bg-gray-200 dark:bg-white/10 text-gray-500 cursor-not-allowed'
+  if (state.status === 'installed') return 'bg-emerald-500/10 text-emerald-500'
   return ''
 }
 </script>
+
+<template>
+  <div class="settings-app flex h-full bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-xl text-gray-900 dark:text-gray-100 font-sans overflow-hidden">
+
+    <!-- 侧边导航栏 -->
+    <div class="w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex flex-col p-4 space-y-2 overflow-y-auto">
+      <div class="flex items-center gap-3 px-3 py-4 mb-4">
+        <div class="w-10 h-10 rounded-full border-2 border-accent/50 object-cover shadow-sm bg-accent flex items-center justify-center text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <div class="min-w-0">
+          <h2 class="text-xs font-bold truncate">应用商店</h2>
+          <p class="text-[10px] opacity-50 truncate">发现新应用与游戏</p>
+        </div>
+      </div>
+
+      <button
+        v-for="cat in categories"
+        :key="cat.id"
+        @click="activeCategory = cat.id"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+        :class="activeCategory === cat.id
+          ? 'bg-white/60 dark:bg-white/10 shadow-sm text-accent dark:text-accent'
+          : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100'"
+      >
+        <span v-if="activeCategory === cat.id" class="absolute left-0 w-1 h-4 bg-accent rounded-full"></span>
+        <div class="flex-shrink-0 w-6 text-center text-lg">{{ cat.icon }}</div>
+        <span class="text-[13px] font-semibold tracking-tight">{{ cat.name }}</span>
+      </button>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <header class="h-16 flex items-center justify-end px-8 border-b border-gray-200/30 dark:border-gray-800/30">
+        <div class="relative w-64">
+          <input
+            type="text"
+            placeholder="搜索应用..."
+            class="w-full bg-white/40 dark:bg-black/40 border border-transparent rounded-xl py-2 px-4 pl-10 text-sm outline-none focus:border-accent/50 transition-all"
+          >
+          <svg class="absolute left-3 top-2.5 opacity-40" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <!-- 重点推荐 Banner -->
+        <div v-if="activeCategory === 'all'" class="mb-8 relative rounded-3xl overflow-hidden h-56 group cursor-pointer shadow-2xl shadow-accent/20">
+          <div class="absolute inset-0 bg-gradient-to-r from-accent/80 to-accent"></div>
+           <div class="absolute -right-20 -top-20 w-80 h-80 bg-white/10 rounded-full blur-[100px] animate-pulse"></div>
+          <div class="relative h-full flex flex-col justify-end px-8 py-6 text-white">
+            <div class="text-xs font-bold bg-white/10 backdrop-blur-sm w-fit px-2 py-1 rounded-md mb-3 uppercase tracking-wider">热门精选</div>
+            <div class="text-3xl font-black mb-1 tracking-tighter">Pixel Studio 2024</div>
+            <div class="text-sm opacity-80 max-w-sm font-medium">专业的像素绘图工具，现已完美适配 FlyOS 触控手势。</div>
+          </div>
+        </div>
+
+        <!-- 应用网格 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+          <div
+            v-for="app in filteredApps"
+            :key="app.id"
+            class="group bg-white/40 dark:bg-white/5 rounded-2xl p-5 border border-white/20 dark:border-white/10 shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+          >
+            <div class="flex items-center gap-4 mb-4">
+              <div :class="['w-14 h-14 rounded-xl shadow-lg flex-shrink-0 flex items-center justify-center text-3xl', app.color]">
+                {{ app.icon }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-bold truncate text-sm">{{ app.name }}</div>
+                <div class="text-xs opacity-60 truncate">{{ app.dev }}</div>
+                <div v-if="app.rating" class="flex items-center gap-1 mt-1 text-yellow-500 text-xs font-bold">\
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
+                  <span>{{ app.rating }}</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              @click="installApp(app.id)"
+              :disabled="installState[app.id]?.status === 'installing'"
+              :class="['mt-2 w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all relative overflow-hidden', getButtonStyle(app.id)]"
+            >
+              <div
+                v-if="installState[app.id]?.status === 'installing'"
+                class="absolute left-0 top-0 h-full bg-accent/20 transition-all duration-300"
+                :style="{ width: installState[app.id]?.progress + '%' }"
+              ></div>
+              <span class="relative z-10">
+                {{ getButtonText(app.id) }}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(128, 128, 128, 0.2);
+  background: rgba(155, 155, 155, 0.2);
   border-radius: 10px;
-}
-.app-card {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-.app-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 </style>

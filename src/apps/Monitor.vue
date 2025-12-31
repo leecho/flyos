@@ -26,7 +26,7 @@ const tabs = [
 ];
 
 const mainStats = computed(() => [
-  { label: '处理器', value: cpuLoad.value, unit: '%', percent: cpuLoad.value, color: '#3b82f6', icon: '⚡' },
+  { label: '处理器', value: cpuLoad.value, unit: '%', percent: cpuLoad.value, color: 'var(--accent-color)', icon: '⚡' },
   { label: '内存', value: '8.4', unit: 'GB', percent: 52, color: '#8b5cf6', icon: '🧠' },
   { label: '网络下行', value: netDown.value, unit: 'MB/s', percent: 30, color: '#10b981', icon: '⬇️' }
 ]);
@@ -100,8 +100,6 @@ onUnmounted(() => clearInterval(timer));
   <div :class="['monitor-root h-full flex flex-col', isDark ? 'dark' : '']">
     <div class="flex-1 flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 overflow-hidden">
 
-
-
       <div class="flex flex-1 overflow-hidden">
         <nav class="w-14 md:w-40 flex flex-col gap-1 p-2 border-r border-slate-200 dark:border-slate-800 shrink-0">
           <button v-for="tab in tabs" :key="tab.id"
@@ -109,7 +107,7 @@ onUnmounted(() => clearInterval(timer));
                   :class="[
               'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200',
               activeTab === tab.id
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                ? 'bg-accent text-white shadow-md shadow-accent/20'
                 : 'hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400'
             ]">
             <span class="shrink-0" v-html="tab.icon"></span>
@@ -134,7 +132,7 @@ onUnmounted(() => clearInterval(timer));
                   <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
                   <tr v-for="p in processes" :key="p.pid" class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                     <td class="px-4 py-2 flex items-center gap-2"><span>{{ p.icon }}</span><span class="font-medium truncate">{{ p.name }}</span></td>
-                    <td class="px-4 py-2 text-right font-mono text-blue-500 font-bold">{{ p.cpu }}%</td>
+                    <td class="px-4 py-2 text-right font-mono text-accent font-bold">{{ p.cpu }}%</td>
                     <td class="px-4 py-2 text-right opacity-60 font-mono">{{ p.mem }}MB</td>
                   </tr>
                   </tbody>
@@ -148,7 +146,7 @@ onUnmounted(() => clearInterval(timer));
                 <div class="w-12 h-12 flex-shrink-0 relative">
                   <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
                     <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" class="text-slate-100 dark:text-slate-700" stroke-width="3" />
-                    <circle cx="18" cy="18" r="16" fill="none" stroke="#6366f1" stroke-width="3" stroke-dasharray="100" :stroke-dashoffset="100 - disk.usedPercent" stroke-linecap="round" />
+                    <circle cx="18" cy="18" r="16" fill="none" stroke="var(--accent-color)" stroke-width="3" stroke-dasharray="100" :stroke-dashoffset="100 - disk.usedPercent" stroke-linecap="round" />
                   </svg>
                   <div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold">{{ disk.usedPercent }}%</div>
                 </div>
@@ -176,7 +174,7 @@ onUnmounted(() => clearInterval(timer));
                 <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                   <div class="flex justify-between items-center mb-4">
                     <h4 class="text-xs font-bold flex items-center gap-2"><span>⬆️</span> 上传流量</h4>
-                    <span class="font-mono text-blue-500 font-bold">{{ netUp }} MB/s</span>
+                    <span class="font-mono text-accent font-bold">{{ netUp }} MB/s</span>
                   </div>
                   <div class="flex flex-col gap-2 mt-2">
                     <div class="flex justify-between text-[10px] opacity-60"><span>当日累计下行</span><span>24.8 GB</span></div>

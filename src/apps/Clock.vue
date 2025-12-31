@@ -11,7 +11,7 @@
             :key="tab.id"
             @click="activeTab = tab.id"
             :class="['flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all',
-                    activeTab === tab.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'hover:bg-gray-200 dark:hover:bg-white/10']"
+                    activeTab === tab.id ? 'bg-accent text-white shadow-lg' : 'hover:bg-gray-200 dark:hover:bg-white/10']"
           >
             <component :is="tab.icon" class="w-5 h-5" />
             <span class="hidden md:block text-sm font-medium">{{ tab.name }}</span>
@@ -34,7 +34,7 @@
             <div class="hand hour" :style="hourStyle"></div>
             <div class="hand min" :style="minStyle"></div>
             <div class="hand sec" :style="secStyle"></div>
-            <div class="absolute top-1/2 left-1/2 w-3 h-3 bg-blue-600 rounded-full -translate-x-1/2 -translate-y-1/2 z-10"></div>
+            <div class="absolute top-1/2 left-1/2 w-3 h-3 bg-accent rounded-full -translate-x-1/2 -translate-y-1/2 z-10"></div>
           </div>
           <div class="text-6xl font-light tracking-tighter mb-2">{{ digitalTime }}</div>
           <div class="text-lg opacity-60">{{ dateString }}</div>
@@ -44,7 +44,7 @@
         <div v-if="activeTab === 'world'" class="animate-fade-in space-y-4">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold">世界时钟</h2>
-            <button @click="addCity" class="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+            <button @click="addCity" class="p-2 bg-accent text-white rounded-full hover:bg-opacity-80 transition-colors">
               <PlusIcon class="w-5 h-5" />
             </button>
           </div>
@@ -67,8 +67,8 @@
             {{ formatStopwatch(stopwatchTime) }}
           </div>
           <div class="flex gap-4 mb-8">
-            <button @click="toggleStopwatch" :class="['w-16 h-16 rounded-full flex items-center justify-center transition-all',
-              isRunning ? 'bg-orange-500 text-white' : 'bg-green-600 text-white']">
+            <button @click="toggleStopwatch" :class="['w-16 h-16 rounded-full flex items-center justify-center transition-all text-white',
+              isRunning ? 'bg-orange-500' : 'bg-green-600']">
               <PauseIcon v-if="isRunning" class="w-8 h-8" />
               <PlayIcon v-else class="w-8 h-8 ml-1" />
             </button>
@@ -91,14 +91,14 @@
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-lg mb-8">
             <button v-for="t in [1, 5, 10, 15, 30, 60]" :key="t"
                     @click="startPresetTimer(t)"
-                    class="p-6 bg-white dark:bg-white/5 rounded-xl border border-white/10 hover:border-blue-500 transition-all text-center">
+                    class="p-6 bg-white dark:bg-white/5 rounded-xl border border-white/10 hover:border-accent transition-all text-center">
               <span class="text-2xl font-bold">{{ t }}</span>
               <span class="text-xs block opacity-50">分钟</span>
             </button>
           </div>
           <div v-if="timerValue > 0" class="text-center">
             <div class="text-6xl font-mono mb-4">{{ formatStopwatch(timerValue * 1000) }}</div>
-            <button @click="timerValue = 0" class="px-6 py-2 bg-red-500 text-white rounded-full">取消</button>
+            <button @click="timerValue = 0" class="px-6 py-2 bg-accent/80 text-white rounded-full hover:bg-accent">取消</button>
           </div>
         </div>
 
@@ -226,7 +226,7 @@ const startPresetTimer = (mins) => {
 
 .hour { width: 4px; height: 25%; z-index: 3; }
 .min { width: 3px; height: 35%; opacity: 0.8; z-index: 2; }
-.sec { width: 2px; height: 42%; background: #ef4444; z-index: 4; }
+.sec { width: 2px; height: 42%; background: var(--accent-color); z-index: 4; }
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;

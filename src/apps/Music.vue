@@ -1,9 +1,9 @@
 <template>
-  <div class="flex h-full w-full bg-white dark:bg-gray-950 overflow-hidden text-gray-900 dark:text-gray-100 font-sans selection:bg-blue-500/30">
+  <div class="flex h-full w-full bg-white dark:bg-gray-950 overflow-hidden text-gray-900 dark:text-gray-100 font-sans selection:bg-accent/30">
     <!-- 左侧侧边栏 -->
     <aside class="w-56 border-r border-gray-100 dark:border-gray-800/50 flex flex-col bg-gray-50/50 dark:bg-gray-900/20 backdrop-blur-md">
       <div class="p-6">
-        <h2 class="text-xl font-bold flex items-center gap-2 tracking-tight text-blue-600 dark:text-blue-400">
+        <h2 class="text-xl font-bold flex items-center gap-2 tracking-tight text-accent">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           FlyMusic
         </h2>
@@ -14,7 +14,7 @@
           <p class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">发现</p>
           <button v-for="item in navMain" :key="item.name"
                   class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all"
-                  :class="activeNav === item.name ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : 'hover:bg-gray-200/50 dark:hover:bg-gray-800/50'">
+                  :class="activeNav === item.name ? 'bg-accent text-white shadow-lg' : 'hover:bg-gray-200/50 dark:hover:bg-gray-800/50'">
             <component :is="item.icon" class="w-4 h-4" />
             {{ item.name }}
           </button>
@@ -45,7 +45,7 @@
     </aside>
 
     <!-- 主内容区 -->
-    <main class="flex-1 flex flex-col relative overflow-hidden bg-gradient-to-b from-blue-50/30 to-white dark:from-blue-900/10 dark:to-gray-950">
+    <main class="flex-1 flex flex-col relative overflow-hidden bg-gradient-to-b from-accent/5 to-white dark:from-accent/10 dark:to-gray-950">
       <!-- 搜索栏 -->
       <header class="h-16 flex items-center justify-between px-8 z-10">
         <div class="flex gap-4">
@@ -54,7 +54,7 @@
         </div>
         <div class="relative w-64 group">
           <input type="text" placeholder="搜索歌曲、专辑..."
-                 class="w-full bg-gray-100/50 dark:bg-gray-800/50 border-none rounded-full py-1.5 pl-9 pr-4 text-xs focus:ring-2 focus:ring-blue-500/50 transition-all outline-none">
+                 class="w-full bg-gray-100/50 dark:bg-gray-800/50 border-none rounded-full py-1.5 pl-9 pr-4 text-xs focus:ring-2 focus:ring-accent/50 transition-all outline-none">
           <svg class="absolute left-3 top-2 text-gray-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         </div>
       </header>
@@ -62,10 +62,10 @@
       <div class="flex-1 overflow-y-auto px-8 pb-32 custom-scrollbar">
         <!-- 推荐 Banner -->
         <div class="relative h-48 rounded-2xl overflow-hidden mb-8 group cursor-pointer shadow-xl">
-          <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-800 mix-blend-multiply"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-accent to-indigo-800 mix-blend-multiply"></div>
           <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1000&q=80" class="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700">
           <div class="absolute inset-0 p-8 flex flex-col justify-end">
-            <span class="text-xs font-bold uppercase tracking-widest text-blue-200 mb-2">热门推荐</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-accent/70 mb-2">热门推荐</span>
             <h1 class="text-3xl font-black text-white mb-1">感性电子乐辑</h1>
             <p class="text-white/70 text-sm max-w-sm">发现属于你的深夜频率，聆听数字时代的温柔回响。</p>
           </div>
@@ -75,7 +75,7 @@
         <section>
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold">我的曲库</h3>
-            <button class="text-xs text-blue-500 font-bold hover:underline">播放全部</button>
+            <button class="text-xs text-accent font-bold hover:underline">播放全部</button>
           </div>
 
           <table class="w-full text-left text-sm">
@@ -91,7 +91,7 @@
             <tr v-for="(track, index) in tracks" :key="track.id"
                 @dblclick="playTrack(track)"
                 class="group hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors rounded-lg cursor-default"
-                :class="{'text-blue-500': currentTrack?.id === track.id}">
+                :class="{'text-accent': currentTrack?.id === track.id}">
               <td class="py-3 text-center opacity-50 group-hover:hidden">{{ index + 1 }}</td>
               <td class="py-3 text-center hidden group-hover:table-cell">
                 <button @click="playTrack(track)"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="m7 4 12 8-12 8V4z"/></svg></button>
@@ -129,20 +129,20 @@
         <!-- 核心控制 -->
         <div class="flex-1 flex flex-col items-center gap-2">
           <div class="flex items-center gap-6">
-            <button class="text-gray-400 hover:text-blue-500 transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 20-4-4 4-4"/><path d="m5 4 4 4-4 4"/><path d="M21 12H9"/><path d="M3 12h12"/></svg></button>
+            <button class="text-gray-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 20-4-4 4-4"/><path d="m5 4 4 4-4 4"/><path d="M21 12H9"/><path d="M3 12h12"/></svg></button>
             <button @click="prev" class="hover:scale-110 transition-transform"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="m11 19-9-7 9-7v14zm11-14v14l-9-7 9-7z"/></svg></button>
-            <button @click="togglePlay" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/40 transition-all">
+            <button @click="togglePlay" class="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:scale-105 active:scale-95 shadow-lg transition-all">
               <svg v-if="!isPlaying" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m7 4 12 8-12 8V4z"/></svg>
               <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </button>
             <button @click="next" class="hover:scale-110 transition-transform"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="m13 19 9-7-9-7v14zM2 5v14l9-7-9-7z"/></svg></button>
-            <button class="text-gray-400 hover:text-blue-500 transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 3 3-3 3"/><path d="M20 5H9a2 2 0 0 0-2 2v7"/><path d="m7 22-3-3 3-3"/><path d="M4 19h11a2 2 0 0 0 2-2v-7"/></svg></button>
+            <button class="text-gray-400 hover:text-accent transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 3 3-3 3"/><path d="M20 5H9a2 2 0 0 0-2 2v7"/><path d="m7 22-3-3 3-3"/><path d="M4 19h11a2 2 0 0 0 2-2v-7"/></svg></button>
           </div>
 
           <div class="w-full flex items-center gap-3 px-4">
             <span class="text-[10px] opacity-50 tabular-nums">02:14</span>
             <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-800 rounded-full relative group cursor-pointer overflow-hidden">
-              <div class="absolute inset-y-0 left-0 bg-blue-500 w-[45%]"></div>
+              <div class="absolute inset-y-0 left-0 bg-accent w-[45%]"></div>
             </div>
             <span class="text-[10px] opacity-50 tabular-nums">{{ currentTrack?.duration || '00:00' }}</span>
           </div>
@@ -150,14 +150,14 @@
 
         <!-- 音量与辅助功能 -->
         <div class="w-1/4 flex items-center justify-end gap-4 text-gray-400">
-          <button class="hover:text-blue-500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+          <button class="hover:text-accent"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
           <div class="flex items-center gap-2 group">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
             <div class="w-20 h-1 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-              <div class="h-full bg-blue-500 w-[70%]"></div>
+              <div class="h-full bg-accent w-[70%]"></div>
             </div>
           </div>
-          <button class="hover:text-blue-500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></button>
+          <button class="hover:text-accent"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></button>
         </div>
       </footer>
     </main>

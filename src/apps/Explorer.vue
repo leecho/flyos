@@ -38,7 +38,7 @@
         <input
           type="text"
           placeholder="搜索"
-          class="w-full pl-8 pr-2 py-1 bg-white dark:bg-black/20 border border-gray-300 dark:border-gray-700 rounded text-xs outline-none focus:ring-1 focus:ring-blue-500"
+          class="w-full pl-8 pr-2 py-1 bg-white dark:bg-black/20 border border-gray-300 dark:border-gray-700 rounded text-xs outline-none focus:ring-1 focus:ring-accent"
         />
       </div>
     </div>
@@ -54,7 +54,7 @@
                 v-for="item in quickAccess"
                 :key="item.id"
                 @click="navigateTo(item.id)"
-                :class="['flex items-center gap-2 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors', currentFolderId === item.id ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'hover:bg-gray-200 dark:hover:bg-gray-800']"
+                :class="['flex items-center gap-2 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors', currentFolderId === item.id ? 'bg-accent/10 text-accent' : 'hover:bg-gray-200 dark:hover:bg-gray-800']"
               >
                 <component :is="item.icon" class="w-4 h-4" :class="item.color" />
                 <span>{{ item.name }}</span>
@@ -80,7 +80,7 @@
             :key="item.id"
             @click="selectedId = item.id"
             @dblclick="handleOpen(item)"
-            :class="['flex flex-col items-center p-2 rounded group border border-transparent transition-all cursor-default', selectedId === item.id ? 'bg-blue-100/60 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700' : 'hover:bg-gray-100 dark:hover:bg-gray-800']"
+            :class="['flex flex-col items-center p-2 rounded group border border-transparent transition-all cursor-default', selectedId === item.id ? 'bg-accent/10 border-accent/50' : 'hover:bg-gray-100 dark:hover:bg-gray-800']"
           >
             <div class="w-12 h-12 mb-2 flex items-center justify-center relative">
               <component :is="getFileIcon(item)" class="w-10 h-10" :class="getFileIconColor(item)" />
@@ -108,7 +108,7 @@
               :key="item.id"
               @click="selectedId = item.id"
               @dblclick="handleOpen(item)"
-              :class="['group transition-colors border-b border-transparent', selectedId === item.id ? 'bg-blue-100/40 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50']"
+              :class="['group transition-colors border-b border-transparent', selectedId === item.id ? 'bg-accent/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50']"
             >
               <td class="py-2 px-4 flex items-center gap-3">
                 <component :is="getFileIcon(item)" class="w-4 h-4 shrink-0" :class="getFileIconColor(item)" />
@@ -134,18 +134,18 @@
     <div class="px-3 py-1 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center text-[11px] text-gray-500 bg-gray-50 dark:bg-gray-900">
       <div class="flex gap-4">
         <span>{{ currentItems.length }} 个项目</span>
-        <span v-if="selectedItem" class="text-blue-500 font-medium">选中 1 个项目 ({{ selectedItem.size || '文件夹' }})</span>
+        <span v-if="selectedItem" class="text-accent font-medium">选中 1 个项目 ({{ selectedItem.size || '文件夹' }})</span>
       </div>
       <div class="flex gap-2">
         <button
           @click="viewMode = 'grid'"
-          :class="['p-0.5 rounded transition-colors', viewMode === 'grid' ? 'bg-gray-200 dark:bg-gray-700 text-blue-500' : 'hover:bg-gray-200 dark:hover:bg-gray-700']"
+          :class="['p-0.5 rounded transition-colors', viewMode === 'grid' ? 'bg-gray-200 dark:bg-gray-700 text-accent' : 'hover:bg-gray-200 dark:hover:bg-gray-700']"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
         </button>
         <button
           @click="viewMode = 'list'"
-          :class="['p-0.5 rounded transition-colors', viewMode === 'list' ? 'bg-gray-200 dark:bg-gray-700 text-blue-500' : 'hover:bg-gray-200 dark:hover:bg-gray-700']"
+          :class="['p-0.5 rounded transition-colors', viewMode === 'list' ? 'bg-gray-200 dark:bg-gray-700 text-accent' : 'hover:bg-gray-200 dark:hover:bg-gray-700']"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
         </button>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { themeStore } from '@/stores/themeStore';
+import { themeStore, AccentColor } from '@/stores/themeStore';
 import { userStore } from '@/stores/userStore';
 import { desktopStore, setMode } from '@/stores/desktopStore';
 
@@ -37,7 +37,7 @@ const activeCategoryLabel = computed(() => {
 /**
  * 个性化配置选项
  */
-const themeColors = [
+const themeColors: { name: string; hex: string; value: AccentColor }[] = [
   { name: '蓝色', hex: '#3b82f6', value: 'blue' },
   { name: '紫色', hex: '#8b5cf6', value: 'purple' },
   { name: '粉色', hex: '#ec4899', value: 'pink' },
@@ -56,7 +56,7 @@ const brightness = ref(80);
     <div class="w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex flex-col p-4 space-y-2 overflow-y-auto">
       <!-- 用户简略信息 -->
       <div class="flex items-center gap-3 px-3 py-4 mb-4 ">
-        <img :src="userStore.user.avatar" class="w-10 h-10 rounded-full border-2 border-blue-500/50 object-cover shadow-sm" />
+        <img :src="userStore.user.avatar" class="w-10 h-10 rounded-full border-2 border-accent/50 object-cover shadow-sm" />
         <div class="min-w-0">
           <h2 class="text-xs font-bold truncate">{{ userStore.user.name }}</h2>
           <p class="text-[10px] opacity-50 truncate">FlyOS Pro 认证</p>
@@ -69,10 +69,10 @@ const brightness = ref(80);
         @click="currentCategory = item.id"
         class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
         :class="currentCategory === item.id
-          ? 'bg-white/60 dark:bg-white/10 shadow-sm text-blue-600 dark:text-blue-400'
+          ? 'bg-white/60 dark:bg-white/10 shadow-sm text-accent dark:text-accent'
           : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-70 hover:opacity-100'"
       >
-        <span v-if="currentCategory === item.id" class="absolute left-0 w-1 h-4 bg-blue-500 rounded-full"></span>
+        <span v-if="currentCategory === item.id" class="absolute left-0 w-1 h-4 bg-accent rounded-full"></span>
         <div class="flex-shrink-0" v-html="item.icon"></div>
         <span class="text-[13px] font-semibold tracking-tight">{{ item.label }}</span>
       </button>
@@ -104,7 +104,7 @@ const brightness = ref(80);
                   <div
                     @click="themeStore.setTheme(themeStore.mode.value === 'dark' ? 'light' : 'dark')"
                     class="w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-500"
-                    :class="themeStore.mode.value === 'dark' ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700'"
+                    :class="themeStore.mode.value === 'dark' ? 'bg-accent' : 'bg-gray-300 dark:bg-gray-700'"
                   >
                     <div class="w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-500" :style="{ transform: themeStore.mode.value === 'dark' ? 'translateX(24px)' : 'translateX(0)' }"></div>
                   </div>
@@ -116,7 +116,7 @@ const brightness = ref(80);
                     <span>屏幕亮度</span>
                     <span>{{ brightness }}%</span>
                   </div>
-                  <input type="range" v-model="brightness" class="w-full accent-blue-500" />
+                  <input type="range" v-model="brightness" class="w-full accent-accent" />
                 </div>
               </div>
             </div>
@@ -127,9 +127,15 @@ const brightness = ref(80);
                 <button
                   v-for="color in themeColors"
                   :key="color.name"
-                  class="w-10 h-10 rounded-full border-4 transition-all hover:scale-110 active:scale-95"
-                  :style="{ backgroundColor: color.hex, borderColor: 'transparent' }"
-                ></button>
+                  @click="themeStore.setAccentColor(color.value)"
+                  class="w-10 h-10 rounded-full transition-all duration-150 hover:scale-110 active:scale-95 flex items-center justify-center relative shadow-md"
+                  :class="{ 'ring-4 ring-white/30 shadow-xl scale-110': themeStore.accentColor.value === color.value }"
+                  :style="{ backgroundColor: color.hex }"
+                >
+                  <svg v-if="themeStore.accentColor.value === color.value" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
               </div>
             </div>
           </section>
@@ -145,9 +151,9 @@ const brightness = ref(80);
               </div>
               <div>
                 <h2 class="text-2xl font-black tracking-tight">{{ userStore.user.name }}</h2>
-                <p class="text-[11px] font-bold text-blue-500 uppercase tracking-widest mt-1">FlyOS Administrator</p>
+                <p class="text-[11px] font-bold text-accent uppercase tracking-widest mt-1">FlyOS Administrator</p>
                 <div class="mt-4 flex gap-2">
-                  <button class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95">编辑资料</button>
+                  <button class="px-5 py-2 bg-accent hover:bg-accent/90 text-white text-[11px] font-black rounded-xl shadow-lg shadow-accent/30 transition-all active:scale-95">编辑资料</button>
                   <button class="px-5 py-2 bg-gray-200 dark:bg-white/10 text-[11px] font-black rounded-xl transition-all">安全设置</button>
                 </div>
               </div>
@@ -181,7 +187,7 @@ const brightness = ref(80);
                 <div
                   @click="setMode('desktop')"
                   class="p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 group"
-                  :class="desktopStore.mode === 'desktop' ? 'border-blue-500 bg-blue-500/5' : 'border-transparent bg-black/5'"
+                  :class="desktopStore.mode === 'desktop' ? 'border-accent bg-accent/5' : 'border-transparent bg-black/5'"
                 >
                   <div class="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform" v-html="icons.display"></div>
                   <div class="text-[12px] font-black uppercase tracking-wider">标准桌面</div>
@@ -189,7 +195,7 @@ const brightness = ref(80);
                 <div
                   @click="setMode('metro')"
                   class="p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 group"
-                  :class="desktopStore.mode === 'metro' ? 'border-blue-500 bg-blue-500/5' : 'border-transparent bg-black/5'"
+                  :class="desktopStore.mode === 'metro' ? 'border-accent bg-accent/5' : 'border-transparent bg-black/5'"
                 >
                   <div class="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -202,13 +208,13 @@ const brightness = ref(80);
 
           <!-- 关于 -->
           <section v-if="currentCategory === 'about'" class="space-y-6">
-            <div class="bg-gradient-to-br from-blue-700 via-indigo-600 to-purple-700 rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-blue-500/20">
+            <div class="bg-gradient-to-br from-accent/70 via-accent to-purple-700 rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-accent/20">
               <div class="relative z-10">
                 <div class="inline-block px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest mb-4">Core Edition</div>
                 <h2 class="text-4xl font-black tracking-tighter mb-2">FlyOS Pro</h2>
                 <p class="opacity-70 text-sm font-medium mb-8">Next-generation workspace for creators.</p>
                 <div class="flex gap-4">
-                  <button class="px-8 py-2.5 bg-white text-blue-700 rounded-2xl text-[11px] font-black shadow-xl hover:scale-105 active:scale-95 transition-all">检查更新</button>
+                  <button class="px-8 py-2.5 bg-white text-accent rounded-2xl text-[11px] font-black shadow-xl hover:scale-105 active:scale-95 transition-all">检查更新</button>
                   <button class="px-8 py-2.5 bg-white/20 backdrop-blur-md text-white rounded-2xl text-[11px] font-black hover:bg-white/30 transition-all">支持中心</button>
                 </div>
               </div>
@@ -223,7 +229,6 @@ const brightness = ref(80);
 </template>
 
 <style scoped>
-@reference "@/styles/tailwind.css";
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
@@ -241,18 +246,5 @@ const brightness = ref(80);
 }
 .animate-in {
   animation: slideUp 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards;
-}
-
-/* 范围选择器优化 */
-input[type=range] {
-  -webkit-appearance: none;
-  background: transparent;
-}
-input[type=range]::-webkit-slider-runnable-track {
-  @apply h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  @apply w-5 h-5 bg-blue-600 rounded-full -mt-[7px] shadow-lg border-2 border-white dark:border-gray-950 transition-transform active:scale-125;
 }
 </style>

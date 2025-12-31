@@ -69,7 +69,7 @@ defineExpose({ toggleOpen, isOpen });
         <button
           @click="dndMode = !dndMode"
           class="flex items-center gap-3 p-4 rounded-xl transition-all duration-300 group"
-          :class="dndMode ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400'"
+          :class="dndMode ? 'bg-accent text-white shadow-lg shadow-accent/30' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400'"
         >
           <div class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/20">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,7 +115,7 @@ defineExpose({ toggleOpen, isOpen });
             <div
               v-for="notif in notifications"
               :key="notif.id"
-              class="group relative bg-white/40 dark:bg-white/5 p-5 select-none rounded-xl border border-white/5 dark:border-white/5 hover:border-indigo-500/50 transition-all duration-300"
+              class="group relative bg-white/40 dark:bg-white/5 p-5 select-none rounded-xl border border-white/5 dark:border-white/5 hover:border-accent/50 transition-all duration-300"
             >
               <div class="flex justify-between items-start mb-2 ">
                 <div class="flex items-center gap-2 ">
@@ -151,28 +151,6 @@ defineExpose({ toggleOpen, isOpen });
           </div>
         </div>
       </div>
-
-      <!-- 底部操作栏 -->
-<!--      <footer class="p-8 grid grid-cols-3 gap-4 border-t border-slate-100 dark:border-white/5">-->
-<!--        <button class="flex flex-col items-center gap-2 group">-->
-<!--          <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all">-->
-<!--            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>-->
-<!--          </div>-->
-<!--          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">设置</span>-->
-<!--        </button>-->
-<!--        <button class="flex flex-col items-center gap-2 group">-->
-<!--          <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all">-->
-<!--            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>-->
-<!--          </div>-->
-<!--          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">锁定</span>-->
-<!--        </button>-->
-<!--        <button class="flex flex-col items-center gap-2 group">-->
-<!--          <div class="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-all text-rose-500">-->
-<!--            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>-->
-<!--          </div>-->
-<!--          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">注销</span>-->
-<!--        </button>-->
-<!--      </footer>-->
     </div>
   </aside>
   </teleport>
@@ -197,7 +175,7 @@ defineExpose({ toggleOpen, isOpen });
 .system-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 0px;
-  box-shadow: -100vw 0 0 100vw #6366f1;
+  box-shadow: -100vw 0 0 100vw var(--accent-color);
 }
 
 /* 列表动画 */

@@ -3,7 +3,7 @@
     <!-- 左侧详情面板 -->
     <div class="w-80 bg-gray-50 dark:bg-gray-800/50 flex flex-col border-r border-gray-200 dark:border-gray-700">
       <div class="p-6">
-        <h1 class="text-4xl font-light text-red-500">{{ selectedDate.getDate() }}</h1>
+        <h1 class="text-4xl font-light text-accent">{{ selectedDate.getDate() }}</h1>
         <p class="text-lg font-medium mt-1">{{ formatFullDate(selectedDate) }}</p>
         <p class="text-sm opacity-50">{{ formatChineseLunar(selectedDate) }}</p>
       </div>
@@ -20,10 +20,10 @@
           今天没有安排
         </div>
         <div v-else class="space-y-3">
-          <div v-for="event in currentDayEvents" :key="event.id" class="group relative p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm border-l-4 border-red-500">
+          <div v-for="event in currentDayEvents" :key="event.id" class="group relative p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm border-l-4 border-accent">
             <p class="text-sm font-semibold">{{ event.title }}</p>
             <p class="text-xs opacity-60 mt-1">{{ event.time }}</p>
-            <button @click="deleteEvent(event.id)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity">
+            <button @click="deleteEvent(event.id)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-accent transition-opacity">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
             </button>
           </div>
@@ -45,7 +45,7 @@
             </button>
           </div>
         </div>
-        <button @click="goToToday" class="px-4 py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors">今天</button>
+        <button @click="goToToday" class="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent/90 text-white rounded-lg transition-colors">今天</button>
       </div>
 
       <div class="grid grid-cols-7 gap-2 flex-1">
@@ -62,13 +62,13 @@
           class="aspect-square relative rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all border-2"
           :class="[
             isCurrentMonth ? 'opacity-100' : 'opacity-20',
-            isSelected ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800',
-            isToday && !isSelected ? 'text-red-500 font-bold' : ''
+            isSelected ? 'border-accent bg-accent/10 dark:bg-accent/20' : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800',
+            isToday && !isSelected ? 'text-accent font-bold' : ''
           ]"
         >
           <span class="text-sm z-10">{{ date.getDate() }}</span>
           <div v-if="eventsCount > 0" class="absolute bottom-2 flex space-x-1">
-            <div v-for="n in Math.min(eventsCount, 3)" :key="n" class="w-1 h-1 rounded-full bg-red-400"></div>
+            <div v-for="n in Math.min(eventsCount, 3)" :key="n" class="w-1 h-1 rounded-full bg-accent/50"></div>
           </div>
         </div>
       </div>

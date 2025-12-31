@@ -5,7 +5,7 @@
       <div class="p-4">
         <button
           @click="isComposing = true"
-          class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center space-x-2 transition-all active:scale-95"
+          class="w-full py-3 bg-accent hover:bg-opacity-80 text-white rounded-xl shadow-lg flex items-center justify-center space-x-2 transition-all active:scale-95"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
           <span class="hidden md:inline font-medium text-sm">撰写邮件</span>
@@ -18,11 +18,11 @@
           :key="folder.id"
           @click="currentFolder = folder.id"
           class="flex items-center px-3 py-2.5 rounded-lg cursor-pointer transition-colors group"
-          :class="currentFolder === folder.id ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'hover:bg-gray-200/50 dark:hover:bg-gray-700/50'"
+          :class="currentFolder === folder.id ? 'bg-accent/10 text-accent' : 'hover:bg-gray-200/50 dark:hover:bg-gray-700/50'"
         >
           <component :is="folder.icon" class="w-5 h-5" :class="currentFolder === folder.id ? 'opacity-100' : 'opacity-60'" />
           <span class="hidden md:inline ml-3 text-sm font-medium">{{ folder.name }}</span>
-          <span v-if="folder.unread" class="hidden md:inline ml-auto text-[10px] bg-blue-100 dark:bg-blue-800 px-1.5 py-0.5 rounded-full font-bold">
+          <span v-if="folder.unread" class="hidden md:inline ml-auto text-[10px] bg-accent/20 px-1.5 py-0.5 rounded-full font-bold">
             {{ folder.unread }}
           </span>
         </div>
@@ -37,7 +37,7 @@
           <input
             type="text"
             placeholder="搜索邮件..."
-            class="w-full pl-9 pr-4 py-1.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-xs focus:ring-2 focus:ring-blue-500/50 outline-none"
+            class="w-full pl-9 pr-4 py-1.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-xs focus:ring-2 focus:ring-accent/50 outline-none"
           />
         </div>
       </div>
@@ -49,8 +49,8 @@
           @click="selectedMailId = mail.id"
           class="p-4 border-b border-gray-50 dark:border-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors relative"
           :class="[
-            selectedMailId === mail.id ? 'bg-blue-50/50 dark:bg-blue-900/10' : '',
-            !mail.read ? 'border-l-4 border-l-blue-500' : 'border-l-4 border-l-transparent'
+            selectedMailId === mail.id ? 'bg-accent/5' : '',
+            !mail.read ? 'border-l-4 border-l-accent' : 'border-l-4 border-l-transparent'
           ]"
         >
           <div class="flex justify-between items-start mb-1">
@@ -93,7 +93,7 @@
 
           <div class="flex items-center justify-between mb-8 pb-6 border-b border-gray-50 dark:border-gray-800">
             <div class="flex items-center">
-              <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-bold">
+              <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent font-bold">
                 {{ selectedMail.from.charAt(0).toUpperCase() }}
               </div>
               <div class="ml-4">
@@ -128,12 +128,12 @@
           </button>
         </div>
         <div class="p-6 space-y-4">
-          <input type="text" placeholder="收件人" class="w-full bg-transparent border-b border-gray-100 dark:border-gray-700 py-2 outline-none focus:border-blue-500 transition-colors text-sm" />
-          <input type="text" placeholder="主题" class="w-full bg-transparent border-b border-gray-100 dark:border-gray-700 py-2 outline-none focus:border-blue-500 transition-colors text-sm" />
+          <input type="text" placeholder="收件人" class="w-full bg-transparent border-b border-gray-100 dark:border-gray-700 py-2 outline-none focus:border-accent transition-colors text-sm" />
+          <input type="text" placeholder="主题" class="w-full bg-transparent border-b border-gray-100 dark:border-gray-700 py-2 outline-none focus:border-accent transition-colors text-sm" />
           <textarea placeholder="输入邮件正文..." class="w-full h-64 bg-transparent resize-none outline-none py-4 text-sm leading-relaxed"></textarea>
         </div>
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 flex justify-end">
-          <button @click="isComposing = false" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-md active:scale-95">
+          <button @click="isComposing = false" class="px-6 py-2 bg-accent hover:bg-opacity-80 text-white rounded-lg text-sm font-medium transition-all shadow-md active:scale-95">
             发送邮件
           </button>
         </div>

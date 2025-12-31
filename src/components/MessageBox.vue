@@ -33,7 +33,7 @@
               v-model="state.inputValue"
               ref="inputRef"
               type="text"
-              class="w-full px-3 py-2 bg-white dark:bg-black/20 border border-gray-300 dark:border-white/10
+              class="w-full rounded px-3 py-2 bg-white dark:bg-black/20 border border-gray-300 dark:border-white/10
                      focus:outline-none text-sm transition-all dark:text-white"
               v-on:keydown.enter="messageBox.handleConfirm"
             />
@@ -44,7 +44,8 @@
         <div class="px-6 py-4  flex flex-row-reverse gap-3">
           <button
             v-on:click="messageBox.handleConfirm"
-            class="min-w-[80px] px-4 py-1.5 bg-blue-700 hover:bg-blue-900 text-white text-[13px] rounded-md transition-all active:scale-95 shadow-sm"
+            :style="{ backgroundColor: 'var(--accent-color)' }"
+            class="min-w-[80px] px-4 py-1.5 text-white text-[13px] rounded-md transition-all active:scale-95 shadow-sm hover:brightness-90"
           >
             {{ state.type === 'confirm' ? '确认' : '好' }}
           </button>
@@ -100,7 +101,7 @@ watch(() => state.isOpen, (newVal) => {
   animation: scaleIn 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
-input {
-  border-bottom-width: 2px;
+input:focus {
+  border-color: var(--accent-color);
 }
 </style>

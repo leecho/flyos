@@ -2,10 +2,21 @@
 import { ref } from "vue"
 
 export type ThemeMode = "light" | "dark" | "system"
-export type AccentColor = "blue" | "purple" | "indigo" | "teal" | "emerald" | "rose"
+export type AccentColor = "blue" | "purple" | "indigo" | "teal" | "emerald" | "rose" | "pink" | "orange"
 
 const mode = ref<ThemeMode>("system")
 const accentColor = ref<AccentColor>('blue')
+
+const accentColorMap: Record<AccentColor, string> = {
+    blue: '#3b82f6',
+    purple: '#8b5cf6',
+    indigo: '#4f46e5',
+    teal: '#14b8a6',
+    emerald: '#10b981',
+    rose: '#f43f5e',
+    pink: '#ec4899',
+    orange: '#f97316',
+};
 
 
 const applyTheme = () => {
@@ -26,7 +37,10 @@ const applyTheme = () => {
 
 const applyAccentColor = () => {
     const html = document.documentElement;
-    html.style.setProperty("--accent-color", `var(--${accentColor.value})`);
+    const hexColor = accentColorMap[accentColor.value];
+    if (hexColor) {
+        html.style.setProperty("--accent-color", hexColor);
+    }
 }
 
 function setTheme(newMode: ThemeMode) {

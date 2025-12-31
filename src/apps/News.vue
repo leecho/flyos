@@ -3,7 +3,7 @@
     <!-- 顶部导航栏 -->
     <header class="flex items-center justify-between px-6 py-4 border-b border-zinc-500/10">
       <div class="flex items-center gap-2">
-        <div class="p-1.5 bg-sky-500 rounded-lg text-white">
+        <div class="p-1.5 bg-accent rounded-lg text-white">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
         </div>
         <h1 class="text-lg font-bold tracking-tight">FlyOS 新闻</h1>
@@ -16,7 +16,7 @@
           @click="activeCategory = cat"
           :class="[
             'px-3 py-1 rounded-full text-sm font-medium transition-all whitespace-nowrap',
-            activeCategory === cat ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/30' : 'hover:bg-black/5 dark:hover:bg-white/10 opacity-70'
+            activeCategory === cat ? 'bg-accent text-white shadow-lg shadow-accent/30' : 'hover:bg-black/5 dark:hover:bg-white/10 opacity-70'
           ]"
         >
           {{ cat }}
@@ -34,11 +34,11 @@
           class="md:col-span-2 group relative h-64 rounded-2xl overflow-hidden cursor-pointer shadow-xl transition-transform active:scale-[0.98]"
         >
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-          <div class="absolute inset-0 bg-sky-900/40 group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-accent/40 group-hover:scale-105 transition-transform duration-700">
             <div class="w-full h-full flex items-center justify-center text-4xl opacity-20">🌍</div>
           </div>
           <div class="absolute bottom-0 left-0 p-6 z-20 text-white">
-            <span class="bg-red-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase mb-2 inline-block">热点</span>
+            <span class="bg-accent px-2 py-0.5 rounded text-[10px] font-bold uppercase mb-2 inline-block">热点</span>
             <h2 class="text-2xl font-bold mb-2">{{ featuredNews.title }}</h2>
             <p class="text-sm opacity-80 line-clamp-2">{{ featuredNews.summary }}</p>
           </div>
@@ -57,7 +57,7 @@
             </div>
             <div class="text-xs font-semibold opacity-60">{{ item.source }} · {{ item.time }}</div>
           </div>
-          <h3 class="font-bold leading-snug group-hover:text-sky-500">{{ item.title }}</h3>
+          <h3 class="font-bold leading-snug group-hover:text-accent">{{ item.title }}</h3>
           <p class="text-xs opacity-70 line-clamp-3 leading-relaxed">{{ item.summary }}</p>
           <div class="mt-auto pt-2 flex items-center justify-between text-[10px] opacity-40">
             <span>{{ item.readTime }} 分钟阅读</span>
@@ -72,7 +72,7 @@
           <div class="max-w-2xl mx-auto px-6 py-12">
             <button
               @click="selectedNews = null"
-              class="mb-8 flex items-center gap-2 text-sky-500 font-medium hover:underline"
+              class="mb-8 flex items-center gap-2 text-accent font-medium hover:underline"
             >
               ← 返回新闻列表
             </button>
@@ -90,10 +90,10 @@
             </div>
             <div class="mt-12 pt-8 border-t border-zinc-500/10 flex justify-between items-center opacity-60">
               <div class="flex gap-4">
-                <button class="hover:text-sky-500">👍 赞</button>
-                <button class="hover:text-sky-500">💬 评论</button>
+                <button class="hover:text-accent">👍 赞</button>
+                <button class="hover:text-accent">💬 评论</button>
               </div>
-              <button class="hover:text-sky-500">🔗 分享</button>
+              <button class="hover:text-accent">🔗 分享</button>
             </div>
           </div>
         </div>

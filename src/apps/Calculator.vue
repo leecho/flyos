@@ -330,7 +330,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyboard))
 
 /* 强调色按键 (=) */
 .accent-key {
-  background: #0067c0;
+  background: var(--accent-color);
   color: white;
   font-weight: bold;
 }
