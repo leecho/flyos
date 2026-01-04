@@ -6,9 +6,13 @@
       <img :src='logo' class="w-[40px] h-[40px]" />
       <div class='text-3xl ml-[10px] leading-[40px]'>FlyOS</div>
     </div>
-    <div ref='groupRef'
+    <div ref='groupContainerRef'
          class='flex-1 flex md:flex-row flex-col gap-12 mt-[20px] mb-[40px] w-full overflow-y-auto md:overflow-x-auto md:pb-4 items-center md:items-start min-h-0'>
-      <TileGroup v-for='group in appStore.groups' :group='group' @select-tile='openContextMenu' />
+      <TileGroup v-for='group in appStore.groups' :key="group.id" :group='group' @select-tile='openContextMenu' />
+      <!-- 新的拖放区域 -->
+      <div ref="newGroupDropAreaRef" class="new-group-drop-area min-h-[200px] min-w-[308px] border-2 border-dashed border-gray-500 rounded-lg flex items-center justify-center">
+        <span class="text-gray-400">拖到此处创建新分组</span>
+      </div>
     </div>
   </div>
   <ContextMenu ref='menuRef' />
@@ -16,7 +20,7 @@
 <script setup lang='ts'>
 import logo from '../assets/logo.svg'
 import TileGroup from './TileGroup.vue'
-import { appStore, type AppItem } from '../stores/appStore'
+import { appStore, type AppItem, createNewGroupWithApp } from '../stores/appStore'
 import { ref } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import ContextMenu from './ContextMenu.vue'
@@ -47,12 +51,28 @@ const getSizeMenuIcon = (app: AppItem, size: string) => {
   return null
 }
 
-
-const groupRef = ref()
-
-useDraggable(groupRef, appStore.groups, {
+// 拖动整个分组
+const groupContainerRef = ref()
+useDraggable(groupContainerRef, appStore.groups, {
   animation: 150,
   handle: '.group-handler',
   chosenClass: 'opacity-40'
 })
+
+// 拖动磁贴到新区域以创建分组
+const newGroupDropAreaRef = ref();
+const droppedApps = ref<string[]>([]);
+
+useDraggable(newGroupDropAreaRef, droppedApps, {
+  animation: 150,
+  group: 'tiles', // 与 TileGroup 共享相同的组名
+  onAdd: (event) => {
+    const appId = event.item.dataset.appId; // 从拖动的元素中获取 app id
+    if (appId) {
+        createNewGroupWithApp(appId);
+    }
+    // 清空，因为它只是一个接收区域
+    droppedApps.value = [];
+  }
+});
 </script>

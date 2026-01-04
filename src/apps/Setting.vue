@@ -50,10 +50,10 @@ const brightness = ref(80);
 </script>
 
 <template>
-  <div class="settings-app flex h-full bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-xl text-gray-900 dark:text-gray-100 font-sans overflow-hidden">
+  <div class="settings-app @container flex h-full bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-xl text-gray-900 dark:text-gray-100 font-sans overflow-hidden">
 
     <!-- 侧边导航栏 -->
-    <div class="hidden w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 @md:flex flex-col p-4 space-y-2 overflow-y-auto">
+    <div class="hidden @[600px]:flex w-64 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex-col p-4 space-y-2 overflow-y-auto">
       <!-- 用户简略信息 -->
       <div class="flex items-center gap-3 px-3 py-4 mb-4 ">
         <img :src="userStore.user.avatar" class="w-10 h-10 rounded-full border-2 border-accent/50 object-cover shadow-sm" />
@@ -84,8 +84,8 @@ const brightness = ref(80);
         <h2 class="text-[20px] font-black uppercase tracking-widest opacity-80">{{ activeCategoryLabel }}</h2>
       </header>
 
-      <div class="flex-1 overflow-y-auto p-8 pt-4 custom-scrollbar">
-        <div class="max-w-3xl space-y-8 animate-in">
+      <div class="flex-1 overflow-y-auto p-4 @[600px]:p-8 custom-scrollbar">
+        <div class="max-w-full @[900px]:max-w-3xl mx-auto space-y-8 animate-in">
 
           <!-- 系统设置 -->
           <section v-if="currentCategory === 'system'" class="space-y-6">
@@ -94,7 +94,7 @@ const brightness = ref(80);
 
           <!-- 账户信息 -->
           <section v-if="currentCategory === 'user'" class="space-y-6">
-            <div class="flex items-center gap-8 p-2">
+            <div class="flex flex-col @[400px]:flex-row items-center gap-8 p-2">
               <div class="relative group">
                 <img :src="userStore.user.avatar" class="w-24 h-24 rounded-[2rem] shadow-2xl border-4 border-white dark:border-gray-800 object-cover" />
                 <div class="absolute inset-0 bg-black/40 rounded-[2rem] opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
@@ -102,8 +102,8 @@ const brightness = ref(80);
                 </div>
               </div>
               <div>
-                <h2 class="text-2xl font-black tracking-tight">{{ userStore.user.name }}</h2>
-                <p class="text-[11px] font-bold text-accent uppercase tracking-widest mt-1">FlyOS Administrator</p>
+                <h2 class="text-2xl font-black tracking-tight text-center @[400px]:text-left">{{ userStore.user.name }}</h2>
+                <p class="text-[11px] font-bold text-accent uppercase tracking-widest mt-1 text-center @[400px]:text-left">FlyOS Administrator</p>
                 <div class="mt-4 flex gap-2">
                   <button class="px-5 py-2 bg-accent hover:bg-accent/90 text-white text-[11px] font-black rounded-xl shadow-lg shadow-accent/30 transition-all active:scale-95">编辑资料</button>
                   <button class="px-5 py-2 bg-gray-200 dark:bg-white/10 text-[11px] font-black rounded-xl transition-all">安全设置</button>
@@ -112,8 +112,8 @@ const brightness = ref(80);
             </div>
 
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
+              <div class="flex flex-col @[400px]:flex-row items-center justify-between">
+                <div class="flex items-center gap-4 mb-4 @[400px]:mb-0">
                   <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500" v-html="icons.lock"></div>
                   <div>
                     <div class="text-sm font-bold">系统锁定状态</div>
@@ -167,7 +167,7 @@ const brightness = ref(80);
 
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">系统强调色</h3>
-              <div class="flex gap-4">
+              <div class="flex flex-wrap gap-4">
                 <button
                   v-for="color in themeColors"
                   :key="color.name"
@@ -184,7 +184,7 @@ const brightness = ref(80);
             </div>
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">UI 布局模式</h3>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 @[400px]:grid-cols-2 gap-4">
                 <div
                   @click="setMode('desktop')"
                   class="p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 group"
@@ -209,12 +209,12 @@ const brightness = ref(80);
 
           <!-- 关于 -->
           <section v-if="currentCategory === 'about'" class="space-y-6">
-            <div class="bg-gradient-to-br from-accent/70 via-accent to-purple-700 rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-accent/20">
+            <div class="bg-gradient-to-br from-accent/70 via-accent to-purple-700 rounded-[2.5rem] p-6 @[400px]:p-10 text-white relative overflow-hidden shadow-2xl shadow-accent/20">
               <div class="relative z-10">
                 <div class="inline-block px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest mb-4">Core Edition</div>
-                <h2 class="text-4xl font-black tracking-tighter mb-2">FlyOS Pro</h2>
+                <h2 class="text-3xl @[400px]:text-4xl font-black tracking-tighter mb-2">FlyOS Pro</h2>
                 <p class="opacity-70 text-sm font-medium mb-8">Next-generation workspace for creators.</p>
-                <div class="flex gap-4">
+                <div class="flex flex-col @[400px]:flex-row gap-4">
                   <button class="px-8 py-2.5 bg-white text-accent rounded-2xl text-[11px] font-black shadow-xl hover:scale-105 active:scale-95 transition-all">检查更新</button>
                   <button class="px-8 py-2.5 bg-white/20 backdrop-blur-md text-white rounded-2xl text-[11px] font-black hover:bg-white/30 transition-all">支持中心</button>
                 </div>

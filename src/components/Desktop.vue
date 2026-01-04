@@ -1,5 +1,5 @@
 <template>
-  <div ref='desktopRef' class='flex flex-col gap-4 m-[20px] pb-[50px] w-full h-full flex-wrap content-start'>
+  <div ref='desktopRef' class='flex flex-row md:flex-col gap-4 m-[20px] pb-[50px] w-full h-full flex-wrap content-start'>
     <div v-for='app in apps'
          :title='app.name'
          :key='app.id'

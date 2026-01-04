@@ -1,100 +1,66 @@
 <template>
-  <div class='flex flex-col gap-4 tile-group select-none'>
-    <!-- ===== 分组标题 ===== -->
-    <div class='group-header px-1 flex justify-center items-center'>
-      <div class='flex-1 max-h-[30px]'>
-        <input
-          v-if='editing'
-          v-model='name'
-          ref='editInput'
-          class='bg-white/10 outline-none px-2 py-1 rounded border border-white/20 w-full text-lg text-white'
-          @blur='saveName'
-          @keydown.enter='saveName'
-        />
-        <div
-          v-else
-          class='text-lg opacity-90 hover:opacity-100 cursor-pointer py-1 text-white'
-          @click='startEdit'
-        >
-          {{ group.name || '未命名分组' }}
-        </div>
-      </div>
-      <div v-if='!editing' class='flex-col opacity-50 group-handler hidden cursor-move'>
-        <SquareMenuIcon />
+  <div class="tile-group flex flex-col items-start mr-8 min-w-[308px]">
+    <!-- ===== 分组标题 (可拖动的手柄) ===== -->
+    <div class="group-handler cursor-move">
+      <div class="group-title text-xl text-white font-light antialiased ml-1 mb-2">
+        {{ group.name }}
       </div>
     </div>
 
-    <!-- ===== 磁贴网格 (使用 CSS Grid 解决乱序) ===== -->
-    <!-- 我们设定 6 列，这样可以灵活分配 1x1, 2x2, 4x2 的比例 -->
+    <!-- ===== 磁贴网格 (磁贴的拖放区域) ===== -->
     <div
-      ref='groupRef'
-      class='grid grid-cols-3 auto-rows-[100px] gap-2 p-1 w-full'
-      style='grid-auto-flow: dense;'
+      ref="tileGridRef"
+      class="grid grid-cols-3 auto-rows-[100px] gap-2 p-1 w-full min-h-[100px]"
+      style="grid-auto-flow: dense;"
     >
       <Tile
-        v-for='appId in group.apps'
-        :key='appId'
-        :app='getAppById(appId)'
-        @click='startTask(getAppById(appId))'
-        @contextmenu.prevent='onContextMenu($event, getAppById(appId))'
+        v-for="appId in localApps"
+        :key="appId"
+        :app="getAppById(appId)"
+        @click="startTask(getAppById(appId)!)"
+        @contextmenu.prevent="$emit('select-tile', $event, getAppById(appId))"
       />
     </div>
-
   </div>
 </template>
 
-<script setup lang='ts'>
-import { ref, nextTick } from 'vue'
-import { useDraggable } from 'vue-draggable-plus'
-import Tile from './Tile.vue'
-import { startTask } from '../stores/taskStore'
-import { getAppById } from '../stores/appStore'
-import { SquareMenuIcon } from 'lucide-vue-next'
-
-const emits = defineEmits(['selectTile'])
-
-const onContextMenu = ($event, app) => {
-  emits('selectTile',$event, app)
-}
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useDraggable } from 'vue-draggable-plus';
+import Tile from './Tile.vue';
+import type { AppGroup } from '../stores/appStore';
+import { getAppById, updateGroupApps } from '../stores/appStore';
+import { startTask } from '../stores/taskStore';
 
 const props = defineProps<{
-  group: {
-    id: string
-    name: string
-    apps: string[]
-  }
-}>()
+  group: AppGroup;
+}>();
 
-const menuRef = ref()
-const groupRef = ref<HTMLElement>()
-const editing = ref(false)
-const name = ref(props.group.name)
-const editInput = ref<HTMLInputElement>()
+defineEmits(['select-tile']);
 
-function startEdit() {
-  editing.value = true
-  nextTick(() => editInput.value?.focus())
-}
+const tileGridRef = ref<HTMLElement | null>(null);
 
-function saveName() {
-  props.group.name = name.value
-  editing.value = false
-}
+// 为 vue-draggable-plus 创建一个本地的、可响应的应用列表副本
+const localApps = ref<string[]>([]);
 
-useDraggable(groupRef, props.group.apps, {
-  animation: 200,
-  ghostClass: 'opacity-20',
-  group: 'tiles'
-})
+// 同步 localApps 与 prop
+watch(() => props.group.apps, (newApps) => {
+  localApps.value = [...newApps];
+}, { immediate: true, deep: true });
+
+useDraggable(tileGridRef, localApps, {
+  animation: 150,
+  group: 'tiles', // 共享的组名，允许跨组拖动
+  onEnd: () => {
+    // onEnd 事件在列表内部或跨列表的拖动操作完成后触发。
+    // 我们用它来持久化列表的最终状态。
+    updateGroupApps(props.group.id, localApps.value);
+  },
+});
 </script>
 
 <style scoped>
 .tile-group {
-  /* 限制单组宽度，确保磁贴折行整齐 */
-  min-width: 330px;
-  max-width: 330px;
-}
-.group-header:hover .group-handler{
-  display: flex;
+  min-height: 200px; /* 保证有一定高度，方便拖入 */
 }
 </style>

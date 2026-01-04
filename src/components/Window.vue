@@ -9,7 +9,7 @@
     <div
       v-show="visible"
       ref="windowRef"
-      class="@container absolute shadow-2xl rounded-md flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur border border-gray-300/50 dark:border-gray-700/50 overflow-hidden"
+      class="absolute shadow-2xl rounded-md flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur border border-gray-300/50 dark:border-gray-700/50 overflow-hidden"
       :class="{ 'snap-animate': !isDragging && !isResizing }"
       :style="windowStyle"
       @mousedown="bringToFront"
