@@ -1,5 +1,6 @@
 <template>
-  <div ref='desktopRef' class='flex flex-row md:flex-col gap-4 m-[20px] pb-[50px] w-full h-full flex-wrap content-start'>
+  <div class="w-full flex h-full justify-center md:justify-start p-[20px] pb-[50px]">
+  <div ref='desktopRef' class='flex flex-row md:flex-col gap-4 flex-wrap content-start items-center'>
     <div v-for='app in apps'
          :title='app.name'
          :key='app.id'
@@ -13,6 +14,7 @@
     </div>
     <ContextMenu ref='menuRef' />
   </div>
+</div>
 
 </template>
 <script setup lang='ts'>

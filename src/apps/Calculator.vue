@@ -336,7 +336,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyboard))
 }
 
 .accent-key:hover {
-  background: #005fb8;
+  opacity: 0.9;
 }
 
 .key:active {

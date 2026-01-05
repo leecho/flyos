@@ -1,7 +1,7 @@
 <template>
   <div class='h-full w-full flex flex-col bg-transparent relative overflow-hidden'
        v-show='!userStore.user.locked'
-       @contextmenu.prevent='menuRef.open($event, desktopMenu)'>
+       @contextmenu.prevent='openContextMenu'>
 
     <!-- 桌面层级切换动画 -->
       <Transition name='desktop-fade'>
@@ -30,26 +30,33 @@ import { CheckIcon } from 'lucide-vue-next'
 
 const menuRef = ref()
 
-const desktopMenu = [
+const openContextMenu = ($event: any) => {
+  const desktopMenu = [
   { label: '刷新', action: () => console.log('刷新') },
   { label: '显示设置', action: () => console.log('显示设置') },
   { type: 'divider' },
   {
     label: '风格',
     children: [
-      { label: '浅色', action: () => themeStore.setTheme('light') },
-      { label: '深色', action: () => themeStore.setTheme('dark') },
-      { label: '系统', action: () => themeStore.setTheme('system') }
+      { label: '浅色', icon: themeStore.mode.value == 'light' ? CheckIcon : null, action: () => themeStore.setTheme('light') },
+      { label: '深色', icon: themeStore.mode.value == 'dark' ? CheckIcon : null, action: () => themeStore.setTheme('dark') },
+      { label: '系统', icon: themeStore.mode.value == 'system' ? CheckIcon : null, action: () => themeStore.setTheme('system') }
     ]
   },
   {
     label: '布局',
     children: [
-      { label: '图标', icon: themeStore.mode.value == 'desktop' ? CheckIcon : null, action: () => setMode('desktop') },
-      { label: '磁贴', icon: themeStore.mode.value == 'metro' ? CheckIcon : null, action: () => setMode('metro') }
+      { label: '图标', icon: desktopStore.mode == 'desktop' ? CheckIcon : null, action: () => setMode('desktop') },
+      { label: '磁贴', icon: desktopStore.mode == 'metro' ? CheckIcon : null, action: () => setMode('metro') }
     ]
   }
 ]
+$event?.stopPropagation()
+menuRef.value.open($event, desktopMenu)
+
+}
+
+
 </script>
 
 <style scoped>
