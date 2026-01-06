@@ -9,13 +9,13 @@
 </h3>
 
 <p align="center">
-  <a href="https://flyos-one.vercel.app/"><strong>Live Demo »</strong></a>
-  <a href="README_zh-CN.md"><strong>中文文档</strong></a>
+  <a href="https://flyos-one.vercel.app/"><strong>Live Demo »</strong></a> ·
+  <a href="README_zh-CN.md"><strong>中文文档 »</strong></a>
 </p>
 
 <p align="center">
-  <a href="DOCUMENTATION.md"><strong>Technical Documentation (English) »</strong></a> ·
-  <a href="DOCUMENTATION_zh-CN.md"><strong>技术文档 (中文) »</strong></a>
+  <a href="DOCUMENTATION.md"><strong>Technical Documentation »</strong></a> ·
+  <a href="DOCUMENTATION_zh-CN.md"><strong>技术文档 »</strong></a>
 </p>
 
 ---
