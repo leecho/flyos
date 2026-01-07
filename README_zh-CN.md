@@ -102,6 +102,23 @@ flyos/
 └── vite.config.ts
 ```
 
+## 截图
+
+<p align="center">
+  <img src="screenshots/image.png" alt="FlyOS Screenshot"/>
+</p>
+
+<p align="center">
+  <img src="screenshots/image2.png" alt="FlyOS Screenshot"/>
+</p>
+<p align="center">
+  <img src="screenshots/image3.png" alt="FlyOS Screenshot"/>
+</p>
+<p align="center">
+  <img src="screenshots/image4.png" alt="FlyOS Screenshot"/>
+</p>
+
+
 ## 贡献
 
 贡献使开源社区成为一个学习、启发和创造的绝佳场所。我们**非常感谢**您所做的任何贡献。
