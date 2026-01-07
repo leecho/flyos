@@ -65,7 +65,7 @@ export function openWindow(
 
 /* ---------------- 激活逻辑（核心） ---------------- */
 
-export function activeWindow(id?: string) {
+export function activeWindow(id: string) {
     const win = getWindow(id)
     if (!win || win.minimized) return
 
