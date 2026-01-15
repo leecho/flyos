@@ -6,6 +6,7 @@ export type AccentColor = "blue" | "purple" | "indigo" | "teal" | "emerald" | "r
 
 const mode = ref<ThemeMode>("system")
 const accentColor = ref<AccentColor>('blue')
+const wallpaper = ref<string>('src/assets/wallpaper.jpg')
 
 const accentColorMap: Record<AccentColor, string> = {
     blue: '#3b82f6',
@@ -55,12 +56,20 @@ function setAccentColor(newColor: AccentColor) {
     applyAccentColor()
 }
 
+function setWallpaper(newWallpaper: string) {
+    wallpaper.value = newWallpaper
+    localStorage.setItem("wallpaper", newWallpaper)
+}
+
 function initTheme() {
     const saved = localStorage.getItem("theme-mode") as ThemeMode
     if (saved) mode.value = saved
 
     const savedAccent = localStorage.getItem("accent-color") as AccentColor
     if (savedAccent) accentColor.value = savedAccent
+
+    const savedWallpaper = localStorage.getItem("wallpaper") as string
+    if (savedWallpaper) wallpaper.value = savedWallpaper
 
     applyTheme()
     applyAccentColor()
@@ -69,7 +78,9 @@ function initTheme() {
 export const themeStore = {
     mode,
     accentColor,
+    wallpaper,
     setTheme,
     initTheme,
     setAccentColor,
+    setWallpaper,
 }

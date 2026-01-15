@@ -5,7 +5,7 @@ export type DesktopMode = "metro" | "desktop"
 const savedStore = localStorage.getItem('desktop-store');
 const initialState = savedStore ? JSON.parse(savedStore) : {
   mode: 'metro',
-  iconSize: 'small'
+  iconSize: 'small',
 };
 
 export const desktopStore = reactive(initialState)
