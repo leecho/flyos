@@ -6,7 +6,8 @@ export type AccentColor = "blue" | "purple" | "indigo" | "teal" | "emerald" | "r
 
 const mode = ref<ThemeMode>("system")
 const accentColor = ref<AccentColor>('blue')
-const wallpaper = ref<string>('src/assets/wallpaper.jpg')
+import Wallpaper from '@/assets/wallpaper.jpg'
+const wallpaper = ref<string>(Wallpaper)
 
 const accentColorMap: Record<AccentColor, string> = {
     blue: '#3b82f6',
