@@ -553,6 +553,28 @@ export const apps: AppItem[] = [
             maximizable: true,
             component: 'Video'
         }
+    },
+    {
+        id: "stocks",
+        name: "股票",
+        icon: {
+            type: 'svg',
+            content: '<line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>',
+            bgColor: "bg-gradient-to-br from-green-500 to-teal-600"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-green-700",
+            style: "rounded-lg text-white",
+            size: "small",
+            component: "Stocks"
+        },
+        window: {
+            height: 600,
+            width: 900,
+            maximizable: true,
+            component: 'Stocks'
+        }
     }
 ] as AppItem[];
 
@@ -578,6 +600,6 @@ export const groups: AppGroup[] = [
     {
         id: "utility",
         name: "实用工具",
-        apps: ["calculator", "calendar", "clock", "maps", "recorder"]
+        apps: ["calculator", "calendar", "clock", "maps", "recorder","stocks"]
     }
 ];
