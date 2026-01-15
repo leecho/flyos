@@ -6,5 +6,5 @@
 </template>
 
 <script setup lang="ts">
-import wallpaper from '../assets/wallpaper.jpg'
+import wallpaper from '@/assets/wallpaper.jpg'
 </script>
