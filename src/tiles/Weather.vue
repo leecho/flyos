@@ -1,196 +1,188 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, onUnmounted } from 'vue';
-import { Sun, Cloud, CloudRain, CloudLightning, Snowflake, CloudFog, MapPin, Wind, Droplets } from 'lucide-vue-next';
+import { ref, onMounted, computed } from 'vue'
+import { 
+  WifiOff, Wind, Droplets, Sun, CloudSun, Cloud, Haze, 
+  CloudRain, Snowflake, CloudLightning, HelpCircle 
+} from 'lucide-vue-next';
 
-interface Props {
-  city?: string;
-}
+// --- STATE ---
+const weather = ref<any>(null)
+const loading = ref(true)
+const error = ref<string | null>(null)
 
-const props = withDefaults(defineProps<Props>(), {
-  city: '上海'
-});
-
-const loading = ref(true);
-const error = ref(false);
-const weatherData = ref<any>(null);
-const cityName = ref(props.city);
-
-// LiveTile 轮播状态
-const currentPageIndex = ref(0);
-let timer: any = null;
-
-async function fetchWeather() {
-  try {
-    loading.value = true;
-    // 使用 Open-Meteo API
-    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`);
-    const data = await res.json();
-    weatherData.value = data;
-    error.value = false;
-  } catch (e) {
-    error.value = true;
-  } finally {
-    loading.value = false;
-  }
-}
-
-function startRotation() {
-  if (timer) clearInterval(timer);
-  timer = setInterval(() => {
-    currentPageIndex.value = (currentPageIndex.value + 1) % 2;
-  }, 5000);
-}
-
+// --- API & DATA FETCHING ---
 onMounted(() => {
-  fetchWeather();
-  startRotation();
-});
+  fetchWeatherData()
+})
 
-onUnmounted(() => clearInterval(timer));
+function fetchWeatherData() {
+  loading.value = true
+  error.value = null
 
-// --- 渲染辅助 ---
-function getWeatherIcon(code: number) {
-  if (code <= 1) return Sun;
-  if (code <= 3) return Cloud;
-  if (code <= 48) return CloudFog;
-  if (code <= 67) return CloudRain;
-  if (code <= 77) return Snowflake;
-  if (code <= 99) return CloudLightning;
-  return Cloud;
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords
+      try {
+        const [weatherRes, locationRes] = await Promise.all([
+          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`),
+          fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
+        ])
+
+        if (!weatherRes.ok || !locationRes.ok) {
+          throw new Error('Failed to fetch data')
+        }
+
+        const weatherData = await weatherRes.json()
+        const locationData = await locationRes.json()
+
+        if (weatherData.error) {
+          throw new Error(weatherData.reason)
+        }
+
+        weather.value = {
+          city: locationData.city || 'Current Location',
+          country: locationData.countryName,
+          temp: Math.round(weatherData.current.temperature_2m),
+          weatherCode: weatherData.current.weather_code,
+          windSpeed: Math.round(weatherData.current.wind_speed_10m),
+          humidity: weatherData.current.relative_humidity_2m,
+          tempMax: Math.round(weatherData.daily.temperature_2m_max[0]),
+          tempMin: Math.round(weatherData.daily.temperature_2m_min[0]),
+        }
+      } catch (e: any) {
+        error.value = '无法加载天气'
+        console.error(e)
+      } finally {
+        loading.value = false
+      }
+    },
+    (err) => {
+      error.value = '请允许位置访问'
+      loading.value = false
+    }
+  )
 }
 
-function getWeatherText(code: number) {
-  const map: Record<number, string> = {
-    0: '晴朗', 1: '晴间多云', 2: '多云', 3: '阴天',
-    45: '雾', 48: '雾', 51: '毛毛雨', 61: '小雨',
-    71: '小雪', 80: '阵雨', 95: '雷阵雨'
-  };
-  return map[code] || '多云';
-}
+// --- COMPUTED & HELPERS ---
+const weatherInterpretation = computed(() => {
+  if (!weather.value) return { text: '', icon: HelpCircle }
+  const code = weather.value.weatherCode;
+  let text = '未知';
+  let icon: any = HelpCircle;
 
-const currentTemp = computed(() => Math.round(weatherData.value?.current_weather?.temperature || 0));
-const weatherCode = computed(() => weatherData.value?.current_weather?.weathercode || 0);
+  switch (code) {
+    case 0: text = '晴天'; icon = Sun; break;
+    case 1: text = '大部晴朗'; icon = CloudSun; break;
+    case 2: text = '局部多云'; icon = Cloud; break;
+    case 3: text = '阴天'; icon = Cloud; break;
+    case 45: case 48: text = '雾'; icon = Haze; break;
+    default:
+        if (code >= 51 && code <= 67) { text = '雨'; icon = CloudRain; }
+        else if (code >= 71 && code <= 86) { text = '雪'; icon = Snowflake; }
+        else if (code >= 95) { text = '雷暴'; icon = CloudLightning; }
+        break;
+  }
+   return { text, icon };
+})
 
-const forecasts = computed(() => {
-  if (!weatherData.value?.daily) return [];
-  return weatherData.value.daily.time.slice(1, 5).map((time: string, i: number) => ({
-    date: new Date(time).toLocaleDateString('zh-CN', { weekday: 'short' }),
-    max: Math.round(weatherData.value.daily.temperature_2m_max[i+1]),
-    min: Math.round(weatherData.value.daily.temperature_2m_min[i+1]),
-    code: weatherData.value.daily.weathercode[i+1]
-  }));
+const backgroundClass = computed(() => {
+  if (!weather.value) return 'weather-bg-cloudy' // Default background
+  const code = weather.value.weatherCode
+  return (code >= 0 && code <= 1) ? 'weather-bg-sunny' : 'weather-bg-cloudy'
 });
+
 </script>
 
 <template>
-  <!-- 容器使用 container-type 以便子元素根据其尺寸调整布局 -->
-  <div
-    class="weather-tile-container relative w-full h-full overflow-hidden select-none text-white transition-all duration-700"
-    :class="[weatherCode === 0 ? 'weather-bg-sunny' : 'weather-bg-cloudy']"
-  >
-    <div v-if="loading" class="absolute inset-0 flex items-center justify-center">
-      <div class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+  <div class="h-full w-full p-4 flex flex-col text-white transition-colors duration-500"
+       :class="backgroundClass">
+    
+    <!-- Loading State -->
+    <div v-if="loading" class="m-auto flex flex-col items-center justify-center text-center">
+      <p class="text-sm">正在加载天气...</p>
     </div>
 
-    <div v-else-if="weatherData" class="weather-content h-full w-full p-3">
+    <!-- Error State -->
+    <div v-else-if="error" class="m-auto flex flex-col items-center justify-center text-center">
+        <WifiOff class="mb-2 opacity-70" :size="32"/>
+        <p class="font-semibold">{{ error }}</p>
+    </div>
 
-      <!-- 1. 极致精简布局 (针对 small 尺寸) -->
-      <div class="view-small hidden flex-col items-center justify-center h-full gap-1">
-        <component :is="getWeatherIcon(weatherCode)" :size="20" />
-        <span class="text-sm font-bold">{{ currentTemp }}°</span>
+    <!-- Content: Three distinct views for different sizes -->
+    <template v-else-if="weather">
+      <!-- View for 1x1 tile (Small) -->
+      <div class="view-small h-full flex-col items-center justify-center text-center">
+          <component :is="weatherInterpretation.icon" :size="64" class="opacity-90" />
+          <p class="text-5xl font-light">{{ weather.temp }}°</p>
+          <p class="text-sm font-semibold mt-1 leading-tight">{{ weather.city }}</p>
       </div>
 
-      <!-- 2. 标准磁贴布局 (针对 medium 尺寸) -->
-      <div class="view-medium hidden h-full flex-col justify-between">
-        <Transition name="tile-flip" mode="out-in">
-          <div v-if="currentPageIndex === 0" key="a" class="flex flex-col h-full justify-between">
-            <div class="flex justify-between items-start">
-              <component :is="getWeatherIcon(weatherCode)" :size="28" />
-              <div class="text-right">
-                <div class="text-xl font-medium leading-none">{{ currentTemp }}°</div>
-                <div class="text-[9px] opacity-70">{{ getWeatherText(weatherCode) }}</div>
-              </div>
+      <!-- View for 2x1 tile (Medium) -->
+      <div class="view-medium h-full w-full flex-col justify-between">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="font-bold text-lg leading-tight">{{ weather.city }}</p>
+                <p class="text-sm opacity-80">{{ weatherInterpretation.text }}</p>
             </div>
-            <div class="text-[10px] flex items-center gap-1 opacity-90"><MapPin :size="10"/>{{ cityName }}</div>
-          </div>
-          <div v-else key="b" class="flex flex-col h-full justify-center gap-1.5">
-            <div class="flex items-center gap-2 text-[10px]"><Wind :size="12" class="opacity-60"/>风速: {{ weatherData.current_weather.windspeed }}km/h</div>
-            <div class="flex items-center gap-2 text-[10px]"><Droplets :size="12" class="opacity-60"/>湿度: 65%</div>
-          </div>
-        </Transition>
-      </div>
-
-      <!-- 3. 看板布局 (针对 large 尺寸) -->
-      <div class="view-large hidden flex-col h-full">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <div class="text-sm font-bold flex items-center gap-1"><MapPin :size="12"/>{{ cityName }}</div>
-            <div class="text-[10px] opacity-60">今日天气</div>
-          </div>
-          <div class="text-right">
-            <div class="text-3xl font-thin leading-none">{{ currentTemp }}°</div>
-            <div class="text-[10px] uppercase tracking-tighter">{{ getWeatherText(weatherCode) }}</div>
-          </div>
+            <component :is="weatherInterpretation.icon" :size="28" class="text-white" />
         </div>
-
-        <div class="grid grid-cols-2 gap-2 mb-4">
-          <div class="bg-white/10 rounded p-1.5 flex items-center gap-2">
-            <Wind :size="14" />
-            <span class="text-[10px]">{{ weatherData.current_weather.windspeed }} km/h</span>
-          </div>
-          <div class="bg-white/10 rounded p-1.5 flex items-center gap-2">
-            <Droplets :size="14" />
-            <span class="text-[10px]">65%</span>
-          </div>
-        </div>
-
-        <div class="mt-auto pt-2 border-t border-white/10 flex justify-between">
-          <div v-for="day in forecasts" :key="day.date" class="flex flex-col items-center">
-            <span class="text-[9px] opacity-50 mb-1">{{ day.date }}</span>
-            <component :is="getWeatherIcon(day.code)" :size="16" />
-            <span class="text-[10px] font-bold mt-1">{{ day.max }}°</span>
-          </div>
+        <div class="flex justify-between items-end">
+            <p class="text-sm opacity-80">H:{{ weather.tempMax }}° L:{{ weather.tempMin }}°</p>
+            <p class="text-5xl font-thin leading-none">{{ weather.temp }}°</p>
         </div>
       </div>
 
-    </div>
+      <!-- View for 2x2 tile (Large) -->
+      <div class="view-large h-full w-full flex-col justify-between">
+           <!-- Top Part -->
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="font-bold text-2xl leading-tight">{{ weather.city }}</p>
+                    <p class="text-lg opacity-80">{{ weatherInterpretation.text }}</p>
+                </div>
+                <div class="flex justify-center items-center">
+                <component :is="weatherInterpretation.icon" :size="48" class="opacity-90" />
+            </div>
+                
+            </div>
+
+            <!-- Middle Part -->
+            <div class="flex justify-center items-center">
+              <p class="text-7xl font-thin">{{ weather.temp }}°</p>
+            </div>
+
+            <!-- Bottom Part -->
+            <div class="flex justify-between items-end text-sm w-full">
+                
+                <div class="flex items-center gap-2">
+                    <Droplets :size="16" class="opacity-80" />
+                    <span>{{ weather.humidity }} %</span>
+                </div>
+                <div class="text-right">
+                    <p>H: {{ weather.tempMax }}° L: {{ weather.tempMin }}°</p>
+                </div>
+            </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <style scoped>
-/* 使用容器查询 API 自动切换显示状态 */
-.weather-tile-container {
-  container-type: size;
-}
-
-/* 默认背景 */
 .weather-bg-sunny { background: linear-gradient(135deg, #60a5fa, #2563eb); }
 .weather-bg-cloudy { background: linear-gradient(135deg, #64748b, #334155); }
 
-/* --- 尺寸适配逻辑 --- */
-
-/* 当宽度和高度都较小时 (1x1) */
-@container (max-width: 120px) {
-  .view-small { display: flex; }
-  .view-medium, .view-large { display: none !important; }
+/* Hide all views by default */
+.view-small, .view-medium, .view-large {
+    display: none;
 }
 
-/* 当宽度适中，高度较小时 (2x1 或 2x2) */
-@container (min-width: 121px) and (max-height: 180px) {
-  .view-medium { display: flex; }
-  .view-small, .view-large { display: none !important; }
+/* 
+  Show the correct view based on the class provided by the parent Tile.vue,
+  which is determined by the tile's `size` property in appStore.ts.
+*/
+.tile-small .view-small,
+.tile-medium .view-medium,
+.tile-large .view-large {
+    display: flex;
 }
-
-/* 当宽度和高度都较大时 (2x2 以上) */
-@container (min-width: 181px) and (min-height: 181px) {
-  .view-large { display: flex; }
-  .view-small, .view-medium { display: none !important; }
-}
-
-/* 动画效果 */
-.tile-flip-enter-active, .tile-flip-leave-active {
-  transition: all 0.5s ease;
-}
-.tile-flip-enter-from { opacity: 0; transform: translateY(10px); }
-.tile-flip-leave-to { opacity: 0; transform: translateY(-10px); }
 </style>

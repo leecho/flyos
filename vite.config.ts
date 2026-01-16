@@ -11,6 +11,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src')
     }
   },
+  server: {
+    proxy: {
+      '/api/news': {
+        target: 'https://newsapi.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/news/, '/v2/top-headlines'),
+      },
+    },
+  },
   build: {
     target: 'es2022',
     outDir: 'dist',

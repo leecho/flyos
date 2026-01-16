@@ -1,175 +1,409 @@
+<script setup lang="ts">
+import { ref, onMounted, watch, computed, shallowRef } from 'vue'
+import { 
+  Plus, Trash2, MapPin, X, Search, Wind, Droplets, 
+  Sun, Moon, CloudSun, CloudMoon, Cloud, Cloudy, Haze, CloudRain, 
+  CloudDrizzle, CloudSnow, Snowflake, CloudLightning, HelpCircle
+} from 'lucide-vue-next'
+
+// --- TYPES ---
+interface City {
+  id: number
+  name: string
+  region: string
+  country: string
+  latitude: number
+  longitude: number
+  isCurrentLocation?: boolean
+}
+
+interface WeatherData {
+  current: {
+    temperature: number
+    weatherCode: number
+    windSpeed: number,
+    humidity: number,
+    isDay: number,
+  }
+  daily: {
+    time: string[]
+    weatherCode: number[]
+    temperatureMax: number[]
+    temperatureMin: number[]
+  },
+  hourly: {
+    time: string[],
+    temperature: number[],
+    weatherCode: number[],
+  }
+}
+
+// --- STATE ---
+const cities = ref<City[]>([])
+const activeCity = ref<City | null>(null)
+const weatherData = ref<WeatherData | null>(null)
+const loading = ref(true)
+const error = ref<string | null>(null)
+
+const showAddCityModal = ref(false)
+const newCityName = ref('')
+const searchResults = ref<any[]>([])
+const isSearching = ref(false)
+
+// --- LIFECYCLE ---
+onMounted(() => {
+  loadCitiesFromLocalStorage()
+  if (cities.value.length === 0) {
+    getUserLocation()
+  } else {
+    setActiveCity(cities.value[0])
+  }
+})
+
+// --- WATCHERS ---
+watch(activeCity, (newCity) => {
+  if (newCity) {
+    fetchWeatherData(newCity)
+  }
+})
+
+// --- API & DATA HANDLING ---
+function getUserLocation() {
+  loading.value = true
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords
+      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
+      const data = await res.json()
+      const currentLocation: City = {
+        id: Date.now(),
+        name: data.city || 'Current Location',
+        region: data.principalSubdivision,
+        country: data.countryName,
+        latitude,
+        longitude,
+        isCurrentLocation: true
+      }
+      cities.value.unshift(currentLocation)
+      setActiveCity(currentLocation)
+      saveCitiesToLocalStorage()
+    },
+    (err) => {
+      error.value = "无法获取您的位置。请允许位置访问权限或手动添加城市。"
+      loading.value = false
+    }
+  )
+}
+
+async function fetchWeatherData(city: City) {
+  loading.value = true
+  error.value = null
+  try {
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${city.latitude}&longitude=${city.longitude}&current=temperature_2m,relative_humidity_2m,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`)
+    const data = await res.json()
+    if (data.error) {
+      throw new Error(data.reason)
+    }
+    weatherData.value = {
+      current: {
+        temperature: Math.round(data.current.temperature_2m),
+        weatherCode: data.current.weather_code,
+        windSpeed: Math.round(data.current.wind_speed_10m),
+        humidity: data.current.relative_humidity_2m,
+        isDay: data.current.is_day,
+      },
+      daily: {
+        time: data.daily.time,
+        weatherCode: data.daily.weather_code,
+        temperatureMax: data.daily.temperature_2m_max.map(Math.round),
+        temperatureMin: data.daily.temperature_2m_min.map(Math.round),
+      },
+      hourly: {
+        time: data.hourly.time.slice(0, 24).map((t: string) => new Date(t).getHours() + ':00'),
+        temperature: data.hourly.temperature_2m.slice(0, 24).map(Math.round),
+        weatherCode: data.hourly.weather_code.slice(0, 24),
+      }
+    }
+  } catch (e: any) {
+    error.value = `无法加载天气数据: ${e.message}`
+    weatherData.value = null
+  } finally {
+    loading.value = false
+  }
+}
+
+async function searchCity() {
+  if (newCityName.value.trim().length < 2) {
+    searchResults.value = []
+    return
+  }
+  isSearching.value = true
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(newCityName.value)}&count=5&language=en&format=json`)
+    const data = await res.json()
+    searchResults.value = data.results || []
+  } catch (e) {
+    console.error("城市搜索失败:", e)
+  } finally {
+    isSearching.value = false
+  }
+}
+
+// --- CITY MANAGEMENT ---
+function addCity(cityData: any) {
+  const newCity: City = {
+    id: cityData.id,
+    name: cityData.name,
+    region: cityData.admin1 || '',
+    country: cityData.country,
+    latitude: cityData.latitude,
+    longitude: cityData.longitude,
+  }
+  if (!cities.value.some(c => c.id === newCity.id)) {
+    cities.value.push(newCity)
+    saveCitiesToLocalStorage()
+    setActiveCity(newCity)
+  }
+  closeModal()
+}
+
+function removeCity(cityToRemove: City) {
+  cities.value = cities.value.filter(c => c.id !== cityToRemove.id)
+  saveCitiesToLocalStorage()
+  if (activeCity.value?.id === cityToRemove.id) {
+    setActiveCity(cities.value.length > 0 ? cities.value[0] : null)
+    if (cities.value.length === 0) {
+      getUserLocation()
+    }
+  }
+}
+
+function setActiveCity(city: City | null) {
+  if (city) {
+    activeCity.value = city
+  }
+}
+
+function closeModal() {
+  showAddCityModal.value = false
+  newCityName.value = ''
+  searchResults.value = []
+}
+
+// --- LOCAL STORAGE ---
+function saveCitiesToLocalStorage() {
+  localStorage.setItem('weather_cities', JSON.stringify(cities.value))
+}
+
+function loadCitiesFromLocalStorage() {
+  const savedCities = localStorage.getItem('weather_cities')
+  if (savedCities) {
+    cities.value = JSON.parse(savedCities)
+  }
+}
+
+// --- COMPUTED & HELPERS ---
+function getWeatherIcon(code: number, isDay?: number | null) {
+    const day = isDay === null || isDay === undefined ? true : isDay === 1;
+    switch (code) {
+        case 0: return day ? Sun : Moon;
+        case 1: return day ? CloudSun : CloudMoon;
+        case 2: return day ? Cloudy : Cloud;
+        case 3: return Cloud;
+        case 45: case 48: return Haze;
+        case 51: case 53: case 55: return CloudDrizzle;
+        case 56: case 57: return CloudDrizzle; // No specific icon for freezing drizzle
+        case 61: case 63: case 65: return CloudRain;
+        case 66: case 67: return CloudRain; // No specific icon for freezing rain
+        case 71: case 73: case 75: return Snowflake;
+        case 77: return CloudSnow;
+        case 80: case 81: case 82: return CloudRain; // Showers
+        case 85: case 86: return CloudSnow; // Snow showers
+        case 95: case 96: case 99: return CloudLightning;
+        default: return HelpCircle;
+    }
+}
+
+const weatherInterpretation = computed(() => {
+  if (!weatherData.value) return { text: '', icon: HelpCircle }
+  const { weatherCode, isDay } = weatherData.value.current;
+  let text = '未知';
+   switch (weatherCode) {
+        case 0: text = '晴天'; break;
+        case 1: text = '大部晴朗'; break;
+        case 2: text = '局部多云'; break;
+        case 3: text = '阴天'; break;
+        case 45: case 48: text = '雾'; break;
+        case 51: case 53: case 55: text = '毛毛雨'; break;
+        case 56: case 57: text = '冻毛毛雨'; break;
+        case 61: case 63: case 65: text = '雨'; break;
+        case 66: case 67: text = '冻雨'; break;
+        case 71: case 73: case 75: text = '雪'; break;
+        case 77: text = '米雪'; break;
+        case 80: case 81: case 82: text = '阵雨'; break;
+        case 85: case 86: text = '阵雪'; break;
+        case 95: text = '雷暴'; break;
+        case 96: case 99: text = '雷暴伴有冰雹'; break;
+    }
+    return { text, icon: getWeatherIcon(weatherCode, isDay) };
+})
+
+const backgroundClass = computed(() => {
+  if (!weatherData.value) return 'bg-gray-400';
+  const code = weatherData.value.current.weatherCode;
+  const isDay = weatherData.value.current.isDay;
+  
+  if (isDay) {
+    if ([0, 1].includes(code)) return 'bg-gradient-to-br from-sky-400 to-blue-600'; // Sunny
+    if ([2, 3].includes(code)) return 'bg-gradient-to-br from-slate-400 to-gray-600'; // Cloudy
+    if (code >= 51 && code <= 67) return 'bg-gradient-to-br from-slate-500 to-gray-700'; // Rain
+    if (code >= 71) return 'bg-gradient-to-br from-slate-300 to-gray-500'; // Snow/Thunder
+  } else {
+    if ([0, 1].includes(code)) return 'bg-gradient-to-br from-gray-800 to-blue-900'; // Clear Night
+    return 'bg-gradient-to-br from-gray-800 to-gray-900'; // Cloudy/Rainy Night
+  }
+  return 'bg-gradient-to-br from-slate-400 to-gray-600';
+});
+
+</script>
+
 <template>
-  <div class="weather-app h-full flex flex-col overflow-hidden relative" :class="themeClass">
-    <!-- 动态背景装饰 -->
-    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-      <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/20 rounded-full blur-3xl animate-pulse"></div>
-      <div class="absolute top-1/2 -left-20 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+  <div class="weather-app h-full w-full flex text-white overflow-hidden transition-colors duration-500" :class="backgroundClass">
+    
+    <!-- City List Sidebar -->
+    <div class="w-64 bg-black/20 backdrop-blur-md p-4 flex flex-col h-full border-r border-white/10 flex-shrink-0">
+      <button @click="showAddCityModal = true" class="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 rounded-lg py-2 mb-4 transition-colors">
+        <Plus :size="16" /> 添加城市
+      </button>
+      <div class="flex-1 overflow-y-auto -mr-2 pr-2">
+        <div v-for="city in cities" :key="city.id" 
+             @click="setActiveCity(city)"
+             class="p-3 rounded-lg cursor-pointer mb-2 transition-colors flex justify-between items-center"
+             :class="activeCity?.id === city.id ? 'bg-white/20' : 'hover:bg-white/10'">
+          <div>
+            <p class="font-semibold flex items-center gap-1">
+              <MapPin v-if="city.isCurrentLocation" :size="14" />
+              {{ city.name }}
+            </p>
+            <p class="text-xs opacity-70">{{ city.country }}</p>
+          </div>
+          <button @click.stop="removeCity(city)" class="p-1 rounded-full hover:bg-red-500/50 opacity-50 hover:opacity-100">
+             <Trash2 :size="16" />
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- 顶部操作栏 -->
-    <header class="relative z-10 flex items-center justify-between px-6 py-4">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-white/20 backdrop-blur-md rounded-xl shadow-inner">
-          <span class="text-2xl">{{ currentWeather.icon }}</span>
-        </div>
-        <div>
-          <h2 class="text-lg font-bold flex items-center gap-1">
-            {{ city }}
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </h2>
-          <p class="text-xs opacity-70">最后更新: 刚刚</p>
-        </div>
+    <!-- Main Weather Display -->
+    <div class="flex-1 overflow-y-auto">
+      <div v-if="loading" class="flex items-center justify-center h-full">
+        <p>正在加载天气数据...</p>
       </div>
-      <div class="flex gap-2">
-        <button class="p-2 rounded-full hover:bg-white/20 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M22 2v20"/></svg>
-        </button>
+      <div v-else-if="error" class="flex items-center justify-center h-full p-4 text-center">
+        <p class="bg-red-500/50 p-4 rounded-lg">{{ error }}</p>
       </div>
-    </header>
-
-    <!-- 主体滚动区域 -->
-    <main class="relative z-10 flex-1 overflow-y-auto custom-scrollbar px-6 pb-8">
-      <!-- 当前天气大看板 -->
-      <section class="py-8 flex flex-col items-center text-center">
-        <div class="text-7xl font-light tracking-tighter mb-2 relative">
-          {{ currentWeather.temp }}<span class="text-4xl absolute top-2 -right-6">°</span>
-        </div>
-        <p class="text-xl font-medium opacity-90">{{ currentWeather.description }}</p>
-        <div class="mt-4 flex gap-4 text-sm font-medium bg-white/10 px-4 py-2 rounded-full backdrop-blur-md">
-          <span>最高 {{ currentWeather.high }}°</span>
-          <span class="opacity-40">|</span>
-          <span>最低 {{ currentWeather.low }}°</span>
-        </div>
-      </section>
-
-      <!-- 逐小时预报 -->
-      <section class="mb-8">
-        <h3 class="text-sm font-bold opacity-60 mb-4 px-1 uppercase tracking-wider">24小时预报</h3>
-        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-          <div
-            v-for="(hour, index) in hourlyForecast"
-            :key="index"
-            class="flex-shrink-0 flex flex-col items-center gap-3 px-4 py-4 rounded-2xl bg-white/5 border border-white/10 min-w-[80px]"
-          >
-            <span class="text-xs opacity-60">{{ hour.time }}</span>
-            <span class="text-xl">{{ hour.icon }}</span>
-            <span class="font-bold">{{ hour.temp }}°</span>
+      <div v-else-if="activeCity && weatherData" class="p-6 lg:p-8">
+        <!-- Current Weather -->
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold">{{ activeCity.name }}</h2>
+          <div class="flex justify-center items-end gap-4">
+            <p class="text-8xl font-thin tracking-tighter">{{ weatherData.current.temperature }}°</p>
+            <p class="text-2xl opacity-80 pb-2">{{ weatherInterpretation.text }}</p>
           </div>
         </div>
-      </section>
 
-      <!-- 详情格点 -->
-      <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div v-for="stat in stats" :key="stat.label" class="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 flex flex-col gap-2">
-          <div class="flex items-center gap-2 opacity-60">
-            <component :is="stat.icon" class="w-4 h-4" />
-            <span class="text-xs font-bold uppercase">{{ stat.label }}</span>
-          </div>
-          <div class="text-xl font-bold">{{ stat.value }}</div>
-          <div class="text-[10px] opacity-50">{{ stat.desc }}</div>
-        </div>
-      </section>
-
-      <!-- 未来五天简报 -->
-      <section class="mt-8 p-5 rounded-3xl bg-black/5 dark:bg-white/5 border border-white/5">
-        <h3 class="text-sm font-bold opacity-60 mb-4 uppercase tracking-wider">未来 5 天预报</h3>
-        <div class="space-y-4">
-          <div v-for="day in dailyForecast" :key="day.date" class="flex items-center justify-between">
-            <span class="w-20 font-medium">{{ day.date }}</span>
-            <span class="text-xl">{{ day.icon }}</span>
-            <div class="flex items-center gap-3 w-32 justify-end">
-              <span class="opacity-40 text-sm">{{ day.low }}°</span>
-              <div class="flex-1 h-1.5 bg-white/10 rounded-full relative overflow-hidden">
-                <div class="absolute h-full bg-gradient-to-r from-blue-400 to-yellow-400 rounded-full" :style="{left: '20%', width: '60%'}"></div>
+        <!-- Hourly Forecast -->
+        <div class="mb-8 bg-black/20 backdrop-blur-md rounded-xl p-4">
+            <h3 class="font-semibold text-sm mb-3 opacity-80 border-b border-white/10 pb-2">每小时预报</h3>
+            <div class="flex overflow-x-auto -mx-4 px-4 pb-1">
+              <div v-for="(temp, i) in weatherData.hourly.temperature" :key="i" class="flex flex-col items-center flex-shrink-0 w-16 text-center">
+                <p class="text-xs opacity-80">{{ weatherData.hourly.time[i] }}</p>
+                <component :is="getWeatherIcon(weatherData.hourly.weatherCode[i])" class="w-8 h-8 my-1 text-white" />
+                <p class="font-semibold">{{ temp }}°</p>
               </div>
-              <span class="font-bold text-sm">{{ day.high }}°</span>
+            </div>
+        </div>
+        
+        <!-- 7-Day Forecast & Details Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="bg-black/20 backdrop-blur-md rounded-xl p-4">
+              <h3 class="font-semibold text-sm mb-3 opacity-80 border-b border-white/10 pb-2">7天预报</h3>
+              <div class="space-y-2">
+                <div v-for="i in 7" :key="i" class="flex items-center justify-between text-sm py-1">
+                  <p class="w-2/5">{{ new Date(weatherData.daily.time[i-1]).toLocaleDateString('zh-CN', { weekday: 'long' }) }}</p>
+                  <div class="w-1/5 flex justify-center">
+                    <component :is="getWeatherIcon(weatherData.daily.weatherCode[i-1])" class="w-7 h-7 text-white" />
+                  </div>
+                  <div class="w-2/5 text-right">
+                    <span class="font-semibold mr-2">{{ weatherData.daily.temperatureMax[i-1] }}°</span>
+                    <span class="opacity-60">{{ weatherData.daily.temperatureMin[i-1] }}°</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-black/20 backdrop-blur-md rounded-xl p-4 space-y-5">
+                <div class="flex items-center gap-4">
+                  <Wind :size="20" class="text-white/70" />
+                  <div>
+                    <p class="text-sm opacity-80">风速</p>
+                    <p class="text-lg font-semibold">{{ weatherData.current.windSpeed }} km/h</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <Droplets :size="20" class="text-white/70" />
+                  <div>
+                    <p class="text-sm opacity-80">湿度</p>
+                    <p class="text-lg font-semibold">{{ weatherData.current.humidity }} %</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <component :is="weatherData.current.isDay ? Sun : Moon" :size="20" class="text-white/70"/>
+                  <div>
+                    <p class="text-sm opacity-80">今日</p>
+                    <p class="text-lg font-semibold">最高: {{ weatherData.daily.temperatureMax[0] }}° / 最低: {{ weatherData.daily.temperatureMin[0] }}°</p>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <!-- Add City Modal -->
+    <transition name="fade">
+        <div v-if="showAddCityModal" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10" @click="closeModal">
+          <div class="bg-gray-800 rounded-xl shadow-lg w-full max-w-md m-4" @click.stop>
+            <div class="p-4 border-b border-white/10">
+              <h2 class="text-lg font-semibold">添加城市</h2>
+            </div>
+            <div class="p-4">
+              <div class="relative">
+                <input type="text" v-model="newCityName" @input="searchCity" placeholder="搜索城市，例如：北京" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <Search :size="18" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"/>
+              </div>
+            </div>
+            <div class="px-4 pb-4 h-64 overflow-y-auto">
+              <div v-if="isSearching" class="text-center p-4">正在搜索...</div>
+              <div v-else-if="searchResults.length > 0" class="space-y-2">
+                <div v-for="result in searchResults" :key="result.id" @click="addCity(result)" class="p-3 rounded-lg hover:bg-white/10 cursor-pointer">
+                  <p class="font-semibold">{{ result.name }}</p>
+                  <p class="text-sm text-gray-400">{{ result.admin1 ? `${result.admin1}, ` : '' }}{{ result.country }}</p>
+                </div>
+              </div>
+               <div v-else-if="newCityName" class="text-center p-4 text-gray-400">无结果</div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
+    </transition>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-
-const city = ref('上海市')
-
-const currentWeather = ref({
-  temp: 22,
-  description: '多云转晴',
-  icon: '⛅',
-  high: 26,
-  low: 18,
-  type: 'cloudy' // 用于背景切换
-})
-
-const themeClass = computed(() => {
-  const themes = {
-    sunny: 'bg-gradient-to-br from-sky-400 to-blue-600 text-white',
-    cloudy: 'bg-gradient-to-br from-slate-400 to-zinc-600 text-white',
-    rainy: 'bg-gradient-to-br from-indigo-700 to-slate-900 text-white',
-    night: 'bg-gradient-to-br from-gray-900 to-black text-white'
-  }
-  return themes[currentWeather.value.type] || themes.sunny
-})
-
-const hourlyForecast = [
-  { time: '现在', temp: 22, icon: '⛅' },
-  { time: '14:00', temp: 24, icon: '☀️' },
-  { time: '15:00', temp: 25, icon: '☀️' },
-  { time: '16:00', temp: 25, icon: '☀️' },
-  { time: '17:00', temp: 23, icon: '🌤️' },
-  { time: '18:00', temp: 21, icon: '🌥️' },
-  { time: '19:00', temp: 19, icon: '🌙' },
-  { time: '20:00', temp: 18, icon: '🌙' },
-]
-
-const dailyForecast = [
-  { date: '明天', icon: '☀️', high: 28, low: 19 },
-  { date: '周四', icon: '⛅', high: 26, low: 18 },
-  { date: '周五', icon: '🌧️', high: 22, low: 16 },
-  { date: '周六', icon: '⛈️', high: 20, low: 15 },
-  { date: '周日', icon: '🌤️', high: 24, low: 17 },
-]
-
-const stats = [
-  { label: '紫外线', value: '4 中等', desc: '建议涂抹防晒霜', icon: 'SunIcon' },
-  { label: '湿度', value: '62%', desc: '露点目前为 16°', icon: 'DropletsIcon' },
-  { label: '能见度', value: '15 km', desc: '视线非常清晰', icon: 'EyeIcon' },
-  { label: '气压', value: '1012 hPa', desc: '正在缓慢下降', icon: 'GaugeIcon' }
-]
-
-// 模拟图标组件 (在实际项目中可使用 lucide-vue-next)
-const SunIcon = { template: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' }
-const DropletsIcon = { template: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7c0-1.8 1.4-3.2 3.2-3.2C12.5 3.8 19 12 19 12s-7 9-10 9c-3 0-5.5-2.5-5.5-5.5 0-2 2-4 3.5-6.5Z"/></svg>' }
-const EyeIcon = { template: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>' }
-const GaugeIcon = { template: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>' }
-</script>
-
 <style scoped>
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-}
-
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.1); }
-}
-.animate-pulse {
-  animation: pulse-slow 8s infinite;
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

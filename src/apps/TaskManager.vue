@@ -82,55 +82,7 @@ const getPath = (data: number[]) => {
   <div class="h-full flex overflow-hidden bg-[#f8f9fa] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans">
 
     <!-- 左侧监控边栏 -->
-    <aside class="w-64 flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-xl">
-      <div class="p-6">
-        <div class="flex items-center gap-2 mb-8">
-          <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          <h2 class="text-lg font-bold tracking-tight uppercase opacity-80">系统负载</h2>
-        </div>
-
-        <div class="space-y-8">
-          <!-- CPU 监控 -->
-          <div class="space-y-3">
-            <div class="flex justify-between items-end">
-              <div>
-                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">中央处理器</p>
-                <p class="text-2xl font-mono font-medium">{{ systemStats.cpu }}%</p>
-              </div>
-              <svg class="w-16 h-8 text-accent" viewBox="0 0 100 30">
-                <path :d="getPath(cpuHistory)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="h-1 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-              <div class="h-full bg-accent transition-all duration-700" :style="{ width: systemStats.cpu + '%' }"></div>
-            </div>
-          </div>
-
-          <!-- 内存监控 -->
-          <div class="space-y-3">
-            <div class="flex justify-between items-end">
-              <div>
-                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">物理内存</p>
-                <p class="text-2xl font-mono font-medium">{{ systemStats.mem }}%</p>
-              </div>
-              <svg class="w-16 h-8 text-purple-500" viewBox="0 0 100 30">
-                <path :d="getPath(memHistory)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="h-1 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-              <div class="h-full bg-purple-500 transition-all duration-700" :style="{ width: systemStats.mem + '%' }"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-auto p-6 border-t border-zinc-200 dark:border-zinc-800">
-        <div class="flex flex-col gap-2 opacity-40 text-[10px] font-bold uppercase tracking-tighter">
-          <span>运行时间: {{ systemStats.uptime }}</span>
-          <span>内核版本: 6.2.0-STABLE</span>
-        </div>
-      </div>
-    </aside>
+    
 
     <!-- 右侧进程列表 -->
     <main class="flex-1 flex flex-col min-w-0">
