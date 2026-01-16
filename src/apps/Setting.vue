@@ -143,39 +143,31 @@ const brightness = ref(80);
           <!-- 显示与桌面 -->
           <section v-if="currentCategory === 'display'" class="space-y-6">
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
-              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">个性化体验</h3>
-              <div class="space-y-6">
-                <!-- 亮色/深色模式切换 -->
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500" v-html="icons.moon"></div>
-                    <div>
-                      <div class="text-sm font-bold">深色模式</div>
-                      <div class="text-[11px] opacity-50">降低屏幕亮度，减轻眼睛疲劳</div>
-                    </div>
-                  </div>
-                  <div
-                    @click="themeStore.setTheme(themeStore.mode.value === 'dark' ? 'light' : 'dark')"
-                    class="w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-500"
-                    :class="themeStore.mode.value === 'dark' ? 'bg-accent' : 'bg-gray-300 dark:bg-gray-700'"
-                  >
-                    <div class="w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-500" :style="{ transform: themeStore.mode.value === 'dark' ? 'translateX(24px)' : 'translateX(0)' }"></div>
-                  </div>
+              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">系统主题</h3>
+              <div class="grid grid-cols-3 gap-4">
+                <div
+                  @click="themeStore.setTheme('light')"
+                  class="aspect-video rounded-lg bg-gradient-to-br from-slate-100 to-slate-300 overflow-hidden cursor-pointer transition-all hover:scale-105"
+                  :class="{ 'ring-4 ring-accent': themeStore.mode.value === 'light' }"
+                >
                 </div>
-
-                <!-- 亮度调节 -->
-                <div class="space-y-3">
-                  <div class="flex justify-between text-[11px] font-bold opacity-60">
-                    <span>屏幕亮度</span>
-                    <span>{{ brightness }}%</span>
-                  </div>
-                  <input type="range" v-model="brightness" class="w-full accent-accent" />
+                <div
+                  @click="themeStore.setTheme('dark')"
+                  class="aspect-video rounded-lg bg-gradient-to-br from-slate-800 to-slate-950 overflow-hidden cursor-pointer transition-all hover:scale-105"
+                  :class="{ 'ring-4 ring-accent': themeStore.mode.value === 'dark' }"
+                >
+                </div>
+                <div
+                  @click="themeStore.setTheme('system')"
+                  class="aspect-video rounded-lg bg-conic/decreasing from-violet-700 via-lime-300 to-violet-700 overflow-hidden cursor-pointer transition-all hover:scale-105"
+                  :class="{ 'ring-4 ring-accent': themeStore.mode.value === 'system' }"
+                >
                 </div>
               </div>
             </div>
 
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
-              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">更换壁纸</h3>
+              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">桌面壁纸</h3>
               <div class="grid grid-cols-3 gap-4">
                 <div
                   v-for="wallpaper in wallpapers"
@@ -190,7 +182,7 @@ const brightness = ref(80);
             </div>
 
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
-              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">系统强调色</h3>
+              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">主题颜色</h3>
               <div class="flex flex-wrap gap-4">
                 <button
                   v-for="color in themeColors"
@@ -207,7 +199,7 @@ const brightness = ref(80);
               </div>
             </div>
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
-              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">UI 布局模式</h3>
+              <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">桌面布局</h3>
               <div class="grid grid-cols-1 @[400px]:grid-cols-2 gap-4">
                 <div
                   @click="setMode('desktop')"
