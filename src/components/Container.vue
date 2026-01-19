@@ -26,17 +26,23 @@ import Desktop from './Desktop.vue'
 import ContextMenu from './ContextMenu.vue'
 import { themeStore } from '../stores/themeStore.ts'
 import { ref } from 'vue'
-import { CheckIcon } from 'lucide-vue-next'
+import { CheckIcon,LockIcon, SettingsIcon, PaletteIcon, LayoutDashboardIcon, ExpandIcon, ShrinkIcon } from 'lucide-vue-next'
+import { startTask } from '../stores/taskStore.ts'
+import { getAppById } from '../stores/appStore.ts'
+import { useFullscreen } from '../composables/useFullscreen'
+const { isFullscreen, toggleFullscreen } = useFullscreen()
 
 const menuRef = ref()
 
 const openContextMenu = ($event: any) => {
   const desktopMenu = [
-  { label: '刷新', action: () => console.log('刷新') },
-  { label: '显示设置', action: () => console.log('显示设置') },
+  { label: isFullscreen.value ? '退出全屏' : '全屏显示', icon: isFullscreen.value ? ShrinkIcon : ExpandIcon, action: async () => await toggleFullscreen()},
+  { label: '锁定屏幕', icon: LockIcon, action: () => userStore.user.locked = true },
+  { label: '个性化设置', icon: SettingsIcon, action: () => startTask(getAppById('settings')) },
   { type: 'divider' },
   {
     label: '风格',
+    icon: PaletteIcon,
     children: [
       { label: '浅色', icon: themeStore.mode.value == 'light' ? CheckIcon : null, action: () => themeStore.setTheme('light') },
       { label: '深色', icon: themeStore.mode.value == 'dark' ? CheckIcon : null, action: () => themeStore.setTheme('dark') },
@@ -45,6 +51,7 @@ const openContextMenu = ($event: any) => {
   },
   {
     label: '布局',
+    icon: LayoutDashboardIcon,
     children: [
       { label: '图标', icon: desktopStore.mode == 'desktop' ? CheckIcon : null, action: () => setMode('desktop') },
       { label: '磁贴', icon: desktopStore.mode == 'metro' ? CheckIcon : null, action: () => setMode('metro') }

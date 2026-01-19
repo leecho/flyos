@@ -53,12 +53,12 @@
                   placeholder="请输入密码"
                   autoFocus
                   @keyup.enter='unlock'
-                  class="w-full text-center bg-white/40 dark:bg-white/10 border border-white/20 outline-none rounded-xl p-3 focus:ring-2 focus:ring-blue-500/50 transition-all"
+                  class="w-full text-center bg-white/40 dark:bg-white/10 border border-white/20 outline-none rounded-xl p-3 focus:ring-2 focus:ring-accent/50 transition-all"
                 />
               </div>
               <button
                 @click='unlock'
-                class='w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl shadow-lg transition-transform active:scale-95 cursor-pointer'
+                class='w-full bg-accent hover:bg-accent/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-transform active:scale-95 cursor-pointer'
               >
                 登录
               </button>
