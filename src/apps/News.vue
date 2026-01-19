@@ -109,7 +109,7 @@ function formatTime(isoString: string) {
 </script>
 
 <template>
-  <div class="news-app flex h-full bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+  <div class="news-app @container/news flex h-full w-full bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
     <!-- Main Content -->
     <div class="flex-1 flex overflow-hidden relative">
       <!-- News List View -->
@@ -159,7 +159,7 @@ function formatTime(isoString: string) {
                 </div>
 
                 <!-- News Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 @lg/news:grid-cols-2 @xl/news:grid-cols-3 gap-4">
                     <div
                         v-for="item in newsList"
                         :key="item.id"

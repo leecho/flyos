@@ -575,6 +575,28 @@ export const apps: AppItem[] = [
             maximizable: true,
             component: 'Stocks'
         }
+    },
+    {
+        id: "todo",
+        name: "待办事项",
+        icon: {
+            type: 'svg',
+            content: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>',
+            bgColor: "bg-gradient-to-br from-cyan-400 to-sky-600"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-cyan-600",
+            style: "rounded-lg text-white",
+            size: "small",
+            component: "Todo"
+        },
+        window: {
+            height: 600,
+            width: 400,
+            maximizable: false,
+            component: 'Todo'
+        }
     }
 ] as AppItem[];
 
@@ -600,6 +622,6 @@ export const groups: AppGroup[] = [
     {
         id: "utility",
         name: "实用工具",
-        apps: ["calculator", "calendar", "clock", "maps", "recorder","stocks"]
+        apps: ["calculator", "calendar", "clock", "maps", "recorder","stocks", "todo"]
     }
 ];
