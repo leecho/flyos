@@ -14,7 +14,7 @@
         <div
           v-else
           class='text-lg opacity-90 hover:opacity-100 cursor-pointer py-1 text-white'
-          @click='startEdit'
+          @click='startEdit($event)'
         >
           {{ group.name || '未命名分组' }}
         </div>
@@ -65,13 +65,13 @@ const props = defineProps<{
   }
 }>()
 
-const menuRef = ref()
 const groupRef = ref<HTMLElement>()
 const editing = ref(false)
 const name = ref(props.group.name)
 const editInput = ref<HTMLInputElement>()
 
-function startEdit() {
+function startEdit($event: MouseEvent) {
+  $event.stopPropagation()
   editing.value = true
   nextTick(() => editInput.value?.focus())
 }
