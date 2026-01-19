@@ -24,15 +24,16 @@ import { ref } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import AppIcon from './AppIcon.vue'
 import ContextMenu from './ContextMenu.vue'
+import {SquareArrowUpRightIcon, PinOffIcon, PinIcon } from 'lucide-vue-next'
 
 const apps = appStore.apps
 const desktopRef = ref<HTMLElement>()
 const menuRef = ref()
 function openContextMenu(e: MouseEvent, app: any) {
   const options = [
-    { label: '打开应用', action: () => startTask(app) },
+    { label: '打开应用', icon: SquareArrowUpRightIcon, action: () => startTask(app) },
     { type: 'divider' },
-    { label: '从开始屏幕' + (app.fixed ? '取消' : '') + '固定', action: () => app.fixed = !app.fixed }
+    { label: app.fixed ? '取消固定' : '固定到开始菜单', icon: app.fixed ? PinOffIcon: PinIcon ,action: () => app.fixed = !app.fixed }
   ]
   e.stopPropagation()
   menuRef.value.open(e, options)

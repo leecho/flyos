@@ -21,22 +21,24 @@ import { ref } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import ContextMenu from './ContextMenu.vue'
 import { startTask } from '../stores/taskStore.ts'
-import { CheckIcon } from 'lucide-vue-next'
+import { CheckIcon,SquareArrowUpRightIcon,Grid2X2Icon, PinIcon, PinOffIcon } from 'lucide-vue-next'
 const menuRef = ref()
 
 function openContextMenu(e: MouseEvent, app: any) {
   const options = [
-    { label: '打开应用', action: () => startTask(app) },
+    { label: '打开应用', icon: SquareArrowUpRightIcon, action: () => startTask(app) },
+    { label: '关闭动态磁贴', action: () => startTask(app) },
     { type: 'divider' },
     {
       label: '尺寸',
+      icon: Grid2X2Icon,
       children: [
         { label: '小', icon: getSizeMenuIcon(app,'small') , action: () => (app.tile.size = 'small') },
         { label: '中', icon: getSizeMenuIcon(app,'medium') ,action: () => (app.tile.size = 'medium') },
         { label: '大', icon: getSizeMenuIcon(app,'large') ,action: () => (app.tile.size = 'large') }
       ]
     },
-    { label: '从开始屏幕' + (app.fixed ? '取消' : '') + '固定', action: () => app.fixed = !app.fixed }
+    { label: app.fixed ? '取消固定' : '固定到开始菜单', icon: app.fixed ? PinOffIcon: PinIcon ,action: () => app.fixed = !app.fixed }
   ]
   e.stopPropagation()
   menuRef.value.open(e, options)
