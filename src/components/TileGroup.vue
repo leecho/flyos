@@ -20,7 +20,7 @@
         </div>
       </div>
       <div v-if='!editing' class='flex-col opacity-50 group-handler hidden cursor-move'>
-        <SquareMenuIcon />
+        <GripIcon />
       </div>
     </div>
 
@@ -49,7 +49,7 @@ import { useDraggable } from 'vue-draggable-plus'
 import Tile from './Tile.vue'
 import { startTask } from '../stores/taskStore'
 import { getAppById } from '../stores/appStore'
-import { SquareMenuIcon } from 'lucide-vue-next'
+import { GripIcon } from 'lucide-vue-next'
 
 const emits = defineEmits(['selectTile'])
 

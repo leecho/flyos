@@ -69,6 +69,7 @@ const sizeClasses = computed(() => {
 
 const subComponent = computed(() => {
   if (!props.app.tile.component) return null
+  if (props.app.tile.enable === false) return null
   return defineAsyncComponent({
     loader: () => import(`@/tiles/${props.app.tile.component}.vue`),
     delay: 100,

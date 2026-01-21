@@ -27,7 +27,7 @@ const menuRef = ref()
 function openContextMenu(e: MouseEvent, app: any) {
   const options = [
     { label: '打开应用', icon: SquareArrowUpRightIcon, action: () => startTask(app) },
-    { label: '关闭动态磁贴', action: () => startTask(app) },
+    { label: app.tile.enable === false ? '打开动态磁贴' : '关闭动态磁贴', disabled: !app.tile.component, action: () => app.tile.enable=(app.tile.enable === false ? true : false) },
     { type: 'divider' },
     {
       label: '尺寸',

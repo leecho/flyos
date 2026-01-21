@@ -138,7 +138,8 @@ export const apps: AppItem[] = [
             height: 650,
             width: 950,
             maximizable: true,
-            component: 'Photo'
+            component: 'Photo',
+            enable: false
         },
         fixed: true
     },

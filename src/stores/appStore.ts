@@ -23,6 +23,7 @@ export interface TileConfig{
     style: string
     size: string
     component: string
+    enable: boolean
 }
 
 export interface WindowConfig{

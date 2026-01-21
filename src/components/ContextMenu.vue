@@ -105,6 +105,7 @@ interface MenuItem {
   icon?: any
   disabled?: boolean  // 新增：禁用状态
   action?: () => void
+  selected: boolean
   children?: MenuItem[]
 }
 
