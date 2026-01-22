@@ -76,9 +76,9 @@
         <button
           v-else
           @click="startRecording"
-          class="w-20 h-20 rounded-full bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center shadow-xl shadow-indigo-100 dark:shadow-indigo-900/20 hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-all hover:scale-105 active:scale-95 group relative"
+          class="w-20 h-20 rounded-full bg-accent flex items-center justify-center shadow-xl shadow-accent/20 dark:shadow-accent/20 hover:bg-accent/90 dark:hover:bg-accent/80 transition-all hover:scale-105 active:scale-95 group relative"
         >
-          <div class="w-16 h-16 rounded-full border-2 border-indigo-400 dark:border-indigo-300 border-dashed animate-spin-slow absolute group-hover:opacity-100 opacity-0 transition-opacity"></div>
+          <div class="w-16 h-16 rounded-full border-2 border-accent/90 dark:border-accent/30 border-dashed animate-spin-slow absolute group-hover:opacity-100 opacity-0 transition-opacity"></div>
           <Mic class="text-white w-8 h-8" />
         </button>
       </div>
