@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useNotification } from '@/composables/useNotification';
+import type { NotificationItem } from '../composables/useNotification';
 
 // 初始化通知中心逻辑
 const { notifications, push, remove, clearAll } = useNotification();
@@ -23,6 +24,15 @@ const handleClickOutside = (event: MouseEvent) => {
 
   }
 };
+
+const removeNotification = ($event: MouseEvent, notification: NotificationItem) => {
+  $event.stopPropagation()
+  remove(notification.id)
+}
+
+const onNotificationClick = (notification: NotificationItem) => {
+  if(notification.handler) notification.handler()
+}
 
 onMounted(() => {
   window.addEventListener('mousedown', handleClickOutside);
@@ -115,6 +125,7 @@ defineExpose({ toggleOpen, isOpen });
             <div
               v-for="notif in notifications"
               :key="notif.id"
+              @click="onNotificationClick(notif)"
               class="group relative bg-white/40 dark:bg-white/5 p-5 select-none rounded-xl border border-white/5 dark:border-white/5 hover:border-accent/50 transition-all duration-300"
             >
               <div class="flex justify-between items-start mb-2 ">
@@ -134,7 +145,7 @@ defineExpose({ toggleOpen, isOpen });
 
               <!-- 删除按钮 -->
               <button
-                @click="remove(notif.id)"
+                @click="removeNotification($event, notification)"
                 class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-slate-200 dark:bg-slate-700 rounded-full hover:bg-rose-500 hover:text-white"
               >
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>

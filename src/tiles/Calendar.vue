@@ -28,25 +28,80 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import LiveTile from '../components/LiveTile.vue';
 
-// 模拟日期数据
+// --- 静态日期信息 ---
 const now = new Date();
 const todayDate = now.getDate();
 const currentMonthStr = now.toLocaleString('zh-CN', { month: 'long' });
 
-// 模拟日程数据
-const todayEvents = ref([
-  { title: '产品迭代会议', time: '14:00' },
-  { title: '健身房训练', time: '18:30' }
-]);
+// --- 数据同步逻辑 ---
+interface CalendarEvent {
+  id: string;
+  dateStr: string;
+  title: string;
+  time: string;
+}
+const STORAGE_KEY = 'flyos_calendar_events';
+const allEvents = ref<CalendarEvent[]>([]);
 
-const upcomingEvents = ref([
-  { title: '牙医预约', time: '明天 10:00' },
-  { title: '朋友聚餐', time: '周四 19:00' },
-  { title: 'FlyOS 周会', time: '下周一' }
-]);
+const loadEvents = () => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    allEvents.value = data ? JSON.parse(data) : [];
+  } catch (e) {
+    console.error("未能加载或解析日历事件：", e);
+    allEvents.value = [];
+  }
+};
+
+onMounted(() => {
+  loadEvents();
+  // 监听来自其他标签页/窗口的更改
+  window.addEventListener('storage', loadEvents);
+  // 定期检查日期以处理午夜跨天的情况
+  const timer = setInterval(loadEvents, 60000);
+  onUnmounted(() => {
+      window.removeEventListener('storage', loadEvents);
+      clearInterval(timer);
+  });
+});
+
+// --- 用于显示的计算属性 ---
+const todayEvents = computed(() => {
+  const todayStr = new Date().toDateString();
+  return allEvents.value
+    .filter(event => event.dateStr === todayStr)
+    .map(e => ({ title: e.title, time: e.time }));
+});
+
+function formatRelativeTime(dateStr: string): string {
+    const eventDate = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const dayDiff = Math.floor((eventDate.getTime() - today.getTime()) / msPerDay);
+
+    if (dayDiff === 1) return '明天';
+    if (dayDiff > 1 && dayDiff <= 7) return eventDate.toLocaleString('zh-CN', { weekday: 'long' }).replace('星期','周');
+    return `${eventDate.getMonth() + 1}月${eventDate.getDate()}日`;
+}
+
+const upcomingEvents = computed(() => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 获取从明天开始的事件
+  return allEvents.value
+    .filter(event => new Date(event.dateStr) > today)
+    .sort((a, b) => new Date(a.dateStr).getTime() - new Date(b.dateStr).getTime())
+    .map(event => ({
+      title: event.title,
+      time: `${formatRelativeTime(event.dateStr)}${event.time === '全天' ? '' : ' ' + event.time}`.trim()
+    }));
+});
 
 const calendarPages = computed(() => [
   { type: 'today', data: todayEvents.value },

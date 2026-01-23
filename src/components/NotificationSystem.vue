@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotification } from '@/composables/useNotification';
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
+import type { NotificationItem } from '../composables/useNotification';
 
 const { notifications, hideToast, push } = useNotification();
 
@@ -11,6 +12,10 @@ const { notifications, hideToast, push } = useNotification();
 const toastNotifications = computed(() => {
   return notifications.value.filter(item => item.isToast);
 });
+
+const onNotificationClick = (notification: NotificationItem) => {
+  if(notification.handler) notification.handler()
+}
 
 const getIconClass = (type: string) => {
   switch (type) {
@@ -41,6 +46,7 @@ const icons = {
         v-for="item in toastNotifications"
         :key="item.id"
         class="pointer-events-auto w-full group"
+        @click="onNotificationClick(item)"
       >
         <!-- Windows 11 风格容器 -->
         <div class="relative overflow-hidden rounded-xl border border-white/10 dark:border-white/5

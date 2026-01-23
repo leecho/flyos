@@ -81,7 +81,7 @@
       <div class="flex-1 overflow-auto relative bg-white/80 dark:bg-gray-950/80">
         <Suspense>
           <template #default>
-            <component :is="subComponent" v-if="subComponent" />
+            <component :is="subComponent" v-if="subComponent" :params="params" />
             <slot v-else></slot>
           </template>
           <template #fallback>
@@ -123,7 +123,8 @@ const props = withDefaults(defineProps<{
   maximizable?: boolean
   width?: number
   height?: number
-  appId: string
+  appId: string,
+  params?: any
 }>(), {
   maximizable: true,
   maximized: false,

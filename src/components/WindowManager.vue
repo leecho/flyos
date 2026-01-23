@@ -18,6 +18,7 @@
     visible='true'
     :minimized='win.minimized'
     :maximized='win.maximized'
+    :params='win.params'
     :component='win.component'></Window>
   <ContextMenu ref='menuRef' />
 </template>

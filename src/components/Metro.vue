@@ -16,12 +16,13 @@
 <script setup lang='ts'>
 import logo from '../assets/logo.svg'
 import TileGroup from './TileGroup.vue'
-import { appStore, type AppItem } from '../stores/appStore'
+import { appStore, type AppItem ,removeAppFromGroups} from '../stores/appStore'
 import { ref } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import ContextMenu from './ContextMenu.vue'
 import { startTask } from '../stores/taskStore.ts'
-import { CheckIcon,SquareArrowUpRightIcon,Grid2X2Icon, PinIcon, PinOffIcon } from 'lucide-vue-next'
+import { messageBox } from '../composables/useMessage.ts'
+import { CheckIcon,SquareArrowUpRightIcon,Grid2X2Icon, PinIcon, PinOffIcon, Trash2 } from 'lucide-vue-next'
 const menuRef = ref()
 
 function openContextMenu(e: MouseEvent, app: any) {
@@ -38,7 +39,9 @@ function openContextMenu(e: MouseEvent, app: any) {
         { label: '大', icon: getSizeMenuIcon(app,'large') ,action: () => (app.tile.size = 'large') }
       ]
     },
-    { label: app.fixed ? '取消固定' : '固定到开始菜单', icon: app.fixed ? PinOffIcon: PinIcon ,action: () => app.fixed = !app.fixed }
+    { label: app.fixed ? '取消固定' : '固定到开始菜单', icon: app.fixed ? PinOffIcon: PinIcon ,action: () => app.fixed = !app.fixed },
+    { label: '卸载', icon: Trash2 ,action: async() => {removeApp(app)} }
+
   ]
   e.stopPropagation()
   menuRef.value.open(e, options)
@@ -47,6 +50,13 @@ function openContextMenu(e: MouseEvent, app: any) {
 const getSizeMenuIcon = (app: AppItem, size: string) => {
   if(app.tile.size == size) return CheckIcon
   return null
+}
+
+const removeApp = async (app: AppItem) => {
+  const result = await messageBox.confirm('确定卸载' + app.name)
+  if(result){
+    removeAppFromGroups(app.id)
+  }
 }
 
 

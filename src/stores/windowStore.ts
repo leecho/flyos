@@ -15,6 +15,7 @@ export interface WindowItem {
     maximized: boolean
     maximizable: boolean
     active?: boolean
+    params?: any
 }
 
 /* ---------------- Store ---------------- */
@@ -65,10 +66,11 @@ export function openWindow(
 
 /* ---------------- 激活逻辑（核心） ---------------- */
 
-export function activeWindow(id: string) {
+export function activeWindow(id: string, params?: any) {
     const win = getWindow(id)
     if (!win || win.minimized) return
 
+    win.params = params || {}
     // 从 actives 中移除旧位置
     windowStore.actives = windowStore.actives.filter(wid => wid !== id)
 
@@ -99,10 +101,9 @@ function activateTop() {
 
 /* ---------------- TaskBar / 点击切换 ---------------- */
 
-export function toggleActive(id: string, params: Object | null) {
+export function toggleActive(id: string, params?: any) {
     const win = getWindow(id)
     if (!win) return
-
     // 当前激活 → 最小化
     if (windowStore.active === id && !win.minimized) {
         toggleMinimize(id)
@@ -116,7 +117,7 @@ export function toggleActive(id: string, params: Object | null) {
     }
 
     // 普通激活
-    activeWindow(id)
+    activeWindow(id, params)
 }
 
 /* ---------------- 最小化 / 最大化 ---------------- */

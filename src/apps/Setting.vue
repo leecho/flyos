@@ -1,17 +1,28 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { themeStore, AccentColor } from '@/stores/themeStore';
 import { userStore } from '@/stores/userStore';
 import { desktopStore, setMode } from '@/stores/desktopStore';
 import Wallpaper1 from '@/assets/wallpaper.jpg';
 import Wallpaper2 from '@/assets/wallpaper2.jpg';
 import Wallpaper3 from '@/assets/wallpaper3.jpg';
+import { useNotification } from '../composables/useNotification';
+import { startTask } from '../stores/taskStore';
+import { getAppById } from '../stores/appStore';
+
+const props = defineProps<{
+  params?: any
+}>()
+
+
 
 const wallpapers = [
   { name: '风景', url: Wallpaper1 },
   { name: '插画', url: Wallpaper2 },
   { name: '暗黑', url: Wallpaper3 },
 ];
+
+const { push } = useNotification()
 
 /**
  * 预设 SVG 图标库 (同步之前的视觉风格)
@@ -39,6 +50,13 @@ const navItems = [
 
 const currentCategory = ref('display');
 
+
+watch(props.params, (newValue) => {
+  if(newValue?.category){
+    currentCategory.value = newValue.category
+  }
+},{ deep: true , immediate: true})
+
 const activeCategoryLabel = computed(() => {
   return navItems.find(item => item.id === currentCategory.value)?.label || '设置';
 });
@@ -54,8 +72,17 @@ const themeColors: { name: string; hex: string; value: AccentColor }[] = [
   { name: '青色', hex: '#14b8a6', value: 'teal' },
 ];
 
-// 本地临时亮度控制
-const brightness = ref(80);
+onMounted(() => {
+  push({
+    title: '通知回调',
+    content: '打开系统设置',
+    appName: '设置',
+    type: 'info',
+    duration: 5000,
+    handler: () => startTask(getAppById('settings'), {'category': 'system'})
+  })
+})
+
 </script>
 
 <template>

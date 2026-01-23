@@ -36,31 +36,30 @@ const menuRef = ref()
 
 const openContextMenu = ($event: any) => {
   const desktopMenu = [
-
-  {
-    label: '风格',
-    icon: PaletteIcon,
-    children: [
-      { label: '浅色', icon: themeStore.mode.value == 'light' ? CheckIcon : null, action: () => themeStore.setTheme('light') },
-      { label: '深色', icon: themeStore.mode.value == 'dark' ? CheckIcon : null, action: () => themeStore.setTheme('dark') },
-      { label: '系统', icon: themeStore.mode.value == 'system' ? CheckIcon : null, action: () => themeStore.setTheme('system') }
-    ]
-  },
-  {
-    label: '布局',
-    icon: LayoutDashboardIcon,
-    children: [
-      { label: '图标', icon: desktopStore.mode == 'desktop' ? CheckIcon : null, action: () => setMode('desktop') },
-      { label: '磁贴', icon: desktopStore.mode == 'metro' ? CheckIcon : null, action: () => setMode('metro') }
-    ]
-  },
-  { type: 'divider' },
-  { label: isFullscreen.value ? '退出全屏' : '全屏显示', icon: isFullscreen.value ? ShrinkIcon : ExpandIcon, action: async () => await toggleFullscreen()},
-  { label: '锁定屏幕', icon: LockIcon, action: () => userStore.user.locked = true },
-  { label: '个性化设置', icon: SettingsIcon, action: () => startTask(getAppById('settings')) },
-]
-$event?.stopPropagation()
-menuRef.value.open($event, desktopMenu)
+    {
+      label: '风格',
+      icon: PaletteIcon,
+      children: [
+        { label: '浅色', icon: themeStore.mode.value == 'light' ? CheckIcon : null, action: () => themeStore.setTheme('light') },
+        { label: '深色', icon: themeStore.mode.value == 'dark' ? CheckIcon : null, action: () => themeStore.setTheme('dark') },
+        { label: '系统', icon: themeStore.mode.value == 'system' ? CheckIcon : null, action: () => themeStore.setTheme('system') }
+      ]
+    },
+    {
+      label: '布局',
+      icon: LayoutDashboardIcon,
+      children: [
+        { label: '图标', icon: desktopStore.mode == 'desktop' ? CheckIcon : null, action: () => setMode('desktop') },
+        { label: '磁贴', icon: desktopStore.mode == 'metro' ? CheckIcon : null, action: () => setMode('metro') }
+      ]
+    },
+    { type: 'divider' },
+    { label: isFullscreen.value ? '退出全屏' : '全屏显示', icon: isFullscreen.value ? ShrinkIcon : ExpandIcon, action: async () => await toggleFullscreen()},
+    { label: '锁定屏幕', icon: LockIcon, action: () => userStore.user.locked = true },
+    { label: '个性化设置', icon: SettingsIcon, action: () => startTask(getAppById('settings')) },
+  ]
+  $event?.stopPropagation()
+  menuRef.value.open($event, desktopMenu)
 
 }
 

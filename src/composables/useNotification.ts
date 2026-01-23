@@ -6,6 +6,7 @@ export interface NotificationOptions {
   appName?: string;
   type?: 'info' | 'success' | 'error' | 'warning';
   duration?: number;
+  handler?: () => void
 }
 
 export interface NotificationItem extends NotificationOptions {
@@ -33,6 +34,7 @@ export function useNotification() {
       content: options.content,
       type: options.type || 'info',
       duration: options.duration ?? 5000,
+      handler: options.handler,
       time: timeString,
       isToast: true // 初始状态在桌面上弹出
     };
