@@ -19,7 +19,7 @@ export function startTask(app: AppItem, params?: any){
         const winId = taskStore.tasks.get(app.id);
         // 如果是，则激活现有窗口，并传递新的参数。
         // 这对于处理通知点击等场景至关重要。
-        activeWindow(winId, params);
+        toggleActive(winId, params);
         return;
     }
 
