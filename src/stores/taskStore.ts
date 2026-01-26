@@ -1,6 +1,6 @@
 import {reactive} from "vue";
 // 导入的函数将进行更新，用一个更强大的 activateWindow 替代 toggleActive
-import {closeWindow, openWindow, toggleActive} from "./windowStore";
+import {activeWindow, closeWindow, openWindow, toggleActive} from "./windowStore";
 import type {AppItem} from "./appStore.ts";
 
 export const taskStore = reactive({
@@ -19,7 +19,7 @@ export function startTask(app: AppItem, params?: any){
         const winId = taskStore.tasks.get(app.id);
         // 如果是，则激活现有窗口，并传递新的参数。
         // 这对于处理通知点击等场景至关重要。
-        toggleActive(winId, params);
+        activeWindow(winId, params);
         return;
     }
 
