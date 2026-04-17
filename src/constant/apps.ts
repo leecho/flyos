@@ -598,6 +598,94 @@ export const apps: AppItem[] = [
             maximizable: false,
             component: 'Todo'
         }
+    },
+    {
+        id: "wechat",
+        name: "微信",
+        icon: {
+            type: 'svg',
+            content: '<path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path>',
+            bgColor: "bg-gradient-to-br from-green-400 to-green-600"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-green-500",
+            style: "rounded-lg text-white font-semibold",
+            size: "small",
+            component: ""
+        },
+        window: {
+            height: 600,
+            width: 800,
+            maximizable: true,
+            component: 'WeChat'
+        }
+    },
+    {
+        id: "bilibili",
+        name: "哔哩哔哩",
+        icon: {
+            type: 'svg',
+            content: '<rect width="20" height="15" x="2" y="7" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline>',
+            bgColor: "bg-gradient-to-br from-pink-400 to-rose-500"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-pink-500",
+            style: "rounded-lg text-white",
+            size: "medium",
+            component: ""
+        },
+        window: {
+            height: 650,
+            width: 1000,
+            maximizable: true,
+            component: 'Bilibili'
+        }
+    },
+    {
+        id: "translate",
+        name: "翻译",
+        icon: {
+            type: 'svg',
+            content: '<path d="m5 8 6 6"></path><path d="m4 14 6-6 2-3"></path><path d="M2 5h12"></path><path d="M7 2h1"></path><path d="m22 22-5-10-5 10"></path><path d="M14 18h6"></path>',
+            bgColor: "bg-gradient-to-br from-blue-500 to-indigo-600"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-blue-600",
+            style: "rounded-lg text-white",
+            size: "small",
+            component: ""
+        },
+        window: {
+            height: 500,
+            width: 700,
+            maximizable: true,
+            component: 'Translate'
+        }
+    },
+    {
+        id: "contacts",
+        name: "通讯录",
+        icon: {
+            type: 'svg',
+            content: '<path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><circle cx="12" cy="10" r="2"></circle><line x1="8" x2="8" y1="2" y2="4"></line><line x1="16" x2="16" y1="2" y2="4"></line>',
+            bgColor: "bg-gradient-to-br from-orange-400 to-red-500"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-orange-500",
+            style: "rounded-lg text-white",
+            size: "small",
+            component: ""
+        },
+        window: {
+            height: 500,
+            width: 700,
+            maximizable: true,
+            component: 'Contacts'
+        }
     }
 ] as AppItem[];
 
@@ -608,12 +696,12 @@ export const groups: AppGroup[] = [
     {
         id: "system",
         name: "系统管理",
-        apps: ["settings", "monitor", "taskmgr", "explorer", "terminal", "about","store"]
+        apps: ["settings", "monitor", "taskmgr", "explorer", "terminal", "about", "store"]
     },
     {
         id: "work",
         name: "效率办公",
-        apps: ["edge", "code", "notepad", "whiteboard", "mail", "notifier"]
+        apps: ["edge", "code", "notepad", "whiteboard", "mail", "notifier", "wechat"]
     },
     {
         id: "multimedia",
@@ -623,6 +711,6 @@ export const groups: AppGroup[] = [
     {
         id: "utility",
         name: "实用工具",
-        apps: ["calculator", "calendar", "clock", "maps", "recorder","stocks", "todo"]
+        apps: ["calculator", "calendar", "clock", "maps", "recorder", "stocks", "todo", "translate", "contacts"]
     }
 ];

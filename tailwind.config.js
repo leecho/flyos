@@ -8,6 +8,5 @@ export default {
                 accent: 'var(--accent-color)',
             }
         }
-    },
-    plugins: [require('@tailwindcss/container-queries')],
+    }
 };

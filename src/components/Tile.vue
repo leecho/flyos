@@ -41,7 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import defaultLogo from '@/assets/vue.svg'
 import type { AppItem } from "@/stores/appStore.ts";
 import { computed, defineAsyncComponent } from "vue";
 import AppIcon from './AppIcon.vue'
