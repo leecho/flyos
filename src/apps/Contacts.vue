@@ -1,8 +1,8 @@
 <template>
   <div class="@container flex h-full w-full bg-white dark:bg-gray-900 overflow-hidden text-gray-800 dark:text-gray-200">
     <!-- Sidebar -->
-    <div class="w-full @sm:w-[50%] @sm:max-w-sm border-r border-gray-200 dark:border-gray-800 flex-col bg-gray-50/50 dark:bg-[rgba(20,20,20,0.5)] shrink-0"
-         :class="selectedContact ? 'hidden @sm:flex' : 'flex'">
+    <div class="w-full @2xl:w-[50%] @2xl:max-w-sm border-r border-gray-200 dark:border-gray-800 flex-col bg-gray-50/50 dark:bg-[rgba(20,20,20,0.5)] shrink-0"
+         :class="selectedContact ? 'hidden @2xl:flex' : 'flex'">
       <div class="p-4 border-b border-gray-200 dark:border-gray-800 backdrop-blur-md">
         <h2 class="text-xl font-bold mb-4 ml-1">通讯录</h2>
         <div class="relative">
@@ -45,10 +45,10 @@
     </div>
     
     <!-- Main Detail Area -->
-    <div class="w-full @sm:flex-1 flex flex-col bg-gray-50/30 dark:bg-black/20 relative h-full overflow-y-auto" v-if="selectedContact">
+    <div class="w-full @2xl:flex-1 flex flex-col bg-gray-50/30 dark:bg-black/20 relative h-full overflow-y-auto" v-if="selectedContact">
       <!-- Mobile Back Button & Desktop Top Actions -->
       <div class="sticky top-0 w-full flex items-center justify-between p-4 z-10 shrink-0">
-        <button @click="selectedId = null" class="@sm:hidden p-2 -ml-2 rounded-full hover:bg-gray-200/50 dark:hover:bg-gray-800/50 text-gray-500 transition-colors flex items-center">
+        <button @click="selectedId = null" class="@2xl:hidden p-2 -ml-2 rounded-full hover:bg-gray-200/50 dark:hover:bg-gray-800/50 text-gray-500 transition-colors flex items-center">
           <ChevronLeft class="w-6 h-6" />
         </button>
         <div class="flex-1"></div>
@@ -72,7 +72,7 @@
           <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1.5">{{ selectedContact.job || '联系人' }}</p>
         </div>
         
-        <div class="flex gap-5 mt-6 mb-8 w-[280px] justify-between">
+        <div class="flex flex-wrap gap-4 @xs:gap-6 mt-6 mb-8 w-full max-w-sm justify-center">
           <button class="flex flex-col items-center justify-center w-[60px] h-[64px] rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-600/20 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-600/30 transition-all hover:scale-105 active:scale-95 shadow-sm">
             <MessageCircle class="w-[22px] h-[22px] mb-1.5" />
             <span class="text-[10px] font-bold">信息</span>
@@ -109,10 +109,9 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Empty State -->
-  <div class="hidden @sm:flex flex-1 flex-col items-center justify-center text-gray-400 dark:text-gray-600 bg-gray-50/30 dark:bg-black/20" v-else>
+ 
+    <!-- Empty State -->
+    <div class="hidden @2xl:flex flex-1 flex-col items-center justify-center text-gray-400 dark:text-gray-600 bg-gray-50/30 dark:bg-black/20" v-else>
       <div class="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-6">
         <Users class="w-10 h-10 text-gray-300 dark:text-gray-600" />
       </div>
