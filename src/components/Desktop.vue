@@ -19,6 +19,7 @@
 </template>
 <script setup lang='ts'>
 import { appStore } from '../stores/appStore.ts'
+import { desktopStore } from '../stores/desktopStore.ts'
 import { startTask } from '../stores/taskStore.ts'
 import { ref } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
