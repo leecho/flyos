@@ -8,7 +8,11 @@ const initialState = savedStore ? JSON.parse(savedStore) : {
   iconSize: 'small',
 };
 
-export const desktopStore = reactive(initialState)
+// 合并状态，确保 isMobile 不被持久化误导
+export const desktopStore = reactive({
+  ...initialState,
+  isMobile: false
+})
 
 watch(desktopStore, (newValue) => {
   localStorage.setItem('desktop-store', JSON.stringify(newValue));

@@ -43,10 +43,15 @@ export function getWindow(id?: string): WindowItem | null {
 
 /* ---------------- 打开窗口 ---------------- */
 
+import { desktopStore } from './desktopStore'
+
 export function openWindow(
     win: Omit<WindowItem, 'id' | 'zIndex' | 'isOpen' | 'minimized' | 'maximized'>
 ) {
     const id = crypto.randomUUID()
+    
+    // 移动端环境下强制最大化
+    const forceMaximize = desktopStore.isMobile
 
     const windowItem: WindowItem = {
         ...win,
@@ -54,7 +59,7 @@ export function openWindow(
         zIndex: windowStore.nextZIndex++,
         isOpen: true,
         minimized: false,
-        maximized: false,
+        maximized: forceMaximize,
         active: false
     }
 

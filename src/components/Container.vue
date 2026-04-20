@@ -1,5 +1,5 @@
 <template>
-  <div class='h-full w-full flex flex-col bg-transparent relative overflow-hidden'
+  <div ref='containerRef' class='h-full w-full flex flex-col bg-transparent relative overflow-hidden'
        v-show='!userStore.user.locked'
        @contextmenu.prevent='openContextMenu'>
 
@@ -12,7 +12,7 @@
         <Metro v-if="desktopStore.mode == 'metro'"  />
       </Transition>
 
-    <TaskBar />
+    <TaskBar v-if="!desktopStore.isMobile" />
     <ContextMenu ref='menuRef' />
   </div>
 </template>
@@ -25,14 +25,33 @@ import TaskBar from './TaskBar.vue'
 import Desktop from './Desktop.vue'
 import ContextMenu from './ContextMenu.vue'
 import { themeStore } from '../stores/themeStore.ts'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { CheckIcon,LockIcon, SettingsIcon, PaletteIcon, LayoutDashboardIcon, ExpandIcon, ShrinkIcon } from 'lucide-vue-next'
 import { startTask } from '../stores/taskStore.ts'
 import { getAppById } from '../stores/appStore.ts'
 import { useFullscreen } from '../composables/useFullscreen'
+
 const { isFullscreen, toggleFullscreen } = useFullscreen()
 
+const containerRef = ref<HTMLElement | null>(null)
 const menuRef = ref()
+
+// 移动端监测
+let resizeObserver: ResizeObserver | null = null
+
+onMounted(() => {
+  if (containerRef.value) {
+    resizeObserver = new ResizeObserver((entries) => {
+      const { width } = entries[0].contentRect
+      desktopStore.isMobile = width < 768
+    })
+    resizeObserver.observe(containerRef.value)
+  }
+})
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect()
+})
 
 const openContextMenu = ($event: any) => {
   const desktopMenu = [
