@@ -594,14 +594,14 @@ export const apps: AppItem[] = [
         },
         window: {
             height: 600,
-            width: 400,
-            maximizable: false,
+            width: 800,
+            maximizable: true,
             component: 'Todo'
         }
     },
     {
         id: "wechat",
-        name: "微信",
+        name: "飞信",
         icon: {
             type: 'svg',
             content: '<path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path>',

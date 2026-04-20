@@ -1,6 +1,11 @@
 <template>
-  <div class="notepad-app flex h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden font-sans">
-    <div class="w-64 bg-gray-100/50 dark:bg-gray-800/50 flex flex-col border-r border-gray-200 dark:border-gray-700">
+  <div ref="containerRef" class="notepad-app flex h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden font-sans border-0">
+    <!-- 侧边栏: 笔记列表 -->
+    <div 
+      class="sidebar w-64 bg-gray-100/50 dark:bg-gray-800/50 flex flex-col border-r border-gray-200 dark:border-gray-700 shrink-0"
+      v-if="!isMobile || !activeNoteId"
+      :class="{ 'w-full': isMobile }"
+    >
       <div class="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
         <h2 class="font-bold text-xs uppercase tracking-wider opacity-60">我的笔记</h2>
         <button
@@ -34,17 +39,33 @@
       </div>
     </div>
 
-    <div v-if="activeNote" class="flex-1 flex flex-col min-w-0">
-      <div class="h-12 border-b border-gray-200 dark:border-gray-700 flex items-center px-6 justify-between bg-white dark:bg-gray-900">
-        <input
-          v-model="activeNote.title"
-          v-on:input="updateTimestamp"
-          placeholder="笔记标题..."
-          class="bg-transparent border-none outline-none font-semibold text-base w-2/3 focus:ring-0 placeholder:opacity-30"
-        />
+    <!-- 主区域: 编辑器 -->
+    <div 
+      v-if="activeNote && (!isMobile || activeNoteId)" 
+      class="flex-1 flex flex-col min-w-0"
+    >
+      <div class="h-12 border-b border-gray-200 dark:border-gray-700 flex items-center px-4 sm:px-6 justify-between bg-white dark:bg-gray-900">
+        <div class="flex items-center gap-2 flex-1">
+          <!-- 移动端返回按钮 -->
+          <button 
+            v-if="isMobile" 
+            @click="activeNoteId = null"
+            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          
+          <input
+            v-model="activeNote.title"
+            v-on:input="updateTimestamp"
+            placeholder="笔记标题..."
+            class="bg-transparent border-none outline-none font-semibold text-base w-full focus:ring-0 placeholder:opacity-30"
+          />
+        </div>
+        
         <div class="flex items-center space-x-4 text-[10px] opacity-40 whitespace-nowrap">
           <span class="hidden sm:inline">字数: {{ getNoteContentLength() }}</span>
-          <span>已自动保存</span>
+          <span>已存档</span>
         </div>
       </div>
 
@@ -56,7 +77,11 @@
       ></textarea>
     </div>
 
-    <div v-else class="flex-1 flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 space-y-4">
+    <!-- 空状态 (仅桌面端) -->
+    <div 
+      v-else-if="!isMobile" 
+      class="flex-1 flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 space-y-4"
+    >
       <div class="p-8 bg-gray-100 dark:bg-gray-800 rounded-full opacity-50">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
       </div>
@@ -72,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 
 interface Note {
   id: string;
@@ -83,23 +108,44 @@ interface Note {
 
 const notes = ref<Note[]>([]);
 const activeNoteId = ref<string | null>(null);
+const containerRef = ref<HTMLElement | null>(null);
+const containerWidth = ref(1000);
+
+const isMobile = computed(() => containerWidth.value < 600);
 
 const activeNote = computed(() => {
   return notes.value.find(n => n.id === activeNoteId.value) || null;
 });
 
+// 容器尺寸监听
+const updateSize = () => {
+  if (containerRef.value) containerWidth.value = containerRef.value.offsetWidth;
+};
+
+let resizeObserver: ResizeObserver | null = null;
 onMounted(() => {
+  if (containerRef.value) {
+    resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(containerRef.value);
+    updateSize();
+  }
+
   const saved = localStorage.getItem('flyos_notepad_data');
   if (saved) {
     try {
       notes.value = JSON.parse(saved);
-      if (notes.value.length > 0) {
+      // 仅在宽屏时自动选中第一条
+      if (notes.value.length > 0 && !isMobile.value) {
         activeNoteId.value = notes.value[0].id;
       }
     } catch (e) {
       console.error('Failed to parse notes', e);
     }
   }
+});
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect();
 });
 
 watch(notes, (newNotes) => {
@@ -132,7 +178,7 @@ function createNewNote() {
 function deleteNote(id: string) {
   notes.value = notes.value.filter(n => n.id !== id);
   if (activeNoteId.value === id) {
-    activeNoteId.value = notes.value.length > 0 ? notes.value[0].id : null;
+    activeNoteId.value = notes.value.length > 0 && !isMobile.value ? notes.value[0].id : null;
   }
 }
 
@@ -145,8 +191,11 @@ function updateTimestamp() {
 
 <style scoped>
 .notepad-app {
-  user-select: text;
+  container-type: inline-size;
+  container-name: notepad-app;
+  user-select: none;
 }
+
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -159,5 +208,9 @@ function updateTimestamp() {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(155, 155, 155, 0.4);
+}
+
+textarea {
+  user-select: text;
 }
 </style>

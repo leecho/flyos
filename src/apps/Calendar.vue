@@ -1,9 +1,23 @@
 <template>
-  <div class="calendar-app flex h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden font-sans">
+  <div ref="containerRef" class="calendar-app flex h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden font-sans border-0">
     <!-- 左侧详情面板 -->
-    <div class="w-80 bg-gray-50 dark:bg-gray-800/50 flex flex-col border-r border-gray-200 dark:border-gray-700">
+    <div 
+      class="sidebar w-80 bg-gray-50 dark:bg-gray-800/50 flex flex-col border-r border-gray-200 dark:border-gray-700 shrink-0"
+      v-if="!isMobile || mobileView === 'details'"
+      :class="{ 'w-full': isMobile }"
+    >
       <div class="p-6">
-        <h1 class="text-4xl font-light text-accent">{{ selectedDate.getDate() }}</h1>
+        <!-- 移动端返回按钮 -->
+        <button 
+          v-if="isMobile" 
+          @click="mobileView = 'month'"
+          class="mb-4 -ml-1 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors inline-flex items-center gap-1 text-xs font-bold text-gray-500"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          返回日历
+        </button>
+
+        <h1 class="text-4xl font-light text-accent leading-none">{{ selectedDate.getDate() }}</h1>
         <p class="text-lg font-medium mt-1">{{ formatFullDate(selectedDate) }}</p>
         <p class="text-sm opacity-50">{{ formatChineseLunar(selectedDate) }}</p>
       </div>
@@ -32,11 +46,14 @@
     </div>
 
     <!-- 右侧日历视图 -->
-    <div class="flex-1 flex flex-col p-6">
-      <div class="flex justify-between items-center mb-8">
-        <div class="flex items-center space-x-4">
-          <h2 class="text-2xl font-bold">{{ viewMonthName }} {{ viewYear }}</h2>
-          <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+    <div 
+      class="flex-1 flex flex-col p-4 sm:p-6 min-w-0"
+      v-if="!isMobile || mobileView === 'month'"
+    >
+      <div class="flex justify-between items-center mb-6 sm:mb-8">
+        <div class="flex items-center space-x-2 sm:space-x-4 overflow-hidden">
+          <h2 class="text-xl sm:text-2xl font-bold truncate">{{ viewMonthName }} {{ viewYear }}</h2>
+          <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 shrink-0">
             <button @click="prevMonth" class="p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded shadow-sm transition-all">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
@@ -45,12 +62,12 @@
             </button>
           </div>
         </div>
-        <button @click="goToToday" class="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent/90 text-white rounded-lg transition-colors">今天</button>
+        <button @click="goToToday" class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-accent hover:bg-accent/90 text-white rounded-lg transition-colors shrink-0">今天</button>
       </div>
 
-      <div class="grid grid-cols-7 gap-2 flex-1">
+      <div class="grid grid-cols-7 gap-1 sm:gap-2 flex-1 items-start content-start">
         <!-- 星期表头 -->
-        <div v-for="day in ['一', '二', '三', '四', '五', '六', '日']" :key="day" class="text-center text-xs font-bold opacity-40 py-2">
+        <div v-for="day in ['一', '二', '三', '四', '五', '六', '日']" :key="day" class="text-center text-[10px] sm:text-xs font-bold opacity-40 py-2">
           {{ day }}
         </div>
 
@@ -58,17 +75,17 @@
         <div
           v-for="{ date, isCurrentMonth, isToday, isSelected, eventsCount } in calendarDays"
           :key="date.getTime()"
-          @click="selectedDate = date"
-          class="aspect-square relative rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all border-2"
+          @click="onDateClick(date)"
+          class="aspect-square relative rounded-lg sm:rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all border-2"
           :class="[
             isCurrentMonth ? 'opacity-100' : 'opacity-20',
             isSelected ? 'border-accent bg-accent/10 dark:bg-accent/20' : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800',
             isToday && !isSelected ? 'text-accent font-bold' : ''
           ]"
         >
-          <span class="text-sm z-10">{{ date.getDate() }}</span>
-          <div v-if="eventsCount > 0" class="absolute bottom-2 flex space-x-1">
-            <div v-for="n in Math.min(eventsCount, 3)" :key="n" class="w-1 h-1 rounded-full bg-accent/50"></div>
+          <span class="text-xs sm:text-sm z-10">{{ date.getDate() }}</span>
+          <div v-if="eventsCount > 0" class="absolute bottom-1 sm:bottom-2 flex space-x-0.5 sm:space-x-1">
+            <div v-for="n in Math.min(eventsCount, 3)" :key="n" class="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-accent/50"></div>
           </div>
         </div>
       </div>
@@ -77,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { messageBox } from '../composables/useMessage';
 
 interface Event {
@@ -87,9 +104,15 @@ interface Event {
   time: string;
 }
 
+const containerRef = ref<HTMLElement | null>(null);
+const containerWidth = ref(1000);
+const mobileView = ref<'month' | 'details'>('month');
+
 const selectedDate = ref(new Date());
 const viewDate = ref(new Date());
 const events = ref<Event[]>([]);
+
+const isMobile = computed(() => containerWidth.value < 700);
 
 const viewYear = computed(() => viewDate.value.getFullYear());
 const viewMonth = computed(() => viewDate.value.getMonth());
@@ -127,6 +150,13 @@ const currentDayEvents = computed(() => {
   return events.value.filter(e => e.dateStr === ds);
 });
 
+// 容器尺寸监听
+const updateSize = () => {
+  if (containerRef.value) containerWidth.value = containerRef.value.offsetWidth;
+};
+
+let resizeObserver: ResizeObserver | null = null;
+
 function createDayObject(date: Date, isCurrentMonth: boolean) {
   const today = new Date();
   return {
@@ -136,6 +166,13 @@ function createDayObject(date: Date, isCurrentMonth: boolean) {
     isSelected: date.toDateString() === selectedDate.value.toDateString(),
     eventsCount: events.value.filter(e => e.dateStr === date.toDateString()).length
   };
+}
+
+function onDateClick(date: Date) {
+  selectedDate.value = date;
+  if (isMobile.value) {
+    mobileView.value = 'details';
+  }
 }
 
 function prevMonth() { viewDate.value = new Date(viewYear.value, viewMonth.value - 1, 1); }
@@ -171,18 +208,29 @@ function formatFullDate(date: Date) {
 }
 
 function formatChineseLunar(date: Date) {
-  // 简单模拟农历显示（由于库限制，仅作展示占位）
   return "农历冬月十二 · 乙巳年";
 }
 
 onMounted(() => {
+  if (containerRef.value) {
+    resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(containerRef.value);
+    updateSize();
+  }
+
   const saved = localStorage.getItem('flyos_calendar_events');
   if (saved) events.value = JSON.parse(saved);
+});
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect();
 });
 </script>
 
 <style scoped>
 .calendar-app {
+  container-type: inline-size;
+  container-name: calendar-app;
   user-select: none;
 }
 ::-webkit-scrollbar { width: 4px; }

@@ -1,63 +1,67 @@
 <template>
-  <div class="calculator-app" @keydown="handleKeyboard">
-    <!-- 顶部状态栏装饰 -->
-    <div class="header-decoration">
-      <span class="mode-label">标准</span>
-      <i class="fa-solid fa-history history-icon"></i>
-    </div>
-
-    <!-- 显示区域 -->
-    <div class="display-section">
-      <div class="equation-hint">{{ equation }}</div>
-      <div class="main-display" :class="{ 'text-smaller': display.length > 10 }">
-        {{ formatNumber(display) }}
+  <div ref="containerRef" class="calculator-app-container" @keydown="handleKeyboard">
+    <div class="calculator-app">
+      <!-- 顶部状态栏装饰 -->
+      <div class="header-decoration desktop-only">
+        <span class="mode-label">标准</span>
+        <i class="fa-solid fa-history history-icon"></i>
       </div>
-    </div>
 
-    <!-- 快捷内存/功能键 (装饰性) -->
-    <div class="memory-bar">
-      <span>MC</span><span>MR</span><span>M+</span><span>M-</span><span>MS</span><span>M⌄</span>
-    </div>
+      <!-- 显示区域 -->
+      <div class="display-section">
+        <div class="equation-hint">{{ equation }}</div>
+        <div class="main-display" :class="{ 'text-smaller': display.length > 10 }">
+          {{ formatNumber(display) }}
+        </div>
+      </div>
 
-    <!-- 按键网格 -->
-    <div class="keypad">
-      <button class="key func-key" @click="handleOperator('%')">%</button>
-      <button class="key func-key" @click="clearDisplay">CE</button>
-      <button class="key func-key" @click="clearAll">C</button>
-      <button class="key func-key" @click="backspace">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
-      </button>
+      <!-- 快捷内存/功能键 (装饰性) -->
+      <div class="memory-bar sm-hide">
+        <span>MC</span><span>MR</span><span>M+</span><span>M-</span><span>MS</span><span>M⌄</span>
+      </div>
 
-      <button class="key func-key" @click="handleSpecial('1/x')">¹/x</button>
-      <button class="key func-key" @click="handleSpecial('x²')">x²</button>
-      <button class="key func-key" @click="handleSpecial('√x')">²√x</button>
-      <button class="key op-key" @click="handleOperator('÷')">÷</button>
+      <!-- 按键网格 -->
+      <div class="keypad">
+        <button class="key func-key" @click="handleOperator('%')">%</button>
+        <button class="key func-key" @click="clearDisplay">CE</button>
+        <button class="key func-key" @click="clearAll">C</button>
+        <button class="key func-key" @click="backspace">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+        </button>
 
-      <button class="key num-key" @click="appendDigit('7')">7</button>
-      <button class="key num-key" @click="appendDigit('8')">8</button>
-      <button class="key num-key" @click="appendDigit('9')">9</button>
-      <button class="key op-key" @click="handleOperator('×')">×</button>
+        <button class="key func-key" @click="handleSpecial('1/x')">¹/x</button>
+        <button class="key func-key" @click="handleSpecial('x²')">x²</button>
+        <button class="key func-key" @click="handleSpecial('√x')">²√x</button>
+        <button class="key op-key" @click="handleOperator('÷')">÷</button>
 
-      <button class="key num-key" @click="appendDigit('4')">4</button>
-      <button class="key num-key" @click="appendDigit('5')">5</button>
-      <button class="key num-key" @click="appendDigit('6')">6</button>
-      <button class="key op-key" @click="handleOperator('-')">−</button>
+        <button class="key num-key" @click="appendDigit('7')">7</button>
+        <button class="key num-key" @click="appendDigit('8')">8</button>
+        <button class="key num-key" @click="appendDigit('9')">9</button>
+        <button class="key op-key" @click="handleOperator('×')">×</button>
 
-      <button class="key num-key" @click="appendDigit('1')">1</button>
-      <button class="key num-key" @click="appendDigit('2')">2</button>
-      <button class="key num-key" @click="appendDigit('3')">3</button>
-      <button class="key op-key" @click="handleOperator('+')">+</button>
+        <button class="key num-key" @click="appendDigit('4')">4</button>
+        <button class="key num-key" @click="appendDigit('5')">5</button>
+        <button class="key num-key" @click="appendDigit('6')">6</button>
+        <button class="key op-key" @click="handleOperator('-')">−</button>
 
-      <button class="key num-key" @click="toggleSign">±</button>
-      <button class="key num-key" @click="appendDigit('0')">0</button>
-      <button class="key num-key" @click="appendDot">.</button>
-      <button class="key accent-key" @click="calculateResult">=</button>
+        <button class="key num-key" @click="appendDigit('1')">1</button>
+        <button class="key num-key" @click="appendDigit('2')">2</button>
+        <button class="key num-key" @click="appendDigit('3')">3</button>
+        <button class="key op-key" @click="handleOperator('+')">+</button>
+
+        <button class="key num-key" @click="toggleSign">±</button>
+        <button class="key num-key" @click="appendDigit('0')">0</button>
+        <button class="key num-key" @click="appendDot">.</button>
+        <button class="key accent-key" @click="calculateResult">=</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+
+const containerRef = ref<HTMLElement | null>(null)
 
 // 状态
 const display = ref('0')
@@ -199,6 +203,13 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyboard))
 </script>
 
 <style scoped>
+.calculator-app-container {
+  height: 100%;
+  width: 100%;
+  container-type: inline-size;
+  container-name: calculator-app;
+}
+
 .calculator-app {
   display: flex;
   flex-direction: column;
@@ -239,12 +250,13 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyboard))
 
 /* 显示区 */
 .display-section {
-  flex: 0 0 100px;
+  flex: 0 0 auto;
+  min-height: 80px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 0 12px 16px;
+  padding: 0 12px 12px;
 }
 
 .equation-hint {
@@ -252,6 +264,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyboard))
   color: #666;
   height: 20px;
   margin-bottom: 4px;
+  text-align: right;
 }
 
 .dark .equation-hint {
@@ -263,6 +276,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyboard))
   font-weight: 600;
   letter-spacing: -0.5px;
   transition: all 0.2s;
+  text-align: right;
+  word-break: break-all;
 }
 
 .main-display.text-smaller {
@@ -346,5 +361,62 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyboard))
 
 .op-key {
   font-size: 20px;
+}
+
+/* Responsive Overrides */
+@container calculator-app (max-width: 320px) {
+  .calculator-app {
+    padding: 4px;
+  }
+  
+  .main-display {
+    font-size: 32px;
+  }
+  
+  .main-display.text-smaller {
+    font-size: 20px;
+  }
+  
+  .sm-hide {
+    display: none;
+  }
+  
+  .display-section {
+    min-height: 60px;
+    padding-bottom: 8px;
+  }
+  
+  .keypad {
+    gap: 1px;
+  }
+  
+  .key {
+    font-size: 13px;
+    border-radius: 2px;
+  }
+  
+  .op-key {
+    font-size: 16px;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+}
+
+@container calculator-app (max-height: 400px) {
+  .display-section {
+    min-height: 40px;
+    padding-bottom: 4px;
+  }
+  .main-display {
+    font-size: 24px;
+  }
+  .equation-hint {
+    font-size: 10px;
+  }
+  .header-decoration, .memory-bar {
+    display: none;
+  }
 }
 </style>
