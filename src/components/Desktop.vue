@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex h-full justify-center md:justify-start p-[20px] pb-[50px]">
+  <div class="w-full flex h-full justify-center md:justify-start p-[20px]" :class="{ 'pb-[60px]': !desktopStore.isMobile }">
   <div ref='desktopRef' class='flex flex-row md:flex-col gap-4 flex-wrap justify-between md:justify-start content-start items-center'>
     <div v-for='app in apps'
          :title='app.name'

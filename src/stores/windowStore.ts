@@ -31,7 +31,10 @@ export const windowStore = reactive({
      * 激活栈（焦点历史）
      * 栈顶 = 当前 active
      */
-    actives: [] as string[]
+    actives: [] as string[],
+
+    /** 移动端多任务切换器可见性 */
+    switcherVisible: false
 })
 
 /* ---------------- 工具函数 ---------------- */
@@ -163,6 +166,23 @@ export function closeWindow(id: string) {
     if (windowStore.active === id) {
         activateTop()
     }
+}
+
+/* ---------------- 移动端导航增强 ---------------- */
+
+/** 回到桌面（最小化所有窗口） */
+export function minimizeAll() {
+    windowStore.windows.forEach(w => {
+        w.minimized = true
+    })
+    windowStore.actives = []
+    windowStore.active = null
+    windowStore.switcherVisible = false
+}
+
+/** 切换多任务视图 */
+export function toggleSwitcher() {
+    windowStore.switcherVisible = !windowStore.switcherVisible
 }
 
 /* ---------------- ZIndex ---------------- */

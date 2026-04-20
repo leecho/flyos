@@ -13,6 +13,8 @@
       </Transition>
 
     <TaskBar v-if="!desktopStore.isMobile" />
+    <MobileNav v-else />
+    <AppSwitcher />
     <ContextMenu ref='menuRef' />
   </div>
 </template>
@@ -24,6 +26,8 @@ import Metro from './Metro.vue'
 import TaskBar from './TaskBar.vue'
 import Desktop from './Desktop.vue'
 import ContextMenu from './ContextMenu.vue'
+import MobileNav from './MobileNav.vue'
+import AppSwitcher from './AppSwitcher.vue'
 import { themeStore } from '../stores/themeStore.ts'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { CheckIcon,LockIcon, SettingsIcon, PaletteIcon, LayoutDashboardIcon, ExpandIcon, ShrinkIcon } from 'lucide-vue-next'
