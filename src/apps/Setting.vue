@@ -91,8 +91,8 @@ onMounted(() => {
   <div class="settings-app @container flex h-full bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-xl text-gray-900 dark:text-gray-100 font-sans overflow-hidden">
 
     <!-- 侧边导航栏 -->
-    <div class="border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex-col p-4 space-y-2 overflow-y-auto shrink-0 w-full @sm:w-64"
-         :class="mobileView === 'sidebar' ? 'flex' : 'hidden @sm:flex'">
+    <div class="border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex-col p-4 space-y-2 overflow-y-auto shrink-0 w-full @2xl:w-64"
+         :class="mobileView === 'sidebar' ? 'flex' : 'hidden @2xl:flex'">
       <!-- 用户简略信息 -->
       <div class="flex items-center gap-3 px-3 py-4 mb-4 ">
         <img :src="userStore.user.avatar" class="w-10 h-10 rounded-full border-2 border-accent/50 object-cover shadow-sm" />
@@ -119,16 +119,16 @@ onMounted(() => {
 
     <!-- 主内容区 -->
     <div class="flex-1 flex flex-col min-w-0 pt-5 border-gray-100 dark:border-gray-800"
-         :class="mobileView === 'detail' ? 'flex' : 'hidden @sm:flex'">
-      <header class="h-16 flex items-center px-4 @sm:px-8 border-b border-gray-200/30 dark:border-gray-800/30 shrink-0">
-        <button @click="mobileView = 'sidebar'" class="@sm:hidden p-2 -ml-2 mr-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+         :class="mobileView === 'detail' ? 'flex' : 'hidden @2xl:flex'">
+      <header class="h-16 flex items-center px-4 @2xl:px-8 border-b border-gray-200/30 dark:border-gray-800/30 shrink-0">
+        <button @click="mobileView = 'sidebar'" class="@2xl:hidden p-2 -ml-2 mr-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
           <ChevronLeft class="w-6 h-6 text-gray-500" />
         </button>
         <h2 class="text-[20px] font-black uppercase tracking-widest opacity-80">{{ activeCategoryLabel }}</h2>
       </header>
 
-      <div class="flex-1 overflow-y-auto p-4 @sm:p-8 custom-scrollbar">
-        <div class="max-w-full @3xl:max-w-3xl mx-auto space-y-8 animate-in">
+      <div class="flex-1 overflow-y-auto p-4 @2xl:p-8 custom-scrollbar">
+        <div class="max-w-full @2xl:max-w-3xl mx-auto space-y-8 animate-in">
 
           <!-- 系统设置 -->
           <section v-if="currentCategory === 'system'" class="space-y-6">
@@ -137,16 +137,16 @@ onMounted(() => {
 
           <!-- 账户信息 -->
           <section v-if="currentCategory === 'user'" class="space-y-6">
-            <div class="flex flex-col @sm:flex-row items-center gap-8 p-2">
-              <div class="relative group">
+            <div class="flex flex-col @2xl:flex-row items-center @2xl:items-start gap-8 p-2">
+              <div class="relative group shrink-0">
                 <img :src="userStore.user.avatar" class="w-24 h-24 rounded-[2rem] shadow-2xl border-4 border-white dark:border-gray-800 object-cover" />
                 <div class="absolute inset-0 bg-black/40 rounded-[2rem] opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
                   <div class="text-white scale-125" v-html="icons.user"></div>
                 </div>
               </div>
               <div>
-                <h2 class="text-2xl font-black tracking-tight text-center @sm:text-left">{{ userStore.user.name }}</h2>
-                <p class="text-[11px] font-bold text-accent uppercase tracking-widest mt-1 text-center @sm:text-left">FlyOS Administrator</p>
+                <h2 class="text-2xl font-black tracking-tight text-center @2xl:text-left">{{ userStore.user.name }}</h2>
+                <p class="text-[11px] font-bold text-accent uppercase tracking-widest mt-1 text-center @2xl:text-left">FlyOS Administrator</p>
                 <div class="mt-4 flex gap-2">
                   <button class="px-5 py-2 bg-accent hover:bg-accent/90 text-white text-[11px] font-black rounded-xl shadow-lg shadow-accent/30 transition-all active:scale-95">编辑资料</button>
                   <button class="px-5 py-2 bg-gray-200 dark:bg-white/10 text-[11px] font-black rounded-xl transition-all">安全设置</button>
@@ -155,8 +155,8 @@ onMounted(() => {
             </div>
 
             <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10">
-              <div class="flex flex-col @sm:flex-row items-center justify-between">
-                <div class="flex items-center gap-4 mb-4 @sm:mb-0">
+              <div class="flex flex-col @2xl:flex-row items-center justify-between">
+                <div class="flex items-center gap-4 mb-4 @2xl:mb-0">
                   <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-500" v-html="icons.lock"></div>
                   <div>
                     <div class="text-sm font-bold">系统锁定状态</div>
@@ -176,9 +176,9 @@ onMounted(() => {
 
           <!-- 显示与桌面 -->
           <section v-if="currentCategory === 'display'" class="space-y-6">
-            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
+            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-4 @2xl:p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">系统主题</h3>
-              <div class="grid grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 @xs:grid-cols-2 @md:grid-cols-3 gap-4">
                 <div
                   @click="themeStore.setTheme('light')"
                   class="aspect-video rounded-lg bg-gradient-to-br from-slate-100 to-slate-300 overflow-hidden cursor-pointer transition-all hover:scale-105"
@@ -200,9 +200,9 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
+            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-4 @2xl:p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">桌面壁纸</h3>
-              <div class="grid grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 @xs:grid-cols-2 @md:grid-cols-3 gap-4">
                 <div
                   v-for="wallpaper in wallpapers"
                   :key="wallpaper.name"
@@ -215,9 +215,9 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
+            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-4 @2xl:p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">主题颜色</h3>
-              <div class="flex flex-wrap gap-4">
+              <div class="flex flex-wrap gap-3 @2xl:gap-4 justify-center @2xl:justify-start">
                 <button
                   v-for="color in themeColors"
                   :key="color.name"
@@ -232,9 +232,9 @@ onMounted(() => {
                 </button>
               </div>
             </div>
-            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-6 border border-white/20 dark:border-white/10 shadow-sm">
+            <div class="bg-white/40 dark:bg-white/5 rounded-2xl p-4 @2xl:p-6 border border-white/20 dark:border-white/10 shadow-sm">
               <h3 class="text-[11px] font-bold mb-5 opacity-40 uppercase tracking-widest">桌面布局</h3>
-              <div class="grid grid-cols-1 @sm:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 @2xl:grid-cols-2 gap-4">
                 <div
                   @click="setMode('desktop')"
                   class="p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 group"
@@ -259,12 +259,12 @@ onMounted(() => {
 
           <!-- 关于 -->
           <section v-if="currentCategory === 'about'" class="space-y-6">
-            <div class="bg-gradient-to-br from-accent/70 via-accent to-purple-700 rounded-[2.5rem] p-6 @sm:p-10 text-white relative overflow-hidden shadow-2xl shadow-accent/20">
+            <div class="bg-gradient-to-br from-accent/70 via-accent to-purple-700 rounded-[2.5rem] p-6 @2xl:p-10 text-white relative overflow-hidden shadow-2xl shadow-accent/20">
               <div class="relative z-10">
                 <div class="inline-block px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest mb-4">Core Edition</div>
-                <h2 class="text-3xl @sm:text-4xl font-black tracking-tighter mb-2">FlyOS Pro</h2>
+                <h2 class="text-3xl @2xl:text-4xl font-black tracking-tighter mb-2">FlyOS Pro</h2>
                 <p class="opacity-70 text-sm font-medium mb-8">Next-generation workspace for creators.</p>
-                <div class="flex flex-col @sm:flex-row gap-4">
+                <div class="flex flex-col @2xl:flex-row gap-4">
                   <button class="px-8 py-2.5 bg-white text-accent rounded-2xl text-[11px] font-black shadow-xl hover:scale-105 active:scale-95 transition-all">检查更新</button>
                   <button class="px-8 py-2.5 bg-white/20 backdrop-blur-md text-white rounded-2xl text-[11px] font-black hover:bg-white/30 transition-all">支持中心</button>
                 </div>
