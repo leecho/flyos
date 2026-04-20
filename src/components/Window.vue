@@ -29,9 +29,10 @@
           </span>
         </div>
 
-        <div v-if="!isMobile" class="flex items-center gap-1" @mousedown.stop>
+        <div class="flex items-center gap-1" @mousedown.stop>
           <!-- 最小化按钮 -->
           <button
+            v-if="!isMobile"
             class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-white"
             @click="$emit('minimize')"
           >
@@ -42,7 +43,7 @@
 
           <!-- 最大化 / 恢复 按钮 -->
           <button
-            v-if="canMaximize"
+            v-if="canMaximize && !isMobile"
             class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-white"
             @click="toggleMaximize"
           >
@@ -65,9 +66,7 @@
               />
             </svg>
           </button>
-        </div>
 
-        <div class="flex items-center gap-1" @mousedown.stop>
           <!-- 关闭按钮 -->
           <button
             class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-500 hover:text-white transition-all text-gray-500"
