@@ -207,12 +207,22 @@ watch(activeBoardId, () => {
 </script>
 
 <template>
-  <div class="flex h-full w-full overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
+  <div class="@container flex h-full w-full overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300 relative">
+
+    <!-- 移动端侧边栏遮罩 -->
+    <div
+      v-if="isSidebarOpen"
+      @click="isSidebarOpen = false"
+      class="absolute inset-0 bg-black/20 backdrop-blur-sm z-30 @2xl:hidden animate-in fade-in duration-300"
+    ></div>
 
     <!-- 侧边管理栏 -->
     <aside
-      class="flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all duration-300 overflow-hidden"
-      :class="[isSidebarOpen ? 'w-64' : 'w-0']"
+      class="flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all duration-300 overflow-hidden z-40"
+      :class="[
+        isSidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full @2xl:translate-x-0',
+        '@2xl:relative absolute inset-y-0 left-0'
+      ]"
     >
       <div class="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0">
         <h2 class="font-bold text-xs uppercase tracking-widest text-accent truncate">我的画布</h2>
@@ -260,24 +270,24 @@ watch(activeBoardId, () => {
     <div class="flex-1 relative flex flex-col min-w-0">
 
       <!-- 顶部控制条 -->
-      <nav class="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4 px-4 py-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-xl">
-        <button @click="isSidebarOpen = !isSidebarOpen" class="p-1.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-transform" :class="{'rotate-180': !isSidebarOpen}">
+      <nav class="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 @sm:gap-4 px-3 @sm:px-4 py-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-xl max-w-[90vw] overflow-x-auto no-scrollbar">
+        <button @click="isSidebarOpen = !isSidebarOpen" class="p-1.5 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-transform shrink-0" :class="{'rotate-180': !isSidebarOpen}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
 
         <div class="w-px h-4 bg-slate-200 dark:bg-slate-800"></div>
 
         <!-- 颜色选择器 -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 @sm:gap-2 shrink-0">
           <button
             v-for="c in presetColors"
             :key="c"
             @click="color = c; tool = 'pencil'"
-            class="w-5 h-5 rounded-full transition-transform border-2"
+            class="w-4 h-4 @sm:w-5 @sm:h-5 rounded-full transition-transform border-2"
             :class="[color === c && tool === 'pencil' ? 'border-slate-400 scale-125' : 'border-transparent hover:scale-110']"
             :style="{ backgroundColor: c }"
           ></button>
-          <div class="relative w-5 h-5 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div class="relative w-4 h-4 @sm:w-5 @sm:h-5 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden">
             <input type="color" v-model="color" class="absolute inset-0 w-full h-full scale-[2] cursor-pointer" @change="tool = 'pencil'" />
           </div>
         </div>
@@ -290,10 +300,10 @@ watch(activeBoardId, () => {
       </nav>
 
       <!-- 侧边浮动工具栏 -->
-      <div class="absolute left-6 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-4 p-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-lg">
+      <div class="absolute left-4 @sm:left-6 top-1/2 -translate-y-1/2 @max-md:top-auto @max-md:-translate-y-0 @max-md:bottom-20 @max-md:left-1/2 @max-md:-translate-x-1/2 z-20 flex flex-col @max-md:flex-row gap-2 @sm:gap-4 p-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-lg transition-all">
         <button
           @click="tool = 'pencil'"
-          class="p-3 rounded-xl transition-all"
+          class="p-2.5 @sm:p-3 rounded-xl transition-all"
           :class="[tool === 'pencil' ? 'bg-accent text-white shadow-lg' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800']"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
@@ -301,22 +311,22 @@ watch(activeBoardId, () => {
 
         <button
           @click="tool = 'eraser'"
-          class="p-3 rounded-xl transition-all"
+          class="p-2.5 @sm:p-3 rounded-xl transition-all"
           :class="[tool === 'eraser' ? 'bg-accent text-white shadow-lg' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800']"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 20Z"/></svg>
         </button>
 
-        <div class="h-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
+        <div class="h-px @max-md:h-4 @max-md:w-px bg-slate-200 dark:bg-slate-800 mx-1 @max-md:my-auto"></div>
 
-        <div class="flex flex-col items-center gap-3 py-2">
+        <div class="flex flex-col @max-md:flex-row items-center gap-2 @sm:gap-3 py-2 px-1">
           <input
             type="range"
             min="1" max="40"
             v-model.number="lineWidth"
-            class="slider-v"
+            class="slider-v @max-md:slider-h"
           />
-          <div class="w-4 h-4 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+          <div class="w-4 h-4 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
             <div class="bg-accent rounded-full" :style="{ width: Math.max(2, lineWidth/4) + 'px', height: Math.max(2, lineWidth/4) + 'px' }"></div>
           </div>
         </div>
@@ -371,7 +381,14 @@ watch(activeBoardId, () => {
   cursor: pointer;
 }
 
-.slider-v::-webkit-slider-thumb {
+.slider-h {
+  writing-mode: horizontal-tb;
+  width: 80px;
+  height: 4px;
+}
+
+.slider-v::-webkit-slider-thumb,
+.slider-h::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 14px;
   height: 14px;
