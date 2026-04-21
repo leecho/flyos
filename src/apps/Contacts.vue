@@ -109,6 +109,7 @@
         </div>
       </div>
     </div>
+  </div>
  
     <!-- Empty State -->
     <div class="hidden @2xl:flex flex-1 flex-col items-center justify-center text-gray-400 dark:text-gray-600 bg-gray-50/30 dark:bg-black/20" v-else>
