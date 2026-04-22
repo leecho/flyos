@@ -1,39 +1,39 @@
 <template>
-  <div ref="containerRef" class="notepad-app flex h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-hidden font-sans border-0">
+  <div ref="containerRef" class="notepad-app flex h-full bg-[var(--fly-bg-primary)] text-[var(--fly-text-primary)] overflow-hidden font-sans border-0">
     <!-- 侧边栏: 笔记列表 -->
     <div 
-      class="sidebar w-64 bg-gray-100/50 dark:bg-gray-800/50 flex flex-col border-r border-gray-200 dark:border-gray-700 shrink-0"
+      class="sidebar w-64 bg-[var(--fly-bg-secondary)] flex flex-col border-r border-[var(--fly-border-system)] shrink-0"
       v-if="!isMobile || !activeNoteId"
       :class="{ 'w-full': isMobile }"
     >
-      <div class="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
-        <h2 class="font-bold text-xs uppercase tracking-wider opacity-60">我的笔记</h2>
+      <div class="p-4 flex items-center justify-between border-b border-[var(--fly-border-system)]">
+        <h2 class="font-bold text-xs uppercase tracking-wider opacity-40">我的笔记</h2>
         <button
-          v-on:click="createNewNote"
-          class="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors text-accent"
+          @click="createNewNote"
+          class="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors text-accent"
           title="新建笔记"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-2 space-y-1">
+      <div class="flex-1 overflow-y-auto p-2 space-y-1 no-scrollbar">
         <div
           v-for="note in notes"
-          v-bind:key="note.id"
-          v-on:click="selectNote(note.id)"
-          class="group p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center"
-          v-bind:class="activeNoteId === note.id ? 'bg-white dark:bg-gray-700 shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'hover:bg-gray-200/50 dark:hover:bg-gray-700/30'"
+          :key="note.id"
+          @click="selectNote(note.id)"
+          class="group p-3 rounded-[var(--fly-radius-md)] cursor-pointer transition-all flex justify-between items-center"
+          :class="activeNoteId === note.id ? 'bg-accent/10 text-accent font-bold' : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-60 hover:opacity-100'"
         >
           <div class="flex flex-col overflow-hidden text-left">
-            <span class="font-medium truncate text-sm leading-tight">{{ getNoteTitle(note) }}</span>
-            <span class="text-[10px] opacity-40 truncate mt-1">{{ note.updatedAt }}</span>
+            <span class="truncate text-[13px] leading-tight">{{ getNoteTitle(note) }}</span>
+            <span class="text-[10px] opacity-40 truncate mt-1 font-medium">{{ note.updatedAt }}</span>
           </div>
           <button
-            v-on:click.stop="deleteNote(note.id)"
-            class="opacity-0 group-hover:opacity-100 p-1 hover:text-accent transition-opacity"
+            @click.stop="deleteNote(note.id)"
+            class="opacity-0 group-hover:opacity-100 p-1 hover:text-red-500 transition-opacity"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
       </div>
@@ -44,54 +44,56 @@
       v-if="activeNote && (!isMobile || activeNoteId)" 
       class="flex-1 flex flex-col min-w-0"
     >
-      <div class="h-12 border-b border-gray-200 dark:border-gray-700 flex items-center px-4 sm:px-6 justify-between bg-white dark:bg-gray-900">
+      <div class="h-12 border-b border-[var(--fly-border-system)] flex items-center px-4 sm:px-6 justify-between bg-[var(--fly-bg-primary)]">
         <div class="flex items-center gap-2 flex-1">
           <!-- 移动端返回按钮 -->
           <button 
             v-if="isMobile" 
             @click="activeNoteId = null"
-            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            class="p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="m15 18-6-6 6-6"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-50"><path d="m15 18-6-6 6-6"/></svg>
           </button>
           
           <input
             v-model="activeNote.title"
-            v-on:input="updateTimestamp"
-            placeholder="笔记标题..."
-            class="bg-transparent border-none outline-none font-semibold text-base w-full focus:ring-0 placeholder:opacity-30"
+            @input="updateTimestamp"
+            placeholder="笔记标题"
+            class="bg-transparent border-none outline-none font-bold text-base w-full focus:ring-0 placeholder:opacity-20"
           />
         </div>
         
-        <div class="flex items-center space-x-4 text-[10px] opacity-40 whitespace-nowrap">
-          <span class="hidden sm:inline">字数: {{ getNoteContentLength() }}</span>
-          <span>已存档</span>
+        <div class="flex items-center space-x-4 text-[10px] opacity-40 tracking-wider font-bold uppercase">
+          <span class="hidden sm:inline">Chars: {{ getNoteContentLength() }}</span>
+          <span>Auto Saved</span>
         </div>
       </div>
 
       <textarea
         v-model="activeNote.content"
-        v-on:input="updateTimestamp"
-        placeholder="在此开始输入..."
-        class="flex-1 p-8 outline-none resize-none text-base leading-relaxed bg-transparent w-full text-gray-700 dark:text-gray-300"
+        @input="updateTimestamp"
+        placeholder="在此开始你的思考..."
+        class="flex-1 p-8 sm:p-12 outline-none resize-none text-base leading-loose bg-transparent w-full text-[var(--fly-text-primary)]"
       ></textarea>
     </div>
 
     <!-- 空状态 (仅桌面端) -->
     <div 
       v-else-if="!isMobile" 
-      class="flex-1 flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 space-y-4"
+      class="flex-1 flex flex-col items-center justify-center text-[var(--fly-text-secondary)] space-y-6"
     >
-      <div class="p-8 bg-gray-100 dark:bg-gray-800 rounded-full opacity-50">
+      <div class="p-10 bg-[var(--fly-bg-secondary)] rounded-full opacity-40">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
       </div>
-      <p class="text-sm">点击左侧笔记开始编辑</p>
-      <button
-        v-on:click="createNewNote"
-        class="px-5 py-2 bg-accent hover:bg-accent/90 text-white rounded-full text-xs font-medium transition-all shadow-md active:scale-95"
-      >
-        新建第一条笔记
-      </button>
+      <div class="text-center">
+        <p class="text-sm font-medium opacity-60">随手记下你的灵感</p>
+        <button
+          @click="createNewNote"
+          class="mt-6 px-8 py-2.5 bg-accent text-white rounded-xl text-xs font-black transition-all shadow-lg shadow-accent/20 active:scale-95"
+        >
+          新建第一条笔记
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -196,18 +198,8 @@ function updateTimestamp() {
   user-select: none;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(155, 155, 155, 0.2);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(155, 155, 155, 0.4);
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 textarea {

@@ -1,39 +1,39 @@
 <template>
-  <div class="@container flex flex-col @sm:flex-row h-full w-full bg-white dark:bg-gray-900 overflow-hidden text-gray-800 dark:text-gray-200 font-sans p-6 gap-6">
+  <div class="@container flex flex-col @sm:flex-row h-full w-full bg-[var(--fly-bg-primary)] overflow-hidden text-[var(--fly-text-primary)] font-sans p-6 gap-6">
     <!-- Source Panel -->
-    <div class="flex-1 flex flex-col rounded-2xl bg-gray-50/60 dark:bg-black/20 border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden transition-all duration-300 h-full focus-within:ring-1 focus-within:ring-blue-400/50 dark:focus-within:ring-blue-500/30">
+    <div class="flex-1 flex flex-col rounded-[var(--fly-radius-md)] bg-[var(--fly-bg-glass)] border border-[var(--fly-border-system)] shadow-sm overflow-hidden transition-all duration-300 h-full focus-within:ring-4 focus-within:ring-accent/5 focus-within:border-accent/30 group">
       <!-- Toolbar -->
-      <div class="flex items-center px-4 py-3 border-b border-gray-200 dark:border-gray-800 shrink-0 bg-transparent">
+      <div class="flex items-center px-5 py-4 border-b border-[var(--fly-border-system)]/50 shrink-0 bg-transparent">
         <div class="relative flex items-center">
           <select 
             v-model="sourceLang" 
-            class="bg-transparent appearance-none border-none text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-0 cursor-pointer p-0 pr-6 outline-none z-10"
+            class="bg-transparent appearance-none border-none text-[13px] font-black text-[var(--fly-text-primary)] focus:ring-0 cursor-pointer p-0 pr-8 outline-none z-10 uppercase tracking-wider"
           >
-            <option v-for="lang in languages" :key="lang.code" :value="lang.code" class="text-gray-900 bg-white dark:bg-gray-800 dark:text-white">{{ lang.name }}</option>
+            <option v-for="lang in languages" :key="lang.code" :value="lang.code" class="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{{ lang.name }}</option>
           </select>
-          <ChevronDown class="w-4 h-4 text-gray-500 absolute right-0 pointer-events-none" />
+          <ChevronDown class="w-4 h-4 opacity-30 absolute right-0 pointer-events-none" stroke-width="3" />
         </div>
         <div class="flex-1"></div>
-        <button @click="sourceText = ''" class="text-gray-400 hover:text-red-500 rounded-md p-1.5 transition-colors bg-transparent hover:bg-gray-200/50 dark:hover:bg-gray-700/50" title="清空内容" v-if="sourceText">
-          <X class="w-4 h-4" />
+        <button @click="sourceText = ''" class="opacity-0 group-focus-within:opacity-40 hover:opacity-100 hover:text-red-500 rounded-lg p-2 transition-all bg-transparent hover:bg-red-500/10" title="清空内容" v-if="sourceText">
+          <X class="w-4 h-4" stroke-width="2.5" />
         </button>
       </div>
       
       <!-- Input Area -->
-      <div class="flex-1 relative p-4 bg-transparent">
+      <div class="flex-1 relative p-6 bg-transparent">
         <textarea 
           v-model="sourceText"
-          placeholder="输入要翻译的文本..." 
-          class="w-full h-full resize-none border-none bg-transparent focus:ring-0 text-lg font-medium leading-relaxed placeholder-gray-400 dark:placeholder-gray-600 p-0 outline-none select-text text-gray-800 dark:text-gray-200"
+          placeholder="在此输入需要翻译的文本..." 
+          class="w-full h-full resize-none border-none bg-transparent focus:ring-0 text-xl font-bold leading-relaxed placeholder:opacity-20 p-0 outline-none select-text no-scrollbar"
           @input="handleInput"
         ></textarea>
       </div>
 
       <!-- Footer -->
-      <div class="px-4 py-3 flex items-center justify-between text-gray-400 dark:text-gray-500 bg-transparent shrink-0">
-        <span class="text-xs font-medium">{{ sourceText.length }} / 5000</span>
-        <button @click="translate" :disabled="!sourceText || isTranslating" class="px-4 py-1.5 rounded-full bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:hover:bg-accent text-white text-sm font-medium transition-all outline-none disabled:shadow-none flex items-center gap-2">
-          <span v-if="!isTranslating">翻译</span>
+      <div class="px-5 py-4 flex items-center justify-between text-[11px] font-black opacity-30 bg-transparent shrink-0 border-t border-[var(--fly-border-system)]/30">
+        <span class="uppercase tracking-[0.2em]">{{ sourceText.length }} / 5000</span>
+        <button @click="translate" :disabled="!sourceText || isTranslating" class="px-6 py-2 rounded-full bg-accent hover:brightness-110 disabled:opacity-20 text-white text-xs font-black transition-all shadow-xl shadow-accent/20 flex items-center gap-2 active:scale-95 uppercase tracking-widest">
+          <span v-if="!isTranslating">翻译内容</span>
           <Loader2 v-else class="w-4 h-4 animate-spin" />
         </button>
       </div>
@@ -43,66 +43,66 @@
     <div class="hidden @sm:flex items-center justify-center shrink-0">
       <button 
         @click="swapLanguages"
-        class="p-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-all"
+        class="p-3 rounded-full border border-[var(--fly-border-system)] bg-[var(--fly-bg-secondary)] text-accent hover:bg-accent hover:text-white shadow-2xl transition-all active:scale-90"
         title="交换语言"
       >
-        <ArrowLeftRight class="w-4 h-4" />
+        <ArrowLeftRight class="w-5 h-5" stroke-width="2.5" />
       </button>
     </div>
     
     <!-- Mobile Swap Button -->
-    <div class="flex items-center justify-center shrink-0 @sm:hidden -my-3 relative z-10">
+    <div class="flex items-center justify-center shrink-0 @sm:hidden -my-4 relative z-10">
       <button 
         @click="swapLanguages"
-        class="p-2 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-blue-500 shadow-sm transition-all"
+        class="p-3 rounded-full border border-[var(--fly-border-system)] bg-[var(--fly-bg-secondary)] text-accent shadow-xl transition-all"
       >
-        <ArrowLeftRight class="w-4 h-4 rotate-90" />
+        <ArrowLeftRight class="w-5 h-5 rotate-90" stroke-width="2.5" />
       </button>
     </div>
-
+    
     <!-- Target Panel -->
-    <div class="flex-1 flex flex-col rounded-2xl bg-gray-50/60 dark:bg-black/20 border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden h-full transition-all duration-300">
+    <div class="flex-1 flex flex-col rounded-[var(--fly-radius-md)] bg-[var(--fly-bg-secondary)]/50 border border-[var(--fly-border-system)] shadow-sm overflow-hidden h-full transition-all duration-300">
       <!-- Toolbar -->
-      <div class="flex items-center px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-transparent shrink-0">
+      <div class="flex items-center px-5 py-4 border-b border-[var(--fly-border-system)]/50 bg-transparent shrink-0">
         <div class="relative flex items-center">
           <select 
             v-model="targetLang" 
-            class="bg-transparent appearance-none border-none text-sm font-semibold text-gray-700 dark:text-gray-300 focus:ring-0 cursor-pointer p-0 pr-6 outline-none z-10"
+            class="bg-transparent appearance-none border-none text-[13px] font-black text-[var(--fly-text-primary)] focus:ring-0 cursor-pointer p-0 pr-8 outline-none z-10 uppercase tracking-wider"
           >
-            <option v-for="lang in targetLanguages" :key="lang.code" :value="lang.code" class="text-gray-900 bg-white dark:bg-gray-800 dark:text-white">{{ lang.name }}</option>
+            <option v-for="lang in targetLanguages" :key="lang.code" :value="lang.code" class="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{{ lang.name }}</option>
           </select>
-          <ChevronDown class="w-4 h-4 text-gray-500 absolute right-0 pointer-events-none" />
+          <ChevronDown class="w-4 h-4 opacity-30 absolute right-0 pointer-events-none" stroke-width="3" />
         </div>
         <div class="flex-1"></div>
-        <button @click="copyTarget" class="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 p-1.5 rounded-md hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors" title="复制结果">
-          <Check v-if="isCopied" class="w-4 h-4 text-green-500" />
-          <Copy v-else class="w-4 h-4" />
+        <button @click="copyTarget" class="opacity-40 hover:opacity-100 hover:text-accent p-2 rounded-lg hover:bg-accent/10 transition-all active:scale-90" title="复制结果">
+          <Check v-if="isCopied" class="w-4 h-4 text-emerald-500" stroke-width="3" />
+          <Copy v-else class="w-4 h-4" stroke-width="2.5" />
         </button>
       </div>
       
       <!-- Output Area -->
-      <div class="flex-1 p-4 relative">
-        <div v-if="isTranslating" class="absolute inset-0 flex flex-col items-center justify-center bg-white/50 dark:bg-gray-900/50 z-10 text-blue-500">
-          <Loader2 class="w-6 h-6 animate-spin mb-2" />
+      <div class="flex-1 p-6 relative">
+        <div v-if="isTranslating" class="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-sm z-10 text-accent">
+          <Loader2 class="w-10 h-10 animate-spin opacity-20" />
         </div>
         
         <div 
-          class="w-full h-full text-lg font-medium leading-relaxed overflow-y-auto whitespace-pre-wrap select-text"
-          :class="translatedText ? 'text-gray-800 dark:text-gray-200' : 'text-gray-400 dark:text-gray-600'"
+          class="w-full h-full text-xl font-bold leading-relaxed overflow-y-auto whitespace-pre-wrap select-text no-scrollbar"
+          :class="translatedText ? 'text-[var(--fly-text-primary)]' : 'opacity-10'"
         >
           {{ translatedText || '翻译结果将显示在这里...' }}
         </div>
       </div>
       
       <!-- Footer Optional Actions -->
-      <div class="px-4 py-3 flex items-center justify-end text-gray-400 shrink-0 bg-transparent">
+      <div class="px-5 py-4 flex items-center justify-end bg-transparent shrink-0 border-t border-[var(--fly-border-glass)]/10">
         <button 
           @click="speakTarget"
           :disabled="!translatedText"
-          :class="['p-1.5 rounded-md transition-colors flex items-center justify-center', isSpeaking ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'hover:bg-gray-200/50 dark:hover:bg-gray-800', !translatedText ? 'opacity-50 cursor-not-allowed' : '']" 
+          :class="['w-10 h-10 rounded-xl transition-all flex items-center justify-center active:scale-90', isSpeaking ? 'text-accent bg-accent/10' : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-30 hover:opacity-100', !translatedText ? 'opacity-10 cursor-not-allowed' : '']" 
           :title="isSpeaking ? '停止朗读' : '朗读结果'"
         >
-          <Volume2 class="w-4 h-4" :class="isSpeaking ? 'animate-pulse' : ''" />
+          <Volume2 class="w-5 h-5" :class="isSpeaking ? 'animate-pulse' : ''" stroke-width="2.5" />
         </button>
       </div>
     </div>
@@ -110,18 +110,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted, markRaw } from 'vue'
 import { Languages, Settings, ArrowRight, ArrowLeftRight, X, Copy, Check, Volume2, Loader2, ChevronDown } from 'lucide-vue-next'
 
 const languages = [
-  { code: 'zh-CN', name: '简体中文 (Chinese)' },
-  { code: 'en', name: '英语 (English)' },
-  { code: 'ja', name: '日语 (Japanese)' },
-  { code: 'ko', name: '韩语 (Korean)' },
-  { code: 'fr', name: '法语 (French)' },
-  { code: 'es', name: '西班牙语 (Spanish)' },
-  { code: 'ru', name: '俄语 (Russian)' },
-  { code: 'de', name: '德语 (German)' },
+  { code: 'zh-CN', name: '简体中文' },
+  { code: 'en', name: '英语 English' },
+  { code: 'ja', name: '日语 Japanese' },
+  { code: 'ko', name: '韩语 Korean' },
+  { code: 'fr', name: '法语 French' },
+  { code: 'es', name: '西班牙语 Spanish' },
+  { code: 'ru', name: '俄语 Russian' },
+  { code: 'de', name: '德语 German' },
 ]
 
 const targetLanguages = [...languages]
@@ -239,19 +239,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Optional custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.4);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.6);
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 </style>

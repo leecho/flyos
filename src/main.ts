@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import './style.css'
 import './styles/tailwind.css'
+import './styles/design-tokens.css'
 import './styles/icofont.css'
 import App from './App.vue'
 import { themeStore } from '@/stores/themeStore'

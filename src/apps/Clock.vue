@@ -1,142 +1,133 @@
 <template>
-  <div ref="containerRef" class="clock-app-container h-full w-full bg-[#f3f3f3] dark:bg-gray-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans overflow-hidden">
+  <div ref="containerRef" class="clock-app-container h-full w-full bg-[var(--fly-bg-primary)] text-[var(--fly-text-primary)] flex flex-col font-sans overflow-hidden">
     
     <div class="clock-layout-wrapper flex-1 flex overflow-hidden min-h-0 relative">
       
       <!-- 1. Sidebar Navigation (Desktop) -->
-      <aside class="clock-sidebar w-64 border-r border-slate-200 dark:border-white/5 bg-slate-100/50 dark:bg-gray-900/50 backdrop-blur-xl flex flex-col p-4 shrink-0 overflow-y-auto">
-        <div class="flex items-center gap-3 px-3 py-6 mb-4">
-          <div class="w-10 h-10 rounded-2xl bg-accent shadow-lg shadow-accent/20 flex items-center justify-center text-white">
-            <ClockIcon class="w-5 h-5" />
-          </div>
-          <div class="min-w-0">
-            <h2 class="text-sm font-black tracking-tight">时钟</h2>
-            <p class="text-[10px] opacity-50 font-medium tracking-wider uppercase">FlyOS Clock</p>
-          </div>
-        </div>
-
+      <aside class="clock-sidebar w-64 border-r border-[var(--fly-border-system)] bg-[var(--fly-bg-secondary)] flex flex-col p-4 shrink-0 overflow-y-auto no-scrollbar">
         <nav class="flex-1 space-y-1">
           <button
             v-for="tab in tabs"
             :key="tab.id"
             @click="activeTab = tab.id"
-            class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative"
+            class="w-full flex items-center gap-3 px-4 py-2.5 rounded-[var(--fly-radius-md)] transition-all duration-200 group relative"
             :class="activeTab === tab.id
-              ? 'bg-accent text-white shadow-lg shadow-accent/20'
-              : 'hover:bg-slate-200/50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400 font-medium'"
+              ? 'bg-accent/10 text-accent font-bold'
+              : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-60 hover:opacity-100'"
           >
-            <component :is="tab.icon" class="w-4.5 h-4.5 flex-shrink-0" />
-            <span class="text-[13px] font-bold">{{ tab.name }}</span>
+            <span v-if="activeTab === tab.id" class="absolute left-0 w-1 h-4 bg-accent rounded-full"></span>
+            <component :is="tab.icon" class="w-4.5 h-4.5 flex-shrink-0" stroke-width="2.5" />
+            <span class="text-[13px] tracking-tight">{{ tab.name }}</span>
           </button>
         </nav>
       </aside>
 
       <!-- 2. Main Content Area -->
-      <main class="clock-main flex-1 flex flex-col min-w-0 overflow-hidden bg-white/20 dark:bg-transparent">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200/40 dark:border-white/5 backdrop-blur-md sticky top-0 z-10 shrink-0 w-full mobile-header hidden">
+      <main class="clock-main flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header class="h-16 flex items-center justify-between px-6 border-b border-[var(--fly-border-system)] bg-[var(--fly-bg-glass)] backdrop-blur-md sticky top-0 z-10 shrink-0 w-full mobile-header hidden">
           <h2 class="text-base font-black tracking-tight">{{ tabs.find(t => t.id === activeTab)?.name }}</h2>
-          <!-- Mobile Specific Add Button for World Clock -->
           <button v-if="activeTab === 'world'" class="p-2 bg-accent text-white rounded-xl shadow-lg shadow-accent/20 active:scale-95 transition-all">
             <PlusIcon class="w-5 h-5" />
           </button>
         </header>
 
-        <div class="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar scroll-smooth">
+        <div class="flex-1 overflow-y-auto p-6 sm:p-10 no-scrollbar scroll-smooth">
           
           <!-- 2.1 时钟视图 -->
-          <div v-if="activeTab === 'clock'" class="h-full flex flex-col items-center justify-center animate-fade-in py-10">
+          <div v-if="activeTab === 'clock'" class="h-full flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-400 py-10">
             <div class="clock-face-container relative mb-12">
-              <div class="absolute inset-0 rounded-full border-[6px] border-slate-200 dark:border-white/10 shadow-2xl bg-gradient-to-br from-white/50 to-white/10 dark:from-white/5 dark:to-transparent"></div>
+              <div class="absolute inset-0 rounded-full border-[6px] border-[var(--fly-border-system)] shadow-2xl bg-gradient-to-br from-[var(--fly-bg-secondary)] to-transparent opacity-50"></div>
               <!-- Numbers/Ticks -->
               <div v-for="i in 12" :key="i" class="absolute inset-0 p-3 sm:p-5" :style="{ transform: `rotate(${i * 30}deg)` }">
-                <div class="w-1 h-3 sm:h-4 bg-slate-300 dark:bg-white/20 mx-auto rounded-full"></div>
+                <div class="w-1 h-3 sm:h-4 bg-[var(--fly-text-primary)] opacity-20 mx-auto rounded-full"></div>
               </div>
               <!-- Hands -->
               <div class="hand hour" :style="hourStyle"></div>
               <div class="hand min" :style="minStyle"></div>
               <div class="hand sec" :style="secStyle"></div>
               <!-- Center Dot -->
-              <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-accent rounded-full -translate-x-1/2 -translate-y-1/2 z-10 shadow-lg shadow-accent/40 ring-4 ring-white dark:ring-gray-900"></div>
+              <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-accent rounded-full -translate-x-1/2 -translate-y-1/2 z-10 shadow-lg shadow-accent/40 ring-4 ring-[var(--fly-bg-primary)]"></div>
             </div>
             
             <div class="text-center">
-              <div class="text-5xl sm:text-7xl font-black tracking-tighter mb-3 leading-none bg-gradient-to-br from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
+              <div class="text-6xl sm:text-8xl font-black tracking-tighter mb-4 leading-none bg-gradient-to-br from-[var(--fly-text-primary)] to-[var(--fly-text-secondary)] bg-clip-text text-transparent">
                 {{ digitalTime }}
               </div>
-              <div class="text-[13px] sm:text-base font-bold opacity-40 uppercase tracking-widest">{{ dateString }}</div>
+              <div class="text-[12px] sm:text-sm font-black opacity-30 uppercase tracking-widest">{{ dateString }}</div>
             </div>
           </div>
 
           <!-- 2.2 世界时钟 -->
-          <div v-if="activeTab === 'world'" class="animate-fade-in max-w-5xl mx-auto">
-            <div class="flex justify-between items-center mb-8 desktop-only">
-              <h2 class="text-xl sm:text-2xl font-black tracking-tight">世界时钟</h2>
-              <button class="p-3 bg-accent text-white rounded-2xl hover:brightness-110 shadow-lg shadow-accent/20 transition-all active:scale-95">
-                <PlusIcon class="w-5 h-5" />
+          <div v-if="activeTab === 'world'" class="animate-in fade-in slide-in-from-bottom-4 duration-400 max-w-5xl mx-auto">
+            <div class="flex justify-between items-center mb-10 desktop-only">
+              <h2 class="text-2xl font-black tracking-tight">全球时间</h2>
+              <button class="px-6 py-2.5 bg-accent text-white rounded-xl hover:brightness-110 shadow-lg shadow-accent/20 transition-all active:scale-95 font-bold text-xs uppercase tracking-wider">
+                添加城市
               </button>
             </div>
-            <div class="world-clock-grid grid gap-4">
+            <div class="world-clock-grid grid gap-6">
               <div v-for="city in worldClocks" :key="city.name"
-                   class="p-5 sm:p-6 bg-white/60 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-slate-200/60 dark:border-white/5 flex justify-between items-center group hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                   class="p-6 bg-[var(--fly-bg-glass)] backdrop-blur-xl rounded-[var(--fly-radius-md)] border border-[var(--fly-border-glass)] flex justify-between items-center group hover:shadow-2xl hover:border-accent/30 transition-all duration-300">
                 <div class="min-w-0">
-                  <div class="text-[10px] font-black opacity-40 uppercase tracking-[0.15em] mb-1">{{ city.offset }}</div>
-                  <div class="text-lg sm:text-xl font-black tracking-tight truncate">{{ city.name }}</div>
-                  <div class="text-[10px] sm:text-xs font-bold opacity-30 mt-1">{{ city.date }}</div>
+                  <div class="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mb-2">{{ city.offset }}</div>
+                  <div class="text-xl font-black tracking-tight truncate">{{ city.name }}</div>
+                  <div class="text-[11px] font-bold opacity-30 mt-1 uppercase tracking-wider">{{ city.date }}</div>
                 </div>
-                <div class="text-3xl sm:text-4xl font-black tracking-tighter text-accent">{{ city.time }}</div>
+                <div class="text-4xl font-black tracking-tighter text-accent">{{ city.time }}</div>
               </div>
             </div>
           </div>
 
           <!-- 2.3 秒表 -->
-          <div v-if="activeTab === 'stopwatch'" class="h-full flex flex-col items-center justify-center animate-fade-in max-w-xl mx-auto">
-            <div class="text-6xl sm:text-8xl font-black font-mono my-10 sm:my-14 tracking-tighter leading-none">
+          <div v-if="activeTab === 'stopwatch'" class="h-full flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-400 max-w-xl mx-auto">
+            <div class="text-7xl sm:text-9xl font-black font-mono my-12 tracking-tighter leading-none opacity-90">
               {{ formatStopwatch(stopwatchTime) }}
             </div>
             
-            <div class="flex gap-6 mb-12">
-              <button @click="toggleStopwatch" :class="['w-16 h-16 sm:w-20 sm:h-20 rounded-[32px] flex items-center justify-center transition-all shadow-xl active:scale-90',
-                isRunning ? 'bg-orange-500 shadow-orange-500/20 text-white' : 'bg-accent shadow-accent/20 text-white']">
-                <PauseIcon v-if="isRunning" class="w-8 h-8 sm:w-10 sm:h-10" />
-                <PlayIcon v-else class="w-8 h-8 sm:w-10 sm:h-10 ml-1" />
+            <div class="flex gap-8 mb-16">
+              <button @click="toggleStopwatch" :class="['w-20 h-20 sm:w-24 sm:h-24 rounded-[32px] flex items-center justify-center transition-all shadow-2xl active:scale-90',
+                isRunning ? 'bg-orange-500 shadow-orange-500/30 text-white' : 'bg-accent shadow-accent/30 text-white']">
+                <PauseIcon v-if="isRunning" class="w-10 h-10" stroke-width="3" />
+                <PlayIcon v-else class="w-10 h-10 ml-1" stroke-width="3" />
               </button>
-              <button @click="lapOrReset" class="w-16 h-16 sm:w-20 sm:h-20 rounded-[32px] bg-slate-200 dark:bg-white/10 flex items-center justify-center shadow-lg active:scale-90 transition-all">
-                <RotateCcwIcon v-if="!isRunning && stopwatchTime > 0" class="w-6 h-6 sm:w-8 sm:h-8" />
-                <FlagIcon v-else class="w-6 h-6 sm:w-8 sm:h-8" />
+              <button @click="lapOrReset" class="w-20 h-20 sm:w-24 sm:h-24 rounded-[32px] bg-[var(--fly-bg-secondary)] border border-[var(--fly-border-system)] flex items-center justify-center shadow-lg active:scale-90 transition-all text-[var(--fly-text-secondary)] hover:text-[var(--fly-text-primary)]">
+                <RotateCcwIcon v-if="!isRunning && stopwatchTime > 0" class="w-8 h-8" stroke-width="2.5" />
+                <FlagIcon v-else class="w-8 h-8" stroke-width="2.5" />
               </button>
             </div>
 
-            <div class="w-full bg-slate-100/50 dark:bg-white/5 rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 backdrop-blur-md">
-              <div v-if="laps.length === 0" class="py-10 text-center opacity-30 font-bold text-sm">计次记录将显示在这里</div>
+            <div class="w-full bg-[var(--fly-bg-glass)] rounded-[var(--fly-radius-md)] overflow-hidden border border-[var(--fly-border-glass)] backdrop-blur-xl">
+              <div v-if="laps.length === 0" class="py-12 text-center opacity-20 font-black text-[11px] uppercase tracking-widest">目前没有计次数据</div>
               <div v-for="(lap, index) in laps" :key="index"
-                   class="flex justify-between px-8 py-4 border-b border-slate-200 dark:border-white/5 last:border-0 hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
-                <span class="text-xs font-black uppercase tracking-widest opacity-30">计次 {{ laps.length - index }}</span>
-                <span class="font-mono font-bold">{{ formatStopwatch(lap) }}</span>
+                   class="flex justify-between px-8 py-4.5 border-b border-[var(--fly-border-system)] last:border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                <span class="text-[10px] font-black uppercase tracking-widest opacity-30">计次 {{ laps.length - index }}</span>
+                <span class="font-mono font-black text-base opacity-70">{{ formatStopwatch(lap) }}</span>
               </div>
             </div>
           </div>
 
           <!-- 2.4 计时器 -->
-          <div v-if="activeTab === 'timer'" class="h-full flex flex-col items-center justify-center animate-fade-in max-w-2xl mx-auto">
-            <div v-if="timerValue === 0" class="timer-grid grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
+          <div v-if="activeTab === 'timer'" class="h-full flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-400 max-w-2xl mx-auto">
+            <div v-if="timerValue === 0" class="timer-grid grid grid-cols-2 sm:grid-cols-3 gap-6 w-full">
               <button v-for="t in [1, 5, 10, 15, 30, 60]" :key="t"
                       @click="startPresetTimer(t)"
-                      class="p-8 sm:p-10 bg-white/60 dark:bg-white/5 rounded-[40px] border border-slate-200 dark:border-white/5 hover:border-accent hover:scale-[1.03] transition-all text-center group shadow-sm hover:shadow-xl">
-                <span class="text-3xl sm:text-4xl font-black group-hover:text-accent transition-colors">{{ t }}</span>
-                <span class="text-[10px] sm:text-xs block font-black opacity-30 mt-2 uppercase tracking-[0.2em]">分钟</span>
+                      class="p-10 sm:p-12 bg-[var(--fly-bg-glass)] rounded-[var(--fly-radius-lg)] border border-[var(--fly-border-glass)] hover:border-accent hover:scale-[1.03] transition-all text-center group shadow-sm hover:shadow-2xl">
+                <span class="text-4xl sm:text-5xl font-black group-hover:text-accent transition-colors">{{ t }}</span>
+                <span class="text-[10px] block font-black opacity-30 mt-3 uppercase tracking-[0.3em]">Minutes</span>
               </button>
             </div>
             
             <div v-if="timerValue > 0" class="flex flex-col items-center w-full">
-              <div class="relative w-64 h-64 sm:w-80 sm:h-80 mb-12 flex items-center justify-center">
+              <div class="relative w-72 h-72 sm:w-96 sm:h-96 mb-16 flex items-center justify-center">
                 <!-- Inner Ring -->
-                <div class="absolute inset-4 rounded-full border-8 border-slate-100 dark:border-white/5"></div>
+                <div class="absolute inset-4 rounded-full border-[10px] border-[var(--fly-border-system)] opacity-40"></div>
+                <div class="absolute inset-4 rounded-full border-[10px] border-accent border-t-transparent animate-spin duration-3000"></div>
                 <!-- Running Text -->
-                <div class="text-5xl sm:text-7xl font-black font-mono tracking-tighter">
+                <div class="text-6xl sm:text-8xl font-black font-mono tracking-tighter opacity-90">
                   {{ formatTimer(timerValue) }}
                 </div>
               </div>
-              <button @click="timerValue = 0" class="px-10 py-3 bg-red-500 text-white rounded-2xl font-black shadow-lg shadow-red-500/20 hover:brightness-110 active:scale-95 transition-all">取消</button>
+              <button @click="timerValue = 0" class="px-12 py-3.5 bg-red-500 text-white rounded-2xl font-black shadow-2xl shadow-red-500/30 hover:brightness-110 active:scale-95 transition-all uppercase tracking-widest text-xs"> 取消计时 </button>
             </div>
           </div>
 
@@ -144,16 +135,16 @@
       </main>
 
       <!-- 3. Bottom Navigation (Mobile Only) -->
-      <nav class="clock-bottom-nav absolute bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-900/90 backdrop-blur-2xl border-t border-slate-200 dark:border-white/10 flex items-center justify-around px-2 z-50 hidden">
+      <nav class="clock-bottom-nav absolute bottom-0 left-0 right-0 h-16 bg-[var(--fly-bg-glass)] backdrop-blur-2xl border-t border-[var(--fly-border-system)] flex items-center justify-around px-2 z-50 hidden">
         <button
           v-for="tab in tabs"
           :key="tab.id"
           @click="activeTab = tab.id"
           class="flex flex-col items-center gap-1 transition-all flex-1 py-1"
-          :class="activeTab === tab.id ? 'text-accent scale-105' : 'text-slate-400'"
+          :class="activeTab === tab.id ? 'text-accent font-black scale-105' : 'opacity-40'"
         >
-          <component :is="tab.icon" class="w-5 h-5 flex-shrink-0" />
-          <span class="text-[10px] font-black tracking-tight">{{ tab.name }}</span>
+          <component :is="tab.icon" class="w-5 h-5 flex-shrink-0" stroke-width="2.5" />
+          <span class="text-[10px] font-bold tracking-tight">{{ tab.name }}</span>
         </button>
       </nav>
 
@@ -162,7 +153,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, markRaw } from 'vue';
 import {
   ClockIcon, GlobeIcon, TimerIcon as TimerIconLucide, PlayIcon, PauseIcon,
   RotateCcwIcon, FlagIcon, PlusIcon, HourglassIcon
@@ -174,7 +165,7 @@ const activeTab = ref('clock');
 
 const tabs = [
   { id: 'clock', name: '时钟', icon: markRaw(ClockIcon) },
-  { id: 'world', name: '世界时钟', icon: markRaw(GlobeIcon) },
+  { id: 'world', name: '世界时间', icon: markRaw(GlobeIcon) },
   { id: 'stopwatch', name: '秒表', icon: markRaw(TimerIconLucide) },
   { id: 'timer', name: '计时器', icon: markRaw(HourglassIcon) },
 ];
@@ -287,11 +278,6 @@ const startPresetTimer = (mins) => {
 };
 </script>
 
-<script>
-// Non-setup script for markRaw if needed, but we used functional imports
-import { markRaw } from 'vue';
-</script>
-
 <style scoped>
 .clock-app-container {
   container-type: inline-size;
@@ -299,9 +285,13 @@ import { markRaw } from 'vue';
   user-select: none;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .clock-face-container {
-  width: 280px;
-  height: 280px;
+  width: 320px;
+  height: 320px;
 }
 
 .hand {
@@ -314,20 +304,19 @@ import { markRaw } from 'vue';
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.hour { width: 6px; height: 28%; z-index: 3; background: #333; }
-.dark .hour { background: #fff; }
-.min { width: 4px; height: 38%; opacity: 0.7; z-index: 2; }
-.sec { width: 2px; height: 45%; background: var(--accent-color); z-index: 4; transition: transform 0.1s linear; }
+.hour { width: 8px; height: 28%; z-index: 3; background: var(--fly-text-primary); }
+.min { width: 5px; height: 38%; opacity: 0.5; z-index: 2; background: var(--fly-text-primary); }
+.sec { width: 2.5px; height: 45%; background: var(--accent-color); z-index: 4; transition: transform 0.1s linear; }
 
-@container clock-app (max-width: 600px) {
+@container clock-app (max-width: 650px) {
   .clock-sidebar { display: none !important; }
   .clock-bottom-nav { display: flex !important; }
   .mobile-header { display: flex !important; }
   .desktop-only { display: none !important; }
   
   .clock-face-container {
-    width: 220px;
-    height: 220px;
+    width: 240px;
+    height: 240px;
   }
   
   .world-clock-grid {
@@ -344,10 +333,4 @@ import { markRaw } from 'vue';
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
-
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.2); border-radius: 10px; }
-
-.animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.2, 0, 0.2, 1); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>

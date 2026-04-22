@@ -6,8 +6,8 @@ export interface WindowItem {
     id: string
     title: string
     component?: string
-    width?: number | string
-    height?: number | string
+    width?: number
+    height?: number
 
     zIndex: number
     isOpen: boolean
@@ -16,6 +16,7 @@ export interface WindowItem {
     maximizable: boolean
     active?: boolean
     params?: any
+    appId: string
 }
 
 /* ---------------- Store ---------------- */
@@ -52,7 +53,7 @@ export function openWindow(
     win: Omit<WindowItem, 'id' | 'zIndex' | 'isOpen' | 'minimized' | 'maximized'>
 ) {
     const id = crypto.randomUUID()
-    
+
     // 移动端环境下强制最大化
     const forceMaximize = desktopStore.isMobile
 

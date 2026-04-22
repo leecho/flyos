@@ -107,8 +107,8 @@
                  @click="selectedSettingId = item.id"
                  class="flex items-center px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors group"
                  :class="selectedSettingId === item.id ? 'bg-gray-200 dark:bg-white/10' : ''">
-              <component :is="item.icon" class="w-4 h-4 mr-3 shrink-0" :class="item.danger ? 'text-red-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-green-500'" />
-              <span class="font-medium text-sm" :class="item.danger ? 'text-red-500' : 'text-gray-900 dark:text-gray-100'">{{ item.name }}</span>
+              <component :is="item.icon" class="w-5 h-5 mr-3 shrink-0" :class="item.danger ? 'text-red-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-green-500'" />
+              <span class="font-medium" :class="item.danger ? 'text-red-500' : 'text-gray-900 dark:text-gray-100'">{{ item.name }}</span>
             </div>
           </div>
         </div>

@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang='ts'>
-import { windowStore, toggleMinimize, toggleMaximize, activeWindow, WindowItem } from '../stores/windowStore'
+import { windowStore, toggleMinimize, toggleMaximize, activeWindow, type WindowItem } from '../stores/windowStore'
 import { stopTask } from '../stores/taskStore.ts'
 import Window from './Window.vue'
 import ContextMenu from './ContextMenu.vue'
@@ -33,7 +33,7 @@ import { ref } from 'vue'
 const menuRef = ref()
 
 
-const openWindowContextMenu = ($event, win: WindowItem) => {
+const openWindowContextMenu = ($event: MouseEvent, win: WindowItem) => {
   $event.stopPropagation()
   const options = [
     { label: '最大化', disabled: win.maximized , action: () => toggleMaximize(win.id) },

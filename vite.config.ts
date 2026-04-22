@@ -13,10 +13,15 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api/news': {
-        target: 'https://newsapi.org',
+      '/api/yahoo-finance': {
+        target: 'https://query1.finance.yahoo.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/news/, '/v2/top-headlines'),
+        rewrite: (path) => path.replace('/api/yahoo-finance', ''),
+      },
+      '/api/yahoo-finance2': {
+        target: 'https://query2.finance.yahoo.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('/api/yahoo-finance2', ''),
       },
     },
   },

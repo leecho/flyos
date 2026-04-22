@@ -1,0 +1,79 @@
+/* FlyOS Design Tokens - 视觉标准代码化 (v1.1) */
+
+:root {
+  /* 1. 基础色彩 - 浅色模式 (Light Mode) */
+  --fly-bg-primary: #ffffff;
+  --fly-bg-secondary: #f8fafc;
+  --fly-bg-glass: rgba(255, 255, 255, 0.7);
+  
+  --fly-text-primary: #0f172a;
+  --fly-text-secondary: #64748b;
+  
+  --fly-border-system: rgba(0, 0, 0, 0.06);
+  --fly-border-glass: rgba(255, 255, 255, 0.4);
+  --fly-accent: #3b82f6;
+  --fly-accent-rgb: 59, 130, 246;
+
+  /* 2. 玻璃拟态 (Glassmorphism) */
+  --fly-glass-blur: 16px;
+  --fly-glass-opacity: 0.7;
+
+  /* 3. 阴影与深度 (Elevations) */
+  --fly-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --fly-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --fly-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --fly-shadow-window: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* 4. 圆角 (Radius) */
+  --fly-radius-sm: 8px;
+  --fly-radius-md: 12px;
+  --fly-radius-lg: 16px;
+
+  /* 5. 动画曲线 (Animations) */
+  --fly-ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fly-transition-fast: 150ms;
+  --fly-transition-normal: 300ms;
+}
+
+/* 6. 深色模式覆盖 (Dark Mode) */
+.dark {
+  --fly-bg-primary: #020617;
+  --fly-bg-secondary: #0f172a;
+  --fly-bg-glass: rgba(15, 23, 42, 0.7);
+  
+  --fly-text-primary: #f8fafc;
+  --fly-text-secondary: #94a3b8;
+  
+  --fly-border-system: rgba(255, 255, 255, 0.1);
+  --fly-border-glass: rgba(255, 255, 255, 0.05);
+  --fly-accent: #60a5fa;
+  --fly-accent-rgb: 96, 165, 250;
+}
+
+/* --- 预设实用类 (Utility Classes) --- */
+
+/* 玻璃效果容器 */
+.glass-effect {
+  background-color: var(--fly-bg-glass);
+  backdrop-filter: blur(var(--fly-glass-blur));
+  -webkit-backdrop-filter: blur(var(--fly-glass-blur));
+  border: 1px solid var(--fly-border-glass);
+}
+
+/* 窗口标准样式 */
+.fly-window {
+  border-radius: var(--fly-radius-lg);
+  box-shadow: var(--fly-shadow-window);
+  background: var(--fly-bg-primary);
+  color: var(--fly-text-primary);
+}
+
+/* 弹性过渡 */
+.spring-animate {
+  transition: all var(--fly-transition-normal) var(--fly-ease-spring);
+}
+
+/* 内边距标准 */
+.fly-p-standard {
+  padding: 1rem;
+}

@@ -1,233 +1,285 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { ArrowLeft, Book, Clock } from 'lucide-vue-next'
+import { ArrowLeft, Globe, RefreshCcw, ExternalLink, TrendingUp } from 'lucide-vue-next'
+
+// --- CONSTANTS ---
+const categories = [
+  { id: 'general',       name: '综合',  sub: 'worldnews' },
+  { id: 'technology',    name: '科技',  sub: 'technology' },
+  { id: 'business',      name: '财经',  sub: 'business' },
+  { id: 'entertainment', name: '娱乐',  sub: 'entertainment' },
+  { id: 'sports',        name: '体育',  sub: 'sports' },
+  { id: 'health',        name: '健康',  sub: 'health' },
+  { id: 'science',       name: '科学',  sub: 'science' },
+]
 
 // --- STATE ---
-const activeCategory = ref('科技')
+const activeCategoryId = ref('general')
 const selectedNews = ref<any>(null)
-const news = ref<any>({})
+const news = ref<Record<string, any[]>>({})
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-// 在 newsapi.org 注册免费账户并在此处替换您的 API 密钥
-const apiKey = 'fa76fb22c2ff4da684fd65a0f165e146'
-
-const categories = ['科技', '财经', '娱乐', '体育', '综合']
-const categoryMap: Record<string, string> = {
-  '科技': 'technology',
-  '财经': 'business',
-  '娱乐': 'entertainment',
-  '体育': 'sports',
-  '综合': 'general'
-}
-
 // --- API ---
-async function fetchNews(category: string) {
-  if (apiKey === 'YOUR_API_KEY') {
-    error.value = '请在 src/apps/News.vue 文件中设置您的 NewsAPI 密钥。'
-    loading.value = false
-    return
-  }
-
-  const categoryParam = categoryMap[category]
-  if (!categoryParam) return
-
+// 数据源：Reddit 公开 JSON API
+// 完全无需 API Key，CORS 开放，稳定可靠
+async function fetchNews(categoryId: string) {
   loading.value = true
   error.value = null
 
+  const cat = categories.find(c => c.id === categoryId)
+  const subreddit = cat?.sub || 'worldnews'
+
   try {
-    const res = await fetch(`/api/news?country=us&category=${categoryParam}&apiKey=${apiKey}`)
+    const res = await fetch(
+      `https://www.reddit.com/r/${subreddit}/top.json?limit=25&t=day`,
+      { headers: { Accept: 'application/json' } }
+    )
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
     const data = await res.json()
+    const posts: any[] = data?.data?.children ?? []
 
-    if (!res.ok) {
-      throw new Error(data.message || `HTTP 错误！状态: ${res.status}`)
-    }
-    if (data.status === 'error') {
-      throw new Error(data.message)
-    }
+    const items = posts
+      .map((child: any, index: number) => {
+        const p = child.data
+        if (p.removed_by_category || p.selftext === '[removed]') return null
 
-    news.value[category] = data.articles.map((article: any, index: number) => ({
-      id: `${category}-${index}`,
-      title: article.title,
-      summary: article.description || '暂无摘要',
-      source: article.source.name,
-      time: formatTime(article.publishedAt),
-      fullTime: new Date(article.publishedAt).toLocaleString('zh-CN'),
-      content: article.content ? [article.content.split('[+')[0]] : ['暂无内容，请访问原文链接查看详情。'],
-      url: article.url,
-      imageUrl: article.urlToImage
-    }))
+        // 封面图优先级：preview → thumbnail → picsum 占位
+        let imageUrl = `https://picsum.photos/seed/${subreddit}${index}/800/450`
+        if (p.preview?.images?.[0]?.source?.url) {
+          imageUrl = p.preview.images[0].source.url.replaceAll('&amp;', '&')
+        } else if (p.thumbnail?.startsWith('http')) {
+          imageUrl = p.thumbnail
+        }
+
+        const upvotes = (p.ups as number)?.toLocaleString() ?? '0'
+        const comments = (p.num_comments as number)?.toLocaleString() ?? '0'
+
+        return {
+          id: `${categoryId}-${p.id}`,
+          title: p.title,
+          summary: p.selftext?.slice(0, 200) || `↑ ${upvotes} 赞  ·  ${comments} 条评论`,
+          source: `r/${p.subreddit}`,
+          author: `u/${p.author}`,
+          time: formatTime(p.created_utc * 1000),
+          fullTime: new Date(p.created_utc * 1000).toLocaleString('zh-CN'),
+          content: p.selftext
+            ? p.selftext.split('\n\n').filter(Boolean)
+            : [`↑ ${upvotes} 人点赞，${comments} 条讨论`, '完整内容请点击下方"阅读原文"。'],
+          url: p.url,
+          redditUrl: `https://reddit.com${p.permalink}`,
+          imageUrl,
+          upvotes: p.ups,
+          comments: p.num_comments,
+        }
+      })
+      .filter(Boolean) as any[]
+
+    if (items.length === 0) throw new Error('该分类暂时没有内容')
+    news.value[categoryId] = items
   } catch (e: any) {
-    error.value = e.message
-    console.error(`无法获取 '${category}' 分类的新闻:`, e)
+    error.value = e.message ?? '未知错误'
+    console.error(`[News] fetch error (${categoryId}):`, e)
   } finally {
     loading.value = false
   }
 }
 
 // --- COMPUTED ---
-const featuredNews = computed(() => {
-  const list = news.value[activeCategory.value] || []
-  return list.length > 0 ? list[0] : null
-})
-
-const newsList = computed(() => {
-  const list = news.value[activeCategory.value] || []
-  return list.length > 1 ? list.slice(1) : []
-})
-
-// --- LIFECYCLE & WATCHERS ---
-onMounted(() => {
-  fetchNews(activeCategory.value)
-})
-
-watch(activeCategory, (newCategory) => {
-  if (!news.value[newCategory]) {
-    fetchNews(newCategory)
-  }
-})
+const currentNewsList = computed(() => news.value[activeCategoryId.value] ?? [])
+const featuredNews    = computed(() => currentNewsList.value[0] ?? null)
+const remainingNews   = computed(() => currentNewsList.value.slice(1))
 
 // --- HELPERS ---
-function selectCategory(category: string) {
-  activeCategory.value = category
+function selectCategory(id: string) {
+  activeCategoryId.value = id
   selectedNews.value = null
+  if (!news.value[id]) fetchNews(id)
 }
 
-function formatTime(isoString: string) {
-  const date = new Date(isoString)
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-  if (diffInSeconds < 60) return `${diffInSeconds}秒前`
-  const diffInMinutes = Math.floor(diffInSeconds / 60)
-  if (diffInMinutes < 60) return `${diffInMinutes}分钟前`
-  const diffInHours = Math.floor(diffInMinutes / 60)
-  if (diffInHours < 24) return `${diffInHours}小时前`
-  const diffInDays = Math.floor(diffInHours / 24)
-  return `${diffInDays}天前`
+function formatTime(tsMs: number) {
+  const s = Math.floor((Date.now() - tsMs) / 1000)
+  if (s < 60)   return `${s}秒前`
+  const m = Math.floor(s / 60)
+  if (m < 60)   return `${m}分钟前`
+  const h = Math.floor(m / 60)
+  if (h < 24)   return `${h}小时前`
+  return `${Math.floor(h / 24)}天前`
 }
 
+// --- LIFECYCLE ---
+onMounted(() => fetchNews(activeCategoryId.value))
+watch(activeCategoryId, id => { if (!news.value[id]) fetchNews(id) })
 </script>
 
 <template>
-  <div class="news-app @container/news flex h-full w-full bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
-    <!-- Main Content -->
-    <div class="flex-1 flex overflow-hidden relative">
-      <!-- News List View -->
-      <div class="w-full overflow-y-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <!-- New Header & Tab Navigation -->
-          <header class="flex items-baseline mb-6 border-b border-gray-200 dark:border-gray-700">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mr-8">新闻</h1>
-            <nav class="-mb-px flex space-x-4" aria-label="Categories">
-                <a v-for="category in categories"
-                   :key="category"
-                   href="#"
-                   @click.prevent="selectCategory(category)"
-                   :class="[
-                    activeCategory === category
-                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:border-gray-600',
-                    'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors'
-                   ]"
-                >
-                  {{ category }}
-                </a>
-            </nav>
-          </header>
+  <div class="news-app @container h-full w-full bg-[var(--fly-bg-primary)] text-[var(--fly-text-primary)] font-sans overflow-hidden flex flex-col">
+    <!-- Header: Tabs -->
+    <header class="shrink-0 bg-[var(--fly-bg-glass)] border-b border-[var(--fly-border-system)] backdrop-blur-xl z-20">
+      <!-- <div class="px-6 pt-6 pb-2 flex items-center justify-between">
+        <button
+          @click="fetchNews(activeCategoryId)"
+          class="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-all duration-500"
+          :class="loading ? 'animate-spin' : ''"
+        >
+          <RefreshCcw :size="18" class="opacity-40" />
+        </button>
+      </div> -->
+      
+      <!-- Scrollable Tabs -->
+      <nav class="px-5 flex gap-2 justify-center overflow-x-auto no-scrollbar pb-3 pt-4">
+        <button 
+          v-for="cat in categories" 
+          :key="cat.id"
+          @click="selectCategory(cat.id)"
+          :class="[
+            'px-4 py-1.5 rounded-full text-sm font-black whitespace-nowrap transition-all uppercase tracking-widest border-2',
+            activeCategoryId === cat.id 
+              ? 'bg-accent text-white border-accent shadow-lg shadow-accent/20' 
+              : 'border-transparent opacity-40 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
+          ]"
+        >
+          {{ cat.name }}
+        </button>
+      </nav>
+    </header>
 
-          <!-- Content Area -->
-          <main>
-            <div v-if="loading" class="flex items-center justify-center h-64 text-gray-500">正在加载最新内容...</div>
-            <div v-else-if="error" class="m-4 p-4 bg-red-100 text-red-700 rounded-lg">错误: {{ error }}</div>
-            
-            <div v-else-if="featuredNews">
-                <!-- Featured News -->
-                <div 
-                  @click="selectedNews = featuredNews" 
-                  class="featured-card group cursor-pointer bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 mb-6 flex flex-col md:flex-row overflow-hidden"
-                >
-                    <div v-if="featuredNews.imageUrl" class="md:w-1/2 h-48 md:h-auto">
-                        <img :src="featuredNews.imageUrl" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    </div>
-                    <div class="md:w-1/2 p-5 flex flex-col justify-between">
-                        <div>
-                           <h2 class="text-2xl font-bold mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ featuredNews.title }}</h2>
-                           <p class="text-sm text-gray-600 dark:text-gray-400">{{ featuredNews.summary }}</p>
-                        </div>
-                        <div class="text-xs text-gray-400 dark:text-gray-500 mt-4">{{ featuredNews.source }} · {{ featuredNews.time }}</div>
-                    </div>
-                </div>
-
-                <!-- News Grid -->
-                <div class="grid grid-cols-1 @lg/news:grid-cols-2 @xl/news:grid-cols-3 gap-4">
-                    <div
-                        v-for="item in newsList"
-                        :key="item.id"
-                        @click="selectedNews = item"
-                        class="news-card group cursor-pointer bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden"
-                    >
-                        <div v-if="item.imageUrl" class="aspect-[16/9] overflow-hidden">
-                            <img :src="item.imageUrl" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        </div>
-                        <div class="p-4 flex flex-col flex-grow">
-                           <h3 class="font-semibold flex-grow mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ item.title }}</h3>
-                           <div class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ item.source }} · {{ item.time }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-             <div v-else class="text-center py-10 text-gray-500">该分类下暂无新闻。</div>
-          </main>
-        </div>
+    <!-- Main Content List -->
+    <main class="flex-1 overflow-y-auto no-scrollbar p-6">
+      <!-- Loading -->
+      <div v-if="loading" class="h-full flex flex-col items-center justify-center opacity-20 space-y-4">
+        <RefreshCcw class="animate-spin" :size="32" stroke-width="1.5" />
+        <p class="text-xs font-black uppercase tracking-widest italic">Fetching Headlines...</p>
       </div>
 
-      <!-- News Detail View (Slide-in Panel) -->
-      <transition name="slide-fade">
-          <div
-            v-if="selectedNews"
-            class="absolute inset-0 bg-gray-100/95 dark:bg-gray-900/95 backdrop-blur-sm overflow-y-auto"
+      <!-- Error -->
+      <div v-else-if="error" class="h-full flex flex-col items-center justify-center space-y-4">
+        <div class="p-6 bg-red-500/10 text-red-500 rounded-2xl border border-red-500/20 text-center max-w-sm space-y-2">
+          <p class="font-black uppercase tracking-wider text-xs">Connection Error</p>
+          <p class="text-sm opacity-80">{{ error }}</p>
+        </div>
+        <button
+          @click="fetchNews(activeCategoryId)"
+          class="text-xs font-black text-accent uppercase tracking-widest underline"
+        >重试抓取</button>
+      </div>
+      
+      <!-- Content -->
+      <div v-else class="max-w-6xl mx-auto space-y-10 pb-20">
+        <!-- Featured News Card -->
+        <section v-if="featuredNews" @click="selectedNews = featuredNews" class="group cursor-pointer">
+          <div class="relative overflow-hidden rounded-[var(--fly-radius-lg)] bg-[var(--fly-bg-glass)] border border-[var(--fly-border-glass)] shadow-xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+            <div class="aspect-[21/9] overflow-hidden relative">
+              <img :src="featuredNews.imageUrl" alt="" class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[var(--fly-bg-primary)] via-transparent to-transparent opacity-80"></div>
+              <div class="absolute bottom-6 left-6 right-6">
+                <span class="px-2.5 py-1 bg-accent text-white text-[10px] font-black uppercase tracking-widest rounded-md mb-3 inline-block">今日头条</span>
+                <h2 class="text-2xl @lg:text-4xl font-black leading-tight group-hover:text-accent transition-colors line-clamp-3">{{ featuredNews.title }}</h2>
+              </div>
+            </div>
+            <div class="px-6 py-4 flex items-center gap-4 text-[11px] font-black opacity-30 uppercase tracking-widest">
+              <span>{{ featuredNews.source }}</span>
+              <span class="w-1 h-1 bg-current rounded-full"></span>
+              <span>{{ featuredNews.time }}</span>
+              <span class="w-1 h-1 bg-current rounded-full"></span>
+              <span>↑ {{ featuredNews.upvotes?.toLocaleString() }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- News Grid -->
+        <section class="grid grid-cols-1 @lg:grid-cols-2 @xl:grid-cols-3 gap-6">
+          <div 
+            v-for="item in remainingNews" 
+            :key="item.id"
+            @click="selectedNews = item"
+            class="group cursor-pointer flex flex-col bg-[var(--fly-bg-glass)] border border-[var(--fly-border-glass)] rounded-[var(--fly-radius-md)] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
           >
-            <div class="max-w-4xl mx-auto p-4 sm:p-8">
-              <button @click="selectedNews = null" class="flex items-center gap-2 mb-6 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
-                <ArrowLeft :size="16" /> 返回列表
-              </button>
-              
-              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                <div v-if="selectedNews.imageUrl" class="w-full h-64 bg-gray-200">
-                    <img :src="selectedNews.imageUrl" alt="" class="w-full h-full object-cover" />
-                </div>
-                <div class="p-6 sm:p-10">
-                    <h1 class="text-3xl lg:text-4xl font-bold mb-4">{{ selectedNews.title }}</h1>
-                    <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6 border-y dark:border-gray-700 py-3">
-                        <div class="flex items-center gap-1.5"><Book :size="14"/><span>{{ selectedNews.source }}</span></div>
-                        <div class="flex items-center gap-1.5"><Clock :size="14"/><span>{{ selectedNews.fullTime }}</span></div>
-                    </div>
-                    <div class="prose dark:prose-invert max-w-none text-base leading-relaxed">
-                        <p>{{ (selectedNews.content || []).join('\n\n') }}</p>
-                    </div>
-                    <a :href="selectedNews.url" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline mt-6 inline-block">阅读原文 &rarr;</a>
-                </div>
+            <div class="aspect-[16/9] overflow-hidden bg-[var(--fly-bg-secondary)]">
+              <img :src="item.imageUrl" alt="" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" loading="lazy" />
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <h3 class="text-base font-bold leading-snug tracking-tight mb-4 group-hover:text-accent transition-colors line-clamp-3">{{ item.title }}</h3>
+              <div class="mt-auto flex items-center justify-between text-[10px] font-black opacity-30 uppercase tracking-tighter">
+                <span>{{ item.source }}</span>
+                <span class="flex items-center gap-1">
+                  <TrendingUp :size="10" />
+                  {{ item.upvotes?.toLocaleString() }}
+                </span>
               </div>
             </div>
           </div>
-      </transition>
-    </div>
+        </section>
+
+        <p v-if="currentNewsList.length === 0" class="text-center py-20 opacity-20 font-black uppercase tracking-widest">No News Available</p>
+      </div>
+    </main>
+
+    <!-- Detail View: Sliding Overlay -->
+    <Transition name="slide">
+      <div v-if="selectedNews" class="absolute inset-0 z-50 bg-[var(--fly-bg-primary)] overflow-y-auto no-scrollbar flex flex-col">
+        <!-- Detail Header -->
+        <header class="sticky top-0 px-4 sm:px-6 py-4 flex justify-between items-center bg-[var(--fly-bg-glass)] backdrop-blur-xl z-20 border-b border-[var(--fly-border-system)]">
+          <button @click="selectedNews = null" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:scale-90 transition-all">
+            <ArrowLeft :size="20" stroke-width="3" />
+          </button>
+          <a
+            :href="selectedNews.redditUrl || selectedNews.url"
+            target="_blank"
+            class="px-4 py-2 bg-accent/10 text-accent text-[11px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 hover:bg-accent hover:text-white transition-all"
+          >
+            阅读原文 <ExternalLink :size="12" stroke-width="3" />
+          </a>
+        </header>
+
+        <!-- Detail Content -->
+        <article class="max-w-3xl mx-auto w-full px-6 py-12 space-y-8">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 text-[11px] font-black opacity-40 uppercase tracking-[0.2em] flex-wrap">
+              <span class="text-accent">{{ selectedNews.source }}</span>
+              <span>/</span>
+              <span>{{ selectedNews.author }}</span>
+              <span>/</span>
+              <span>{{ selectedNews.fullTime }}</span>
+              <span v-if="selectedNews.upvotes" class="flex items-center gap-1">
+                / ↑ {{ selectedNews.upvotes?.toLocaleString() }}
+              </span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black leading-tight">{{ selectedNews.title }}</h1>
+          </div>
+
+          <img :src="selectedNews.imageUrl" alt="" class="w-full aspect-[16/9] object-cover rounded-[var(--fly-radius-md)] shadow-2xl" />
+
+          <div class="prose-fly space-y-6">
+            <p v-for="(p, i) in selectedNews.content" :key="i" class="text-lg leading-relaxed font-medium opacity-80">
+              {{ p }}
+            </p>
+            <div class="p-6 bg-[var(--fly-bg-secondary)] rounded-[var(--fly-radius-sm)] border border-[var(--fly-border-system)] italic opacity-60 text-sm">
+              内容来源于 {{ selectedNews.source }}，版权归原作者所有。FlyOS 新闻聚合不代表任何立场。
+            </div>
+          </div>
+        </article>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <style scoped>
-.prose {
-  color: #374151;
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+.slide-enter-active, .slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.dark .prose {
-  color: #d1d5db;
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 
-.slide-fade-enter-active, .slide-fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.slide-fade-enter-from, .slide-fade-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
+.prose-fly p {
+  line-height: 1.8;
+  word-break: break-word;
 }
 </style>
