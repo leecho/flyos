@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/yahoo-finance/:path*",
+      "destination": "https://query1.finance.yahoo.com/:path*"
+    },
+    {
+      "source": "/api/yahoo-finance2/:path*",
+      "destination": "https://query2.finance.yahoo.com/:path*"
+    },
+    {
+      "source": "/api/binance/:path*",
+      "destination": "https://api.binance.com/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
