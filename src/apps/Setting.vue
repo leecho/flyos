@@ -2,13 +2,10 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { themeStore, AccentColor } from '@/stores/themeStore';
 import { userStore } from '@/stores/userStore';
-import { desktopStore, setMode } from '@/stores/desktopStore';
 import Wallpaper1 from '@/assets/wallpaper.jpg';
 import Wallpaper2 from '@/assets/wallpaper2.jpg';
 import Wallpaper3 from '@/assets/wallpaper3.jpg';
 import { useNotification } from '../composables/useNotification';
-import { startTask } from '../stores/taskStore';
-import { getAppById } from '../stores/appStore';
 import { ChevronLeft } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -73,6 +70,9 @@ onMounted(() => {
     appName: '设置',
     type: 'info',
     duration: 3000,
+    handler: () => {
+      currentCategory.value = 'system'
+    }
   })
 })
 

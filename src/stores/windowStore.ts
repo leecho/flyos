@@ -8,7 +8,6 @@ export interface WindowItem {
     component?: string
     width?: number
     height?: number
-
     zIndex: number
     isOpen: boolean
     minimized: boolean

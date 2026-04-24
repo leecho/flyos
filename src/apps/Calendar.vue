@@ -1,7 +1,70 @@
 <template>
   <div ref="containerRef" class="calendar-app flex h-full bg-[var(--fly-bg-primary)] text-[var(--fly-text-primary)] overflow-hidden font-sans border-0 select-none relative">
     <!-- 左侧详情面板 -->
+ 
+    <!-- 右侧日历视图 -->
     <div 
+      class="flex-1 flex flex-col min-w-0 relative"
+      v-if="!isMobile || mobileView === 'month'"
+    >
+      <!-- 固定头部 -->
+      <div class="px-6 pt-6 pb-2 z-10 bg-[var(--fly-bg-glass)] backdrop-blur-md border-b border-[var(--fly-border-system)]">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ viewMonthName }} {{ viewYear }}</h2>
+          <button @click="goToToday" class="px-4 py-1.5 text-xs font-bold bg-accent/10 hover:bg-accent/20 text-accent rounded-full transition-all active:scale-95">今天</button>
+        </div>
+        
+        <!-- 星期表头 -->
+        <div class="grid grid-cols-7 gap-1">
+          <div v-for="day in ['一', '二', '三', '四', '五', '六', '日']" :key="day" class="text-center text-[10px] font-bold opacity-30 py-1 uppercase tracking-tighter">
+            {{ day }}
+          </div>
+        </div>
+      </div>
+
+      <!-- 滚动月份列表 -->
+      <div 
+        ref="scrollContainerRef" 
+        @scroll="handleScroll"
+        class="flex-1 overflow-y-auto px-6 py-4 no-scrollbar"
+      >
+        <div 
+          v-for="month in renderedMonths" 
+          :key="month.id" 
+          :data-month-id="month.id"
+          class="month-section mb-10 last:mb-20"
+        >
+          <h3 class="text-sm font-bold opacity-40 mb-4 px-1 sticky top-0 bg-[var(--fly-bg-primary)] py-2 z-[5]">{{ month.year }}年 {{ month.month + 1 }}月</h3>
+          
+          <div class="grid grid-cols-7 gap-1 sm:gap-2">
+            <div v-for="n in month.startOffset" :key="'empty-'+n" class="aspect-square"></div>
+            
+            <!-- 日期格子 -->
+            <div
+              v-for="day in month.days"
+              :key="day.date.getTime()"
+              @click="onDateClick(day.date)"
+              class="aspect-square relative rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all border-2 group"
+              :class="[
+                day.isSelected ? 'border-accent bg-accent/10 dark:bg-accent/20' : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800',
+                day.isToday && !day.isSelected ? 'text-accent font-bold ring-1 ring-accent/30' : '',
+                day.isToday ? 'is-today' : ''
+              ]"
+            >
+              <span class="text-sm z-10 group-active:scale-90 transition-transform">{{ day.date.getDate() }}</span>
+              <span v-if="day.date.getDate() === 1 || day.isToday" class="text-[8px] opacity-40 scale-75 mt-0.5 leading-none absolute bottom-2 font-bold uppercase">
+                {{ day.date.getDate() === 1 ? (month.month + 1) + '月' : '今日' }}
+              </span>
+              
+              <div v-if="getEventsCount(day.date) > 0" class="absolute top-1 right-1">
+                <div class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   <div 
       class="sidebar w-80 bg-[var(--fly-bg-secondary)] flex flex-col border-r border-[var(--fly-border-system)] shrink-0 z-20"
       v-if="!isMobile || mobileView === 'details'"
       :class="{ 'w-full': isMobile }"
@@ -62,69 +125,6 @@
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 {{ event.location }}
               </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 右侧日历视图 -->
-    <div 
-      class="flex-1 flex flex-col min-w-0 relative"
-      v-if="!isMobile || mobileView === 'month'"
-    >
-      <!-- 固定头部 -->
-      <div class="px-6 pt-6 pb-2 z-10 bg-[var(--fly-bg-glass)] backdrop-blur-md border-b border-[var(--fly-border-system)]">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ viewMonthName }} {{ viewYear }}</h2>
-          <button @click="goToToday" class="px-4 py-1.5 text-xs font-bold bg-accent/10 hover:bg-accent/20 text-accent rounded-full transition-all active:scale-95">今天</button>
-        </div>
-        
-        <!-- 星期表头 -->
-        <div class="grid grid-cols-7 gap-1">
-          <div v-for="day in ['一', '二', '三', '四', '五', '六', '日']" :key="day" class="text-center text-[10px] font-bold opacity-30 py-1 uppercase tracking-tighter">
-            {{ day }}
-          </div>
-        </div>
-      </div>
-
-      <!-- 滚动月份列表 -->
-      <div 
-        ref="scrollContainerRef" 
-        @scroll="handleScroll"
-        class="flex-1 overflow-y-auto px-6 py-4 no-scrollbar"
-      >
-        <div 
-          v-for="month in renderedMonths" 
-          :key="month.id" 
-          :data-month-id="month.id"
-          class="month-section mb-10 last:mb-20"
-        >
-          <h3 class="text-sm font-bold opacity-40 mb-4 px-1 sticky top-0 bg-[var(--fly-bg-primary)] py-2 z-[5]">{{ month.year }}年 {{ month.month + 1 }}月</h3>
-          
-          <div class="grid grid-cols-7 gap-1 sm:gap-2">
-            <div v-for="n in month.startOffset" :key="'empty-'+n" class="aspect-square"></div>
-            
-            <!-- 日期格子 -->
-            <div
-              v-for="day in month.days"
-              :key="day.date.getTime()"
-              @click="onDateClick(day.date)"
-              class="aspect-square relative rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all border-2 group"
-              :class="[
-                day.isSelected ? 'border-accent bg-accent/10 dark:bg-accent/20' : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800',
-                day.isToday && !day.isSelected ? 'text-accent font-bold ring-1 ring-accent/30' : '',
-                day.isToday ? 'is-today' : ''
-              ]"
-            >
-              <span class="text-sm z-10 group-active:scale-90 transition-transform">{{ day.date.getDate() }}</span>
-              <span v-if="day.date.getDate() === 1 || day.isToday" class="text-[8px] opacity-40 scale-75 mt-0.5 leading-none absolute bottom-2 font-bold uppercase">
-                {{ day.date.getDate() === 1 ? (month.month + 1) + '月' : '今日' }}
-              </span>
-              
-              <div v-if="getEventsCount(day.date) > 0" class="absolute top-1 right-1">
-                <div class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]"></div>
-              </div>
             </div>
           </div>
         </div>

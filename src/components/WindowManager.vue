@@ -19,7 +19,9 @@
     :minimized='win.minimized'
     :maximized='win.maximized'
     :params='win.params'
-    :component='win.component'></Window>
+    :component='win.component'
+    :ref='(el) => registerWindow(win.id, el as InstanceType<typeof Window>)'
+    @unmounted='unregisterWindow(win.id)'></Window>
   <ContextMenu ref='menuRef' />
 </template>
 
@@ -31,6 +33,15 @@ import ContextMenu from './ContextMenu.vue'
 import { ref } from 'vue'
 
 const menuRef = ref()
+const windowRefs = ref<Record<string, InstanceType<typeof Window>>>({}) 
+
+const registerWindow = (id: string, ref: InstanceType<typeof Window>) => {
+  windowRefs.value[id] = ref
+}
+
+const unregisterWindow = (id: string) => {
+  delete windowRefs.value[id]
+}
 
 
 const openWindowContextMenu = ($event: MouseEvent, win: WindowItem) => {

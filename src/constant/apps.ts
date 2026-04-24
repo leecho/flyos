@@ -686,6 +686,28 @@ export const apps: AppItem[] = [
             maximizable: true,
             component: 'Contacts'
         }
+    },
+    {
+        id: "crypto",
+        name: "数字货币",
+        icon: {
+            type: 'svg',
+            content: '<path d="M11.75 11.75 9 14.5l-3-3 2.75-2.75"></path><path d="M16 11.75 13.25 14.5l-3-3 2.75-2.75"></path><circle cx="12" cy="12" r="10"></circle><path d="M12 7v10"></path>',
+            bgColor: "bg-gradient-to-br from-orange-400 to-yellow-600"
+        },
+        style: "shadow-md rounded-lg",
+        tile: {
+            bgColor: "bg-orange-600",
+            style: "rounded-lg text-white font-black",
+            size: "medium",
+            component: "Crypto"
+        },
+        window: {
+            height: 600,
+            width: 900,
+            maximizable: true,
+            component: 'Crypto'
+        }
     }
 ] as AppItem[];
 
@@ -711,6 +733,6 @@ export const groups: AppGroup[] = [
     {
         id: "utility",
         name: "实用工具",
-        apps: ["calculator", "calendar", "clock", "maps", "recorder", "stocks", "todo", "translate", "contacts"]
+        apps: ["calculator", "calendar", "clock", "maps", "recorder", "stocks", "todo", "translate", "contacts", "crypto"]
     }
 ];
