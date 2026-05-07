@@ -226,7 +226,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, markRaw, onUnmounted } from 'vue';
 import {
-  Inbox, Send, FileText, Star, Trash2, AlertCircle, Plus, Search, Paperclip, ChevronLeft, Mail as MailIcon, X, MoreVertical
+  Inbox, Send, FileText, Star, Trash2, Plus, Search, Paperclip, ChevronLeft, Mail as MailIcon, X
 } from 'lucide-vue-next';
 
 interface Mail {
@@ -280,12 +280,14 @@ const folders = ref([
   { id: 'trash', name: '垃圾箱', icon: markRaw(Trash2), unread: 0 },
 ]);
 
-const mobileFolders = computed(() => [
-  folders.value[0], // Inbox
-  folders.value[1], // Starred
-  folders.value[2], // Sent
-  folders.value[4], // Trash
-]);
+const mobileFolders = computed(() => {
+  return [
+    folders.value[0],
+    folders.value[1],
+    folders.value[2],
+    folders.value[4],
+  ].filter((f): f is typeof folders.value[0] => !!f)
+});
 
 const currentFolderName = computed(() => {
   return folders.value.find(f => f.id === currentFolder.value)?.name || '';

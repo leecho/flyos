@@ -371,6 +371,7 @@ watch(activeBoardId, () => {
 
 .slider-v {
   -webkit-appearance: none;
+  appearance: none;
   width: 4px;
   height: 100px;
   background: rgba(156, 163, 175, 0.2);

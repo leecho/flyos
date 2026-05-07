@@ -43,14 +43,13 @@ const handleLock = () => {
 </script>
 
 <template>
-  <teleport to="body">
     <Transition name="fade">
       <!-- 控制中心面板：全屏模式 -->
-      <aside
+      <div
         v-if="uiStore.controlCenterVisible"
-        class="fixed left-0 right-0 top-0 z-[999999] bottom-[var(--mobile-nav-height)]"
+        class="fixed left-0 right-0 top-0 z-[999999] bottom-[var(--mobile-nav-height)] bg-white/60 dark:bg-black/40 backdrop-blur-3xl transition-colors duration-500"
       >
-        <div class="h-full w-full bg-white/50 dark:bg-gray-900/90 backdrop-blur-xl flex flex-col transition-colors duration-500">
+        <div class="h-full w-full flex flex-col">
           
           <!-- 顶部拉条指示器 -->
           <div class="w-full flex justify-center pt-3 pb-1">
@@ -149,9 +148,8 @@ const handleLock = () => {
             </div>
           </div>
         </div>
-      </aside>
+      </div>
     </Transition>
-  </teleport>
 </template>
 
 <style scoped>

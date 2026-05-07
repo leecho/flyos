@@ -176,7 +176,8 @@ const groupedContacts = computed(() => {
   })
   
   return Object.keys(groups).sort().reduce((acc, key) => {
-    acc[key] = groups[key]
+    const group = groups[key]
+    if (group) acc[key] = group
     return acc
   }, {} as Record<string, Contact[]>)
 })

@@ -61,8 +61,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const containerRef = ref<HTMLElement | null>(null)
-
 // 状态
 const display = ref('0')
 const equation = ref('')
@@ -72,9 +70,11 @@ const waitingForSecondOperand = ref(false)
 
 // 格式化数字显示 (Win11 风格千分位)
 const formatNumber = (val: string) => {
-  if (val === '错误') return val
+  if (val === '错误' || !val) return val
   const parts = val.split('.')
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  if (parts[0]) {
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
   return parts.join('.')
 }
 

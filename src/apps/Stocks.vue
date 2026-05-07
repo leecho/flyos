@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
-import { Plus, Search, TrendingUp, TrendingDown, RefreshCcw, X, BarChart2, Activity } from 'lucide-vue-next'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { Plus, RefreshCcw, X, BarChart2, Activity } from 'lucide-vue-next'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface StockData {
@@ -100,7 +100,7 @@ async function fetchStockData(symbol: string, range: string, interval: string): 
   })
 
   // 如果 intraday 价格序列为空，用 meta 字段补一个数据点
-  const price = meta.regularMarketPrice ?? prices.at(-1) ?? 0
+  const price = meta.regularMarketPrice ?? (prices.length ? prices[prices.length - 1] : 0)
   if (prices.length === 0 && price > 0) prices.push(price)
 
   const prev  = meta.chartPreviousClose ?? meta.previousClose ?? price
@@ -136,12 +136,14 @@ async function loadStock(symbol: string, name: string) {
       currency: 'USD', loading: true, error: false,
     }
     watchlist.value.push(newStock)
-    stock = watchlist.value.at(-1)!
+    stock = watchlist.value[watchlist.value.length - 1]
   }
+  if (!stock) return
   stock.loading = true
   stock.error   = false
   try {
-    const data = await fetchStockData(symbol, selectedRange.value.value, selectedRange.value.interval)
+    const r = selectedRange.value;
+    const data = await fetchStockData(symbol, r?.value || '1d', r?.interval || '1h')
     Object.assign(stock, data, { loading: false })
   } catch (e) {
     console.error(`[Stocks] ${symbol}:`, e)
@@ -170,8 +172,10 @@ function selectStock(symbol: string) {
 
 function removeStock(symbol: string) {
   watchlist.value = watchlist.value.filter(s => s.symbol !== symbol)
-  if (selectedSymbol.value === symbol && watchlist.value.length > 0)
-    selectedSymbol.value = watchlist.value[0].symbol
+  if (selectedSymbol.value === symbol && watchlist.value.length > 0) {
+    const first = watchlist.value[0];
+    if (first) selectedSymbol.value = first.symbol;
+  }
 }
 
 async function addStock() {
@@ -230,7 +234,10 @@ function fmtTs(ts: number) {
 let ro: ResizeObserver | null = null
 onMounted(() => {
   if (containerRef.value) {
-    ro = new ResizeObserver(([e]) => { containerWidth.value = e.contentRect.width })
+    ro = new ResizeObserver((entries) => {
+      const e = entries[0];
+      if (e) containerWidth.value = e.contentRect.width;
+    });
     ro.observe(containerRef.value)
     containerWidth.value = containerRef.value.offsetWidth
   }
@@ -387,7 +394,7 @@ onUnmounted(() => ro?.disconnect())
               @click="changeRange(r)"
               :class="[
                 'px-3 py-1 rounded-full text-xs font-black transition-all uppercase tracking-widest',
-                selectedRange.value === r.value
+                selectedRange?.value === r.value
                   ? 'bg-accent text-white shadow-md shadow-accent/20'
                   : 'opacity-30 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
               ]"
@@ -427,9 +434,11 @@ onUnmounted(() => ro?.disconnect())
                   v-if="selectedStock.prices.length"
                   :cx="600"
                   :cy="(() => {
-                    const ps = selectedStock.prices
-                    const lo = Math.min(...ps), hi = Math.max(...ps)
-                    return 160 - ((ps.at(-1)! - lo) / (hi - lo || 1)) * 160
+                    const ps = selectedStock.prices;
+                    const lo = Math.min(...ps), hi = Math.max(...ps);
+                    const last = ps[ps.length - 1];
+                    if (last === undefined) return 0;
+                    return 160 - ((last - lo) / (hi - lo || 1)) * 160
                   })()"
                   r="4"
                   :fill="isUp(selectedStock) ? '#10b981' : '#ef4444'"
@@ -438,8 +447,8 @@ onUnmounted(() => ro?.disconnect())
 
               <!-- Time labels -->
               <div v-if="selectedStock.timestamps.length > 1" class="absolute bottom-2 left-4 right-4 flex justify-between text-[9px] font-black opacity-30 uppercase">
-                <span>{{ fmtTs(selectedStock.timestamps[0]) }}</span>
-                <span>{{ fmtTs(selectedStock.timestamps.at(-1) ?? 0) }}</span>
+                <span>{{ fmtTs(selectedStock.timestamps[0] ?? 0) }}</span>
+                <span>{{ fmtTs(selectedStock.timestamps[selectedStock.timestamps.length - 1] ?? 0) }}</span>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { ArrowLeft, Globe, RefreshCcw, ExternalLink, TrendingUp } from 'lucide-vue-next'
+import { ArrowLeft, RefreshCcw, ExternalLink, TrendingUp } from 'lucide-vue-next'
 
 // --- CONSTANTS ---
 const categories = [

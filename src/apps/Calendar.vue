@@ -273,7 +273,6 @@ const colorPresets = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#a855f7', '#0
 const isMobile = computed(() => containerWidth.value < 700);
 
 const viewYear = computed(() => viewDate.value.getFullYear());
-const viewMonth = computed(() => viewDate.value.getMonth());
 const viewMonthName = computed(() => viewDate.value.toLocaleString('zh-CN', { month: 'long' }));
 
 // 初始化加载：当前月及前后 12 个月
@@ -367,10 +366,12 @@ function handleScroll() {
 function loadMoreMonths(direction: 'prev' | 'next') {
   if (direction === 'next') {
     const last = renderedMonths.value[renderedMonths.value.length - 1];
+    if (!last) return;
     const nextDate = new Date(last.year, last.month + 1, 1);
     renderedMonths.value.push(generateMonthData(nextDate.getFullYear(), nextDate.getMonth()));
   } else {
     const first = renderedMonths.value[0];
+    if (!first) return;
     const prevDate = new Date(first.year, first.month - 1, 1);
     const oldHeight = scrollContainerRef.value?.scrollHeight || 0;
     renderedMonths.value.unshift(generateMonthData(prevDate.getFullYear(), prevDate.getMonth()));
@@ -486,7 +487,7 @@ function formatFullDate(date: Date) {
   return date.toLocaleString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-function formatChineseLunar(date: Date) {
+function formatChineseLunar(_date: Date) {
   return "农历冬月十二 · 乙巳年";
 }
 

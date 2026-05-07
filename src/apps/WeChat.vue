@@ -380,7 +380,7 @@ import { ref, computed, nextTick } from 'vue'
 import { 
   MessageCircle, Users, Settings, Search, Plus, 
   ChevronLeft, MoreHorizontal, Smile, FolderOpen, Video,
-  UserPlus, Hash, ShieldCheck, User, Mail, Phone,
+  UserPlus, Hash, ShieldCheck, User,
   Shield, Bell, Monitor, Lock, CircleHelp, LogOut, Sun, Moon
 } from 'lucide-vue-next'
 
@@ -520,7 +520,7 @@ const groupedContacts = computed(() => {
     menus,
     alphabetical: sortedLetters.map(letter => ({
       letter,
-      items: groups[letter].sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'))
+      items: (groups[letter] || []).sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'))
     }))
   }
 })
@@ -580,13 +580,16 @@ const sendMessage = () => {
   if (!inputText.value.trim() || !activeChatId.value) return
   
   const text = inputText.value.trim()
+  if (!messagesDb.value[activeChatId.value]) messagesDb.value[activeChatId.value] = []
   const chatMsg = messagesDb.value[activeChatId.value]
   
-  chatMsg.push({
-    id: Date.now(),
-    text,
-    isMe: true
-  })
+  if (chatMsg) {
+    chatMsg.push({
+      id: Date.now(),
+      text,
+      isMe: true
+    })
+  }
   
   // 更新外侧卡片状态
   const chatItem = chats.value.find(c => c.id === activeChatId.value)
@@ -609,6 +612,7 @@ const sendMessage = () => {
 }
 
 const receiveMockMessage = (chatId: number) => {
+  if (!messagesDb.value[chatId]) messagesDb.value[chatId] = []
   messagesDb.value[chatId].push({
     id: Date.now(),
     text: '收到！好的，我会跟进处理。',

@@ -1,6 +1,6 @@
 import {reactive} from "vue";
 // 导入的函数将进行更新，用一个更强大的 activateWindow 替代 toggleActive
-import {activeWindow, closeWindow, openWindow, toggleActive} from "./windowStore";
+import {closeWindow, openWindow, toggleActive} from "./windowStore";
 import type {AppItem} from "./appStore.ts";
 
 export const taskStore = reactive({

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { cryptoWatchlist, moveCryptoConf, cryptoAlerts, addAlert, removeAlert } from '@/stores/cryptoStore'
-import { Plus, X, BarChart2, Activity, RefreshCcw, Wifi, WifiOff, ChevronUp, ChevronDown, Bell, BellRing, Settings2, BarChart, Presentation, Trash2, LineChart, LayoutGrid, MapPin, Map as MapIcon, Wallet } from 'lucide-vue-next'
+import { Plus, X, Activity, RefreshCcw, ChevronUp, ChevronDown, Bell, BellRing, Trash2, LineChart, LayoutGrid, Map as MapIcon, Wallet } from 'lucide-vue-next'
 
-import CryptoChart, { KlineData } from './crypto/CryptoChart.vue'
+import CryptoChart from './crypto/CryptoChart.vue'
+import type { KlineData } from './crypto/CryptoChart.vue'
 import CryptoOrderbook from './crypto/CryptoOrderbook.vue'
 import FearGreedIndex from './crypto/FearGreedIndex.vue'
 import CryptoHeatmap from './crypto/CryptoHeatmap.vue'
@@ -83,7 +84,9 @@ async function loadStock(symbol: string, name: string) {
   }
   stock.loading = true; stock.error = false
   try {
-    const [ticker, klineObj] = await Promise.all([ fetchTicker(symbol), fetchKlines(symbol, selectedRange.value) ])
+    const r = selectedRange.value;
+    if (!r) return;
+    const [ticker, klineObj] = await Promise.all([ fetchTicker(symbol), fetchKlines(symbol, r) ])
     Object.assign(stock, ticker, klineObj, { loading: false })
   } catch (e) { stock.loading = false; stock.error = true }
 }
@@ -121,17 +124,30 @@ function removeStock(symbol: string) {
   watchlist.value = watchlist.value.filter(s => s.symbol !== symbol)
   cryptoWatchlist.value = cryptoWatchlist.value.filter(s => s.symbol !== symbol)
   updateWSSubscription()
-  if (selectedSymbol.value === symbol && watchlist.value.length > 0) selectedSymbol.value = watchlist.value[0].symbol
+  if (selectedSymbol.value === symbol && watchlist.value.length > 0) {
+    const first = watchlist.value[0]; 
+    if (first) selectedSymbol.value = first.symbol
+  }
 }
 
 function moveStock(symbol: string, direction: 'up' | 'down') {
   const wsIndex = watchlist.value.findIndex(s => s.symbol === symbol); const storeIndex = cryptoWatchlist.value.findIndex(s => s.symbol === symbol)
   if (direction === 'up' && wsIndex > 0) {
-    const tempWs = watchlist.value[wsIndex]; watchlist.value[wsIndex] = watchlist.value[wsIndex - 1]; watchlist.value[wsIndex - 1] = tempWs;
-    moveCryptoConf(storeIndex, direction)
+    const prev = watchlist.value[wsIndex - 1];
+    const curr = watchlist.value[wsIndex];
+    if (prev && curr) {
+      watchlist.value[wsIndex] = prev;
+      watchlist.value[wsIndex - 1] = curr;
+      moveCryptoConf(storeIndex, direction)
+    }
   } else if (direction === 'down' && wsIndex < watchlist.value.length - 1) {
-    const tempWs = watchlist.value[wsIndex]; watchlist.value[wsIndex] = watchlist.value[wsIndex + 1]; watchlist.value[wsIndex + 1] = tempWs;
-    moveCryptoConf(storeIndex, direction)
+    const next = watchlist.value[wsIndex + 1];
+    const curr = watchlist.value[wsIndex];
+    if (next && curr) {
+      watchlist.value[wsIndex] = next;
+      watchlist.value[wsIndex + 1] = curr;
+      moveCryptoConf(storeIndex, direction)
+    }
   }
 }
 
@@ -168,7 +184,8 @@ function connectWS() {
           stock.price = newPrice; stock.open = parseFloat(data.o); stock.dayHigh = parseFloat(data.h); stock.dayLow = parseFloat(data.l);
           stock.volume = parseFloat(data.v); stock.quoteVolume = parseFloat(data.q); stock.change = parseFloat(data.p); stock.changePercent = parseFloat(data.P); stock.previousClose = parseFloat(data.x)
           if (stock.klines.length > 0) {
-             const k = stock.klines[stock.klines.length - 1]; k.c = newPrice; k.h = Math.max(k.h, newPrice); k.l = Math.min(k.l, newPrice)
+             const k = stock.klines[stock.klines.length - 1];
+             if (k) { k.c = newPrice; k.h = Math.max(k.h, newPrice); k.l = Math.min(k.l, newPrice) }
           }
         }
       }
@@ -206,7 +223,10 @@ function fmtCurrency(v: number) {
 let ro: ResizeObserver | null = null
 onMounted(() => {
   if (containerRef.value) {
-    ro = new ResizeObserver(([e]) => { containerWidth.value = e.contentRect.width })
+    ro = new ResizeObserver((entries) => { 
+      const e = entries[0]
+      if (e) containerWidth.value = e.contentRect.width 
+    })
     ro.observe(containerRef.value); containerWidth.value = containerRef.value.offsetWidth
   }
   Promise.all(cryptoWatchlist.value.map(({ symbol, name }) => loadStock(symbol, name))).then(() => { connectWS() })
@@ -318,7 +338,7 @@ onUnmounted(() => { ro?.disconnect(); clearTimeout(reconnectTimer); if (ws) ws.c
                       <span class="text-xs font-black opacity-30 tracking-widest mt-1">/ USDT</span>
                     </div>
                     <div class="flex gap-2.5 mt-3">
-                      <button v-for="r in RANGES" :key="r.value" @click="changeRange(r)" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest transition-colors" :class="selectedRange.value===r.value ? 'bg-[var(--fly-text-primary)] text-[var(--fly-bg-primary)]' : 'bg-black/5 dark:bg-white/5 opacity-50 hover:opacity-100'">{{ r.label }}</button>
+                      <button v-for="r in RANGES" :key="r.value" @click="changeRange(r)" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest transition-colors" :class="selectedRange?.value === r.value ? 'bg-[var(--fly-text-primary)] text-[var(--fly-bg-primary)]' : 'bg-black/5 dark:bg-white/5 opacity-50 hover:opacity-100'">{{ r.label }}</button>
                     </div>
                   </div>
                   <div class="text-right relative">
@@ -333,7 +353,7 @@ onUnmounted(() => { ro?.disconnect(); clearTimeout(reconnectTimer); if (ws) ws.c
                                <Trash2 @click="removeAlert(alt.id)" :size="12" class="text-red-500 opacity-50 cursor-pointer hover:opacity-100"/>
                             </div>
                           </div>
-                          <div class="flex items-center gap-2 mb-3"><select v-model="alertForm.condition" class="bg-black/10 border-none outline-none rounded p-1 text-xs"><option value="above">&gt;</option><option value="below">&lt;</option></select><input v-model="alertForm.threshold" type="number" class="w-full bg-black/10 \border-none outline-none rounded p-1 font-mono text-xs"/></div>
+                          <div class="flex items-center gap-2 mb-3"><select v-model="alertForm.condition" class="bg-black/10 border-none outline-none rounded p-1 text-xs"><option value="above">&gt;</option><option value="below">&lt;</option></select><input v-model="alertForm.threshold" type="number" class="w-full bg-black/10 border-none outline-none rounded p-1 font-mono text-xs"/></div>
                           <button @click="() => { addAlert(selectedSymbol, alertForm.condition, alertForm.threshold); showAlertDialog=false }" class="w-full py-1 bg-accent text-white font-black uppercase text-xs rounded">新建</button>
                         </div>
                       </div>

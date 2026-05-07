@@ -207,7 +207,7 @@
 import { ref, computed, watch, nextTick } from 'vue';
 import { 
   Menu, Search, Trash2, Plus, Star, Check, 
-  Inbox, Calendar, ListTodo, CheckCircle2, X
+  Inbox, Calendar, CheckCircle2, X
 } from 'lucide-vue-next';
 import { userStore } from '@/stores/userStore';
 
@@ -228,7 +228,6 @@ const searchQuery = ref('');
 const isMobileSearchVisible = ref(false);
 const searchInputRef = ref<HTMLInputElement | null>(null);
 const activeCategory = ref('all');
-const containerRef = ref<HTMLElement | null>(null);
 
 // 初始侧边栏状态
 const isSidebarVisible = ref(window.innerWidth >= 900);
@@ -266,7 +265,6 @@ const currentCategoryName = computed(() => {
 });
 
 const completedTodos = computed(() => todos.value.filter(t => t.completed));
-const pendingTodos = computed(() => todos.value.filter(t => !t.completed));
 
 // --- Filtering ---
 const filteredTodos = computed(() => {
@@ -290,7 +288,7 @@ watch(todos, (newTodos) => {
 
 // --- Utils ---
 function getTodayStr() {
-  return new Date().toISOString().split('T')[0];
+  return (new Date().toISOString().split('T')[0]) || '';
 }
 
 // --- Actions ---

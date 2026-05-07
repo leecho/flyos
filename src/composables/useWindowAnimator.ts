@@ -2,7 +2,7 @@ import { nextTick } from 'vue'
 
 interface AnimatorOptions {
     id: string
-    windowRef: Object
+    windowRef: { value: HTMLElement | null }
 }
 
 export function useWindowAnimator({ id, windowRef }: AnimatorOptions) {

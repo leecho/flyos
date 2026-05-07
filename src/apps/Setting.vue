@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { themeStore, AccentColor } from '@/stores/themeStore';
+import { themeStore } from '@/stores/themeStore';
+import type { AccentColor } from '@/stores/themeStore';
 import { userStore } from '@/stores/userStore';
 import Wallpaper1 from '@/assets/wallpaper.jpg';
 import Wallpaper2 from '@/assets/wallpaper2.jpg';
