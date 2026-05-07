@@ -16,6 +16,7 @@ export interface WindowItem {
     active?: boolean
     params?: any
     appId: string
+    preview?: string
 }
 
 /* ---------------- Store ---------------- */
@@ -33,8 +34,6 @@ export const windowStore = reactive({
      */
     actives: [] as string[],
 
-    /** 移动端多任务切换器可见性 */
-    switcherVisible: false
 })
 
 /* ---------------- 工具函数 ---------------- */
@@ -98,7 +97,7 @@ export function activeWindow(id: string, params?: any) {
 
 /** 激活栈顶窗口 */
 function activateTop() {
-    const nextId = windowStore.actives.at(-1)
+    const nextId = windowStore.actives[windowStore.actives.length - 1]
     if (nextId) {
         activeWindow(nextId)
     } else {
@@ -170,6 +169,7 @@ export function closeWindow(id: string) {
 
 /* ---------------- 移动端导航增强 ---------------- */
 
+
 /** 回到桌面（最小化所有窗口） */
 export function minimizeAll() {
     windowStore.windows.forEach(w => {
@@ -177,12 +177,6 @@ export function minimizeAll() {
     })
     windowStore.actives = []
     windowStore.active = null
-    windowStore.switcherVisible = false
-}
-
-/** 切换多任务视图 */
-export function toggleSwitcher() {
-    windowStore.switcherVisible = !windowStore.switcherVisible
 }
 
 /* ---------------- ZIndex ---------------- */

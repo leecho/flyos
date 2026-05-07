@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { useNotification } from '@/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import type { NotificationItem } from '../composables/useNotification';
 
 // 初始化通知中心逻辑
-const { notifications, push, remove, clearAll } = useNotification();
+const { notifications, remove, clearAll } = useNotification();
 
 // 2. 侧边栏显示状态
 const isOpen = ref(false);
@@ -145,7 +145,7 @@ defineExpose({ toggleOpen, isOpen });
 
               <!-- 删除按钮 -->
               <button
-                @click="removeNotification($event, notification)"
+                @click="removeNotification($event, notif)"
                 class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-slate-200 dark:bg-slate-700 rounded-full hover:bg-rose-500 hover:text-white"
               >
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -171,6 +171,7 @@ defineExpose({ toggleOpen, isOpen });
 /* 滑块自定义 */
 .system-slider {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 8px;
   background: rgba(0, 0, 0, 0.05);

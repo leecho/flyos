@@ -5,16 +5,23 @@
 
     <!-- 桌面层级切换动画 -->
       <Transition name='desktop-fade'>
-        <Desktop v-if="desktopStore.mode == 'desktop'"  />
+        <div v-if="desktopStore.mode == 'desktop'" class="absolute">
+          <Desktop />
+        </div>
       </Transition>
 
       <Transition name='metro-fade'>
-        <Metro v-if="desktopStore.mode == 'metro'"  />
+        <div v-if="desktopStore.mode == 'metro'" class="absolute">
+          <Metro />
+        </div>
       </Transition>
 
     <TaskBar v-if="!desktopStore.isMobile" />
-    <MobileNav v-else />
+    <HomeBar v-else />
     <AppSwitcher />
+    <ControlCenter />
+    <NotificationSystem v-if="!desktopStore.isMobile" />
+    <MobileNotificationSystem v-else />
     <ContextMenu ref='menuRef' />
   </div>
 </template>
@@ -26,8 +33,11 @@ import Metro from './Metro.vue'
 import TaskBar from './TaskBar.vue'
 import Desktop from './Desktop.vue'
 import ContextMenu from './ContextMenu.vue'
-import MobileNav from './MobileNav.vue'
+import HomeBar from './HomeBar.vue'
 import AppSwitcher from './AppSwitcher.vue'
+import ControlCenter from './ControlCenter.vue'
+import NotificationSystem from './NotificationSystem.vue'
+import MobileNotificationSystem from './MobileNotificationSystem.vue'
 import { themeStore } from '../stores/themeStore.ts'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { CheckIcon,LockIcon, SettingsIcon, PaletteIcon, LayoutDashboardIcon, ExpandIcon, ShrinkIcon } from 'lucide-vue-next'
@@ -46,8 +56,10 @@ let resizeObserver: ResizeObserver | null = null
 onMounted(() => {
   if (containerRef.value) {
     resizeObserver = new ResizeObserver((entries) => {
-      const { width } = entries[0].contentRect
-      desktopStore.isMobile = width < 768
+      if (entries[0]) {
+        const { width } = entries[0].contentRect
+        desktopStore.isMobile = width < 768
+      }
     })
     resizeObserver.observe(containerRef.value)
   }

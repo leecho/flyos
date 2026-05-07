@@ -1,6 +1,7 @@
 <template>
   <div
-    class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col items-center md:items-start content-stretch text-white transition-all duration-200 ease-[cubic-bezier(0.2,1,0.5,1)] '
+    class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col items-center md:items-start content-stretch text-white transition-all duration-200 ease-[cubic-bezier(0.2,1,0.5,1)]'
+    :style="desktopStore.isMobile ? { paddingBottom: 'calc(var(--mobile-nav-height) + 20px)' } : {}"
   >
     <div class='w-full flex flex-shrink-0'>
       <img :src='logo' class="w-[40px] h-[40px]" />
@@ -17,7 +18,8 @@
 import logo from '../assets/logo.svg'
 import TileGroup from './TileGroup.vue'
 import { appStore, type AppItem ,removeAppFromGroups} from '../stores/appStore'
-import { ref } from 'vue'
+import { desktopStore } from '../stores/desktopStore'
+import { ref, toRef } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import ContextMenu from './ContextMenu.vue'
 import { startTask } from '../stores/taskStore.ts'
@@ -61,8 +63,9 @@ const removeApp = async (app: AppItem) => {
 
 
 const groupRef = ref()
+const groupsRef = toRef(appStore, 'groups')
 
-useDraggable(groupRef, appStore.groups, {
+useDraggable(groupRef, groupsRef, {
   animation: 150,
   handle: '.group-handler',
   chosenClass: 'opacity-40'

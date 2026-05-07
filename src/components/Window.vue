@@ -32,7 +32,6 @@
         <div class="flex items-center gap-1" @mousedown.stop>
           <!-- 最小化按钮 -->
           <button
-            v-if="!isMobile"
             class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-white"
             @click="$emit('minimize')"
           >
@@ -43,7 +42,7 @@
 
           <!-- 最大化 / 恢复 按钮 -->
           <button
-            v-if="canMaximize && !isMobile"
+            v-if="canMaximize"
             class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-white"
             @click="toggleMaximize"
           >
@@ -111,9 +110,8 @@ import {
   watch,
   nextTick
 } from 'vue'
-import { useWindowAnimator } from "@/composables/useWindowAnimator.ts"
+import { useWindowAnimator } from "../composables/useWindowAnimator"
 import AppIcon from './AppIcon.vue'
-import { desktopStore } from '@/stores/desktopStore'
 
 const props = withDefaults(defineProps<{
   id: string
@@ -141,7 +139,7 @@ const visible = ref(!props.minimized)
 const animator = useWindowAnimator({ id: props.id, windowRef })
 
 const subComponent = props.component
-  ? defineAsyncComponent(() => import(`@/apps/${props.component}.vue`))
+  ? defineAsyncComponent(() => import(`../apps/${props.component}.vue`))
   : null
 
 const isDragging = ref(false)
@@ -152,8 +150,6 @@ const snapState = ref<'left' | 'right' | null>(null)
 const canMaximize = computed(() => {
   return props.maximizable
 })
-
-const isMobile = computed(() => desktopStore.isMobile)
 
 const position = reactive({
   x: (window.innerWidth - props.width) / 2,
@@ -168,27 +164,22 @@ const windowStyle = computed(() => {
   const base = { zIndex: props.zIndex }
 
   if (isMaximized.value) {
-    const height = isMobile.value ? '100vh' : 'calc(100vh - 42px)'
     return {
       ...base,
       top: '0px',
       left: '0px',
       width: '100vw',
-      height,
-      borderRadius: '0px',
-      border: isMobile.value ? 'none' : undefined,
-      boxShadow: isMobile.value ? 'none' : undefined
+      height: 'calc(100vh - 42px)',
+      borderRadius: '0px'
     }
   }
 
   if (snapState.value === 'left') {
-    const height = isMobile.value ? '100vh' : 'calc(100vh - 42px)'
-    return { ...base, top: '0', left: '0', width: '50vw', height, borderRadius: '0px' }
+    return { ...base, top: '0', left: '0', width: '50vw', height: 'calc(100vh - 42px)', borderRadius: '0px' }
   }
 
   if (snapState.value === 'right') {
-    const height = isMobile.value ? '100vh' : 'calc(100vh - 42px)'
-    return { ...base, top: '0', left: '50vw', width: '50vw', height, borderRadius: '0px' }
+    return { ...base, top: '0', left: '50vw', width: '50vw', height: 'calc(100vh - 42px)', borderRadius: '0px' }
   }
 
   return {
@@ -202,12 +193,11 @@ const windowStyle = computed(() => {
 
 const snapPreviewStyle = computed(() => {
   if (!snapState.value) return {}
-  const height = isMobile.value ? '100vh' : 'calc(100vh - 42px)'
   return {
     top: '0',
     left: snapState.value === 'left' ? '0' : '50vw',
     width: '50vw',
-    height
+    height: 'calc(100vh - 42px)'
   }
 })
 

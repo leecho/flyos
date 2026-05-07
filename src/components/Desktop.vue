@@ -1,55 +1,92 @@
 <template>
-  <div class="w-full flex h-full justify-center md:justify-start p-[20px]" :class="{ 'pb-[60px]': !desktopStore.isMobile }">
-  <div ref='desktopRef' class='flex flex-row md:flex-col gap-4 flex-wrap justify-between md:justify-start content-start items-center'>
-    <div v-for='app in apps'
-         :title='app.name'
-         :key='app.id'
-         @click='startTask(app)'
-         @contextmenu.prevent='openContextMenu($event, app)'
-         class='desktop-icon  flex flex-col p-[5px] w-[80px] h-[80px] justify-center cursor-pointer items-center rounded-md hover:backdrop-blur-sm hover:bg-accent/55 '>
-      <div class='text-center justify-center flex'>
-        <AppIcon :id='app.id' size='md'/>
+  <div 
+    class="h-full w-full relative overflow-y-auto no-scrollbar pb-32"
+    @click="handleBackgroundClick"
+  >
+    <!-- 图标网格布局 -->
+    <div 
+      class="desktop-icons grid gap-x-2 gap-y-8 p-6 pt-10"
+      :class="[
+        desktopStore.isMobile 
+          ? 'grid-cols-4' 
+          : 'grid-cols-[repeat(auto-fill,minmax(100px,1fr))]'
+      ]"
+    >
+      <div 
+        v-for="app in appStore.apps" 
+        :key="app.id"
+        class="desktop-item group flex flex-col items-center gap-2 cursor-pointer active:scale-90 transition-all duration-200"
+        @click.stop="openApp(app)"
+        @contextmenu.prevent="openContextMenu($event, app)"
+      >
+        <div class="icon-container relative flex flex-col items-center">
+          <AppIcon 
+            :id="app.id" 
+            size="md" 
+            rounded="md" 
+            class="shadow-xl group-hover:shadow-blue-500/20 transition-all" 
+          />
+          <!-- 运行状态指示点 -->
+          <div 
+            v-if="isAppRunning(app.id)" 
+            class="absolute -bottom-2 w-1 h-1 bg-white rounded-full shadow-glow"
+          ></div>
+        </div>
+        <span class="text-[11px] font-semibold text-white text-center drop-shadow-lg truncate w-full px-1 leading-tight opacity-90">
+          {{ app.name }}
+        </span>
       </div>
-      <span class='text-sm text-center truncate w-full mt-1 text-shadow-lg h-[18px] text-white'>{{ app.name }}</span>
     </div>
-    <ContextMenu ref='menuRef' />
+    
+    <ContextMenu ref="menuRef" />
   </div>
-</div>
-
 </template>
+
 <script setup lang='ts'>
+import { ref } from 'vue'
 import { appStore } from '../stores/appStore.ts'
 import { desktopStore } from '../stores/desktopStore.ts'
 import { startTask } from '../stores/taskStore.ts'
-import { ref } from 'vue'
-import { useDraggable } from 'vue-draggable-plus'
+import { windowStore } from '../stores/windowStore.ts'
 import AppIcon from './AppIcon.vue'
 import ContextMenu from './ContextMenu.vue'
-import {SquareArrowUpRightIcon, PinOffIcon, PinIcon } from 'lucide-vue-next'
+import { SquareArrowUpRightIcon, PinOffIcon, PinIcon } from 'lucide-vue-next'
 
-const apps = appStore.apps
-const desktopRef = ref<HTMLElement>()
 const menuRef = ref()
+
+// 检查应用是否正在运行
+const isAppRunning = (appId: string) => {
+  return windowStore.windows.some(win => win.appId === appId)
+}
+
+const openApp = (app: any) => {
+  startTask(app)
+}
+
+const handleBackgroundClick = () => {
+  // 背景点击逻辑（如取消选中）
+}
+
 function openContextMenu(e: MouseEvent, app: any) {
   const options = [
-    { label: '打开应用', icon: SquareArrowUpRightIcon, action: () => startTask(app) },
+    { label: '打开应用', icon: SquareArrowUpRightIcon, action: () => openApp(app) },
     { type: 'divider' },
-    { label: app.fixed ? '取消固定' : '固定到开始菜单', icon: app.fixed ? PinOffIcon: PinIcon ,action: () => app.fixed = !app.fixed }
+    { label: app.fixed ? '取消固定' : '固定到开始菜单', icon: app.fixed ? PinOffIcon : PinIcon, action: () => app.fixed = !app.fixed }
   ]
   e.stopPropagation()
   menuRef.value.open(e, options)
 }
-
-
-useDraggable(desktopRef, appStore.apps, {
-  animation: 150,
-  group: {
-    name: 'apps',
-    pull: true,
-    put: true
-  },
-  ghostClass: 'opacity-40',
-  chosenClass: 'ring-blue-400'
-})
-
 </script>
+
+<style scoped>
+.shadow-glow {
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
