@@ -1,8 +1,8 @@
 <template>
   <div class="mobile-nav-container fixed bottom-0 left-0 right-0 z-[999999] pointer-events-none">
     <div class="mobile-nav-bar w-full h-[var(--mobile-nav-height)] pointer-events-auto
-                bg-white/70 dark:bg-[#0a0a0a]/80 backdrop-blur-[30px] border-t border-gray-900/5 dark:border-white/10
-                shadow-[0_-10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex items-center justify-around px-6 relative overflow-hidden transition-colors duration-500">
+                bg-white/50 dark:bg-black/30 backdrop-blur-[60px] border-t border-gray-900/5 dark:border-white/10
+                shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.5)] flex items-center justify-around px-6 relative overflow-hidden transition-colors duration-500">
       
       <!-- 首页 -->
       <button 
