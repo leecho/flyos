@@ -222,7 +222,7 @@ const handleLock = () => {
 .status {
   display: block;
   font-size: 0.95rem;
-  font-weight: 900;
+  font-weight: 500;
   color: #1e293b;
   white-space: nowrap;
 }

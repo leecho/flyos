@@ -2,7 +2,7 @@
   <Transition name="fade">
     <div 
       v-if="uiStore.switcherVisible" 
-      class="app-switcher fixed inset-0 z-[999998] flex flex-col items-center justify-center bg-white/60 dark:bg-black/40 backdrop-blur-3xl px-6 transition-colors duration-500"
+      class="app-switcher fixed left-0 right-0 top-0 bottom-[var(--mobile-nav-height)]  inset-0 z-[999998] flex flex-col items-center justify-center bg-white/60 dark:bg-black/40 backdrop-blur-3xl px-6 transition-colors duration-500"
       @click="toggleSwitcher"
     >
       <div 
