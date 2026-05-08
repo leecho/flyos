@@ -50,15 +50,31 @@ watch(() => props.minimized, async (isMinimized) => {
         logging: false,
         useCORS: true,
         backgroundColor: null,
-        // 关键：即使元素隐藏也尝试捕捉（取决于渲染引擎）
-        // 或者在 v-show 生效前的一刹那捕捉
+        // 修复 Tailwind v4 oklch/oklab 导致的 html2canvas 崩溃
+        onclone: (clonedDoc) => {
+          const elements = clonedDoc.getElementsByTagName('*');
+          for (let i = 0; i < elements.length; i++) {
+            const el = elements[i] as HTMLElement;
+            const style = window.getComputedStyle(el);
+            // 针对可能包含 oklch/oklab 的常见属性进行清理
+            const props = ['backgroundColor', 'color', 'borderColor', 'fill', 'stroke'];
+            props.forEach(prop => {
+              const val = (style as any)[prop];
+              if (val && (val.includes('oklch') || val.includes('oklab'))) {
+                // 暂时降级为透明或继承，防止解析器报错
+                (el.style as any)[prop] = 'inherit';
+              }
+            });
+          }
+        }
       })
       const win = getWindow(props.id)
       if (win) {
         win.preview = canvas.toDataURL('image/webp', 0.5)
       }
-    } catch (e) {
-      console.warn('Snapshot failed:', e)
+    } catch (e: any) {
+      // 记录具体错误但不再中断流程
+      console.warn('Snapshot failed:', e.message || e)
     } finally {
       isCapturing = false
     }

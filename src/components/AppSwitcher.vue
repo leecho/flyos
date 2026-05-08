@@ -22,7 +22,7 @@
         class="switcher-content w-full flex gap-6 overflow-x-auto pb-12 pt-4 no-scrollbar items-center px-4"
         @click.stop
       >
-        <div v-for="win in windowStore.windows" :key="win.id" class="task-card-wrapper shrink-0 group perspective-1000">
+        <div v-for="win in reversedWindows" :key="win.id" class="task-card-wrapper shrink-0 group perspective-1000">
           <div 
             class="task-card w-48 sm:w-64 aspect-[3/4] bg-white/40 dark:bg-gray-800/50 rounded-[28px] border border-gray-900/5 dark:border-white/20 shadow-2xl relative flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-2 active:scale-95 cursor-pointer"
             @click="activateTask(win.id)"
@@ -71,11 +71,16 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { uiStore, toggleSwitcher } from '../stores/uiStore'
 import { windowStore, toggleActive, minimizeAll } from '../stores/windowStore'
 import { stopTask } from '../stores/taskStore'
 import AppIcon from './AppIcon.vue'
 import { X } from 'lucide-vue-next'
+
+const reversedWindows = computed(() => {
+  return [...windowStore.windows].reverse()
+})
 
 const activateTask = (id: string) => {
   toggleActive(id)
