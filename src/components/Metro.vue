@@ -3,9 +3,9 @@
     class='h-full flex p-[20px] lg:p-[60px] gap-3 flex-col items-center md:items-start content-stretch text-white transition-all duration-200 ease-[cubic-bezier(0.2,1,0.5,1)]'
     :style="desktopStore.isMobile ? { paddingBottom: 'calc(var(--mobile-nav-height) + 20px)' } : {}"
   >
-    <div class='w-full flex flex-shrink-0'>
+    <div class='w-full flex flex-shrink-0 justify-center md:justify-start items-center'>
       <img :src='logo' class="w-[40px] h-[40px]" />
-      <div class='text-3xl ml-[10px] leading-[40px]'>FlyOS</div>
+      <div class='text-3xl ml-[10px] leading-[40px] font-bold tracking-tight'>FlyOS</div>
     </div>
     <div ref='groupRef'
          class='flex-1 flex md:flex-row flex-col gap-12 mt-[20px] w-full overflow-y-auto md:overflow-x-auto md:pb-4 items-center md:items-start min-h-0'>
