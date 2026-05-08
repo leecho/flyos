@@ -1,21 +1,23 @@
 <template>
   <div 
-    class="h-full w-full relative overflow-y-auto no-scrollbar pb-32"
+    class="h-full w-full relative no-scrollbar"
+    :class="[desktopStore.isMobile ? 'overflow-y-auto pb-32' : 'overflow-x-auto']"
     @click="handleBackgroundClick"
   >
     <!-- 图标网格布局 -->
     <div 
-      class="desktop-icons grid gap-x-2 gap-y-8 p-6 pt-10"
+      class="desktop-icons grid gap-2 p-6 pt-10 h-full w-fit"
       :class="[
         desktopStore.isMobile 
-          ? 'grid-cols-4' 
-          : 'grid-cols-[repeat(auto-fill,minmax(100px,1fr))]'
+          ? 'grid-cols-4 grid-auto-rows-min w-full gap-4' 
+          : 'grid-flow-col grid-rows-[repeat(auto-fill,100px)]'
       ]"
     >
       <div 
         v-for="app in appStore.apps" 
         :key="app.id"
-        class="desktop-item group flex flex-col items-center gap-2 cursor-pointer active:scale-90 transition-all duration-200"
+        class="desktop-item group flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-all duration-200"
+        :class="[!desktopStore.isMobile ? 'w-24 h-24 justify-center hover:bg-white/10 rounded-lg' : '']"
         @click.stop="openApp(app)"
         @contextmenu.prevent="openContextMenu($event, app)"
       >
@@ -32,7 +34,9 @@
             class="absolute -bottom-2 w-1 h-1 bg-white rounded-full shadow-glow"
           ></div>
         </div>
-        <span class="text-[11px] font-semibold text-white text-center drop-shadow-lg truncate w-full px-1 leading-tight opacity-90">
+        <span 
+          class="text-[11px] font-semibold text-white text-center drop-shadow-lg truncate w-full px-1 leading-tight opacity-90"
+        >
           {{ app.name }}
         </span>
       </div>
