@@ -733,6 +733,6 @@ export const groups: AppGroup[] = [
     {
         id: "utility",
         name: "实用工具",
-        apps: ["calculator", "calendar", "clock", "maps", "recorder", "stocks", "todo", "translate", "contacts", "crypto"]
+        apps: ["calculator", "calendar", "clock", "maps", "recorder", "stocks", "todo", "translate", "contacts"]
     }
 ];

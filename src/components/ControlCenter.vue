@@ -4,23 +4,22 @@ import { desktopStore, setMode } from '../stores/desktopStore';
 import { themeStore } from '../stores/themeStore';
 import { userStore } from '../stores/userStore';
 import { useNotification } from '../composables/useNotification';
-import { useFullscreen } from '../composables/useFullscreen';
 import { 
   LayoutDashboardIcon, 
   Grid2X2Icon, 
   MoonIcon, 
   SunIcon, 
-  MaximizeIcon, 
-  MinimizeIcon, 
   LockIcon, 
   Trash2Icon,
-  BellIcon
+  BellIcon,
+  SettingsIcon
 } from 'lucide-vue-next';
+import { startTask } from '../stores/taskStore';
+import { getAppById } from '../stores/appStore';
 import { uiStore, toggleControlCenter } from '../stores/uiStore';
 import logoUrl from '../assets/logo.svg';
 
 const { notifications, clearAll, remove } = useNotification();
-const { isFullscreen, toggleFullscreen } = useFullscreen();
 
 // 将内部状态映射到全局 uiStore
 const isOpen = computed(() => uiStore.controlCenterVisible);
@@ -39,6 +38,14 @@ const handleToggleTheme = () => {
 const handleLock = () => {
   userStore.user.locked = true;
   uiStore.controlCenterVisible = false;
+};
+
+const handleOpenSettings = () => {
+  const app = getAppById('settings');
+  if (app) {
+    startTask(app);
+    uiStore.controlCenterVisible = false;
+  }
 };
 </script>
 
@@ -91,14 +98,14 @@ const handleLock = () => {
                 </div>
               </button>
 
-              <!-- 全屏控制 -->
-              <button @click="toggleFullscreen" class="control-card group">
+              <!-- 系统设置 -->
+              <button @click="handleOpenSettings" class="control-card group">
                 <div class="icon-box bg-emerald-500">
-                  <component :is="isFullscreen ? MinimizeIcon : MaximizeIcon" class="w-6 h-6" />
+                  <SettingsIcon class="w-6 h-6" />
                 </div>
                 <div class="text-left">
-                  <span class="title">显示模式</span>
-                  <span class="status">{{ isFullscreen ? '退出全屏' : '进入全屏' }}</span>
+                  <span class="title">系统设置</span>
+                  <span class="status">系统设置</span>
                 </div>
               </button>
 

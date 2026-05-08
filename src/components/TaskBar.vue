@@ -48,7 +48,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { toggleActive, toggleMaximize, toggleMinimize, WindowItem, windowStore } from '../stores/windowStore'
+import { toggleActive, toggleMaximize, toggleMinimize, windowStore } from '../stores/windowStore'
+import type { WindowItem } from '../stores/windowStore'
+// @ts-ignore
 import TaskBarItem from "./TaskBarItem.vue"
 import ContextMenu from './ContextMenu.vue'
 import StartMenu from './StartMenu.vue'

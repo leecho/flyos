@@ -11,6 +11,18 @@
   --mobile-nav-height: 56px;
 }
 
+* {
+  touch-action: manipulation;
+}
+
+input, textarea, select {
+  font-size: 16px !important;
+}
+
+html, body {
+  touch-action: pan-x pan-y;
+}
+
 html.dark{
   color: #fff
 }
